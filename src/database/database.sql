@@ -6,7 +6,7 @@ GO
 
 -- danh mục Phòng
 -- Phòng
--- Account
+-- Tài khoản
 -- danh mục dịch vụ
 -- Dịch Vụ
 -- Hóa đơn
@@ -34,10 +34,10 @@ CREATE TABLE Phong
 )
 GO
 
-CREATE TABLE Account
+CREATE TABLE TaiKhoan
 (
     UserName NVARCHAR(100) PRIMARY KEY,
-    displayName NVARCHAR(100) NOT NULL DEFAULT N'Chưa đặt tên',
+    DisplayName NVARCHAR(100) NOT NULL DEFAULT N'Chưa đặt tên',
     PassWord VARCHAR(1000) NOT NULL DEFAULT 123456,
     -- 1. admin || 0. nhân viên
     loaiTK INT NOT NULL DEFAULT 0
