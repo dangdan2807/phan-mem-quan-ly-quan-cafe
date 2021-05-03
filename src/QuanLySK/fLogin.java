@@ -6,7 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class fLogin extends JFrame implements ActionListener {
-
+    // chưa bắt sự kiện phím enter để submit
     private JTextField txtUserName, txtPassWord;
     private JButton btnLogin, btnExit;
 
@@ -21,9 +21,9 @@ public class fLogin extends JFrame implements ActionListener {
     }
 
     public void createFormLogin() {
-        JPanel pnLoginNorth = new JPanel();
-        pnLoginNorth.setPreferredSize(new Dimension(0, 200));
-        pnLoginNorth.setLayout(null);
+        JPanel pnMain = new JPanel();
+        pnMain.setLayout(null);
+        pnMain.setBounds(0, 0, 300, 150);
 
         JLabel lbUserName, lbPassWord;
         lbUserName = new JLabel("Tên đăng nhập: ");
@@ -31,14 +31,15 @@ public class fLogin extends JFrame implements ActionListener {
         txtUserName = new JTextField();
         txtPassWord = new JTextField();
         btnLogin = new JButton("Đăng nhập");
+        // btnLogin.setMnemonic(KeyEvent.VK_ENTER);
         btnExit = new JButton("Thoát");
 
-        pnLoginNorth.add(lbUserName);
-        pnLoginNorth.add(txtUserName);
-        pnLoginNorth.add(lbPassWord);
-        pnLoginNorth.add(txtPassWord);
-        pnLoginNorth.add(btnLogin);
-        pnLoginNorth.add(btnExit);
+        pnMain.add(lbUserName);
+        pnMain.add(txtUserName);
+        pnMain.add(lbPassWord);
+        pnMain.add(txtPassWord);
+        pnMain.add(btnLogin);
+        pnMain.add(btnExit);
 
         int w1 = 110, w2 = 170, h = 20;
         lbUserName.setBounds(10, 10, w1, h);
@@ -47,7 +48,7 @@ public class fLogin extends JFrame implements ActionListener {
         txtPassWord.setBounds(w1, 40, w2, h);
         btnLogin.setBounds(10, 80, 130, h);
         btnExit.setBounds(150, 80, 130, h);
-        add(pnLoginNorth, BorderLayout.NORTH);
+        this.add(pnMain);
 
         btnExit.addActionListener(this);
         btnLogin.addActionListener(this);

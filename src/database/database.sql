@@ -40,7 +40,7 @@ CREATE TABLE KhachHang
 (
     maKH INT IDENTITY PRIMARY KEY,
     tenKH NVARCHAR(100) NOT NULL DEFAULT N'Chưa cập nhật',
-    cmnd NVARCHAR(100) NOT NULL DEFAULT N'Chưa cập nhật',
+    cccd NVARCHAR(100) NOT NULL DEFAULT N'Chưa cập nhật',
     -- 1. khách việt nam || 0. khách nước ngoài
     loaiKhach INT NOT NULL DEFAULT 1
 )
@@ -50,6 +50,7 @@ CREATE TABLE NhanVien
 (
     maNV INT IDENTITY PRIMARY KEY,
     tenNV NVARCHAR(100) NOT NULL DEFAULT N'Chưa cập nhật',
+    cccd NVARCHAR(100) NOT NULL DEFAULT N'Chưa cập nhật',
     email NVARCHAR(100) DEFAULT N'Chưa cập nhật',
     sdt NVARCHAR(100) DEFAULT N'Chưa cập nhật',
 )
@@ -58,7 +59,6 @@ GO
 CREATE TABLE TaiKhoan
 (
     userName NVARCHAR(100) PRIMARY KEY,
-    displayName NVARCHAR(100) NOT NULL DEFAULT N'Chưa cập nhật',
     PassWord VARCHAR(1000) NOT NULL DEFAULT 123456,
     maNV INT NOT NULL,
     -- 1. admin || 0. nhân viên

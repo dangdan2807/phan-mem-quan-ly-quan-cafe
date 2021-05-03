@@ -10,7 +10,7 @@ import java.awt.event.*;
 public class fQLKhachSan extends JFrame implements ActionListener {
 
     private JMenuBar menuBar;
-    private JMenuItem itemThanhToan, itemChuyenPhong, itemThemDV, itemThoat, itemTTKH, itemQLKH;
+    private JMenuItem itemDangXuat, itemThongTinTK;
     private JComboBox<String> cboDanhMucDV, cboDV, cboPhong;
     private JPanel pnMain;
     private JButton btnThemDV, btnChuyenPhong, btnGiamGia, btnThanhToan;
@@ -28,7 +28,7 @@ public class fQLKhachSan extends JFrame implements ActionListener {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
         createMenuBar();
-        GiaoDienChinh();
+        createFromQLKS();
         setCloseAction(this);
     }
 
@@ -36,24 +36,19 @@ public class fQLKhachSan extends JFrame implements ActionListener {
         menuBar = new JMenuBar();
         this.setJMenuBar(menuBar);
 
-        //
-        JMenu menuQLKH = new JMenu("QL Khách Hàng");
-        itemTTKH = new JMenuItem("Thông tin khách hàng");
-        itemQLKH = new JMenuItem("Quản lý khách hàng");
-        menuQLKH.add(itemTTKH);
-        menuQLKH.add(itemQLKH);
+        JMenu menuTK = new JMenu("Tài khoản");
+        itemThongTinTK = new JMenuItem("Thông tin tài khoản");
+        itemDangXuat = new JMenuItem("Đăng xuất");
+        menuTK.add(itemThongTinTK);
+        menuTK.add(itemDangXuat);
 
-        JMenu menuQLDV = new JMenu("QL Dịch Vụ");
-        JMenu menuQLTK = new JMenu("QL Tài Khoản");
         JMenu menuAdmin = new JMenu("Admin");
 
-        menuBar.add(menuQLKH);
-        menuBar.add(menuQLDV);
-        menuBar.add(menuQLTK);
+        menuBar.add(menuTK);
         menuBar.add(menuAdmin);
     }
 
-    public void GiaoDienChinh() {
+    public void createFromQLKS() {
         pnMain = new JPanel();
         pnMain.setLayout(null);
 
@@ -146,6 +141,8 @@ public class fQLKhachSan extends JFrame implements ActionListener {
         pnMain.add(pnLeft);
         pnMain.add(pnRight);
         this.add(pnMain);
+
+        itemDangXuat.addActionListener(this);
     }
 
     public static void main(String[] args) {
@@ -154,21 +151,32 @@ public class fQLKhachSan extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        Object o = e.getSource();
+        if (o.equals(itemDangXuat)) {
+            fLogin f = new fLogin();
+            this.setVisible(false);
+            f.setVisible(true);
+        }
     }
 
+    // mô tả: Bắt sự kiện khi click btn close(x), sẽ show 1 form xác nhận đăng xuất
+    // hay thoát chương trình
     public void setCloseAction(JFrame jframe) {
-
         jframe.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-
-                int dialogButton = JOptionPane.YES_NO_OPTION;
-                int dialogResult = JOptionPane.showConfirmDialog(jframe, "Bạn muốn đăng xuất ?", "Warning",
-                        dialogButton);
-                if (dialogResult == JOptionPane.YES_OPTION) {
+                Object[] options = { "Đăng xuất", "Thoát" };
+                int select = JOptionPane.showOptionDialog(null, "Bạn muốn đăng xuất hay thoát chương trình ?",
+                        "Thông báo", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+                        options[0]);
+                if (select == JOptionPane.OK_OPTION) {
+                    // đăng xuất
                     fLogin f = new fLogin();
                     jframe.setVisible(false);
                     f.setVisible(true);
+                } else if (select == JOptionPane.NO_OPTION) {
+                    // thoát
+                    System.exit(0);
                 }
             }
         });
