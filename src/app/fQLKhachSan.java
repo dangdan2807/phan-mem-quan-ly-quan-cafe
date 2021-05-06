@@ -1,7 +1,7 @@
-package QuanLySK;
+package app;
 
 import javax.swing.*;
-import javax.swing.event.*;
+// import javax.swing.event.*;
 import javax.swing.table.*;
 
 import java.awt.*;
@@ -58,7 +58,7 @@ public class fQLKhachSan extends JFrame implements ActionListener {
         flowLeft.setHgap(10);
         flowLeft.setVgap(10);
         pnLeft.setLayout(flowLeft);
-        pnLeft.setBackground(Color.CYAN);
+        // pnLeft.setBackground(Color.CYAN);
 
         int wRight = 450;
         JPanel pnRight = new JPanel();
@@ -143,6 +143,7 @@ public class fQLKhachSan extends JFrame implements ActionListener {
         this.add(pnMain);
 
         itemDangXuat.addActionListener(this);
+        itemThongTinTK.addActionListener(this);
     }
 
     public static void main(String[] args) {
@@ -155,6 +156,11 @@ public class fQLKhachSan extends JFrame implements ActionListener {
         if (o.equals(itemDangXuat)) {
             fLogin f = new fLogin();
             this.setVisible(false);
+            f.setVisible(true);
+        }
+        else if (o.equals(itemThongTinTK)) {
+            fAccountProfile f = new fAccountProfile();
+            f.setModal(true);
             f.setVisible(true);
         }
     }

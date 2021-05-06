@@ -1,3 +1,6 @@
+USE master
+GO
+
 CREATE DATABASE QuanLyKhachSan
 GO
 
@@ -107,11 +110,13 @@ CREATE TABLE ChiTietHoaDon
 (
     maCTHoaDon INT IDENTITY NOT NULL,
     maHoaDon INT NOT NULL,
-    maDV INT,
+    maDV INT NOT NULL,
     soLuong INT NOT NULL DEFAULT 0,
+
 
     FOREIGN KEY (maHoaDon) REFERENCES dbo.HoaDon (maHoaDon),
     FOREIGN KEY (maDV) REFERENCES dbo.DichVu (maDV)
 )
 GO
+
 -- DROP DATABASE QuanLyKhachSan

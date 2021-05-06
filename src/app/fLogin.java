@@ -1,12 +1,12 @@
-package QuanLySK;
+package app;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.*;
+// import javax.swing.event.*;
+// import java.awt.*;
 import java.awt.event.*;
 
 public class fLogin extends JFrame implements ActionListener {
-    // chưa bắt sự kiện phím enter để submit
+    // ch?a b?t s? ki?n phím enter ?? submit
     private JTextField txtUserName, txtPassWord;
     private JButton btnLogin, btnExit;
 

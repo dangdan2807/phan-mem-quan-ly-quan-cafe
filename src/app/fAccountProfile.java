@@ -1,12 +1,11 @@
-package QuanLySK;
+package app;
 
 import javax.swing.*;
-import javax.swing.event.*;
-
-import java.awt.*;
+// import javax.swing.event.*;
+// import java.awt.*;
 import java.awt.event.*;
 
-public class fAccountProfile extends JFrame implements ActionListener {
+public class fAccountProfile extends JDialog implements ActionListener {
     private JLabel lbUserName, lbDisplayName, lbPassWord, lbNewPassWord, lbReNewPassWord, lbEmail, lbSdt, lbCCCD;
     private JTextField txtUserName, txtDisplayName, txtPassWord, txtNewPassWord, txtReNewPassWord, txtEmail, txtSdt,
             txtCCCD;
@@ -21,7 +20,6 @@ public class fAccountProfile extends JFrame implements ActionListener {
         setSize(withPn, heightPn);
         setResizable(false);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         createFormAccountProfile();
     }
