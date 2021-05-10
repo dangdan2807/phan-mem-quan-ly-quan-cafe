@@ -1,12 +1,15 @@
 package app;
 
 import javax.swing.*;
+
+import DAO.TaiKhoanDAO;
+
 // import javax.swing.event.*;
 // import java.awt.*;
 import java.awt.event.*;
 
 public class fLogin extends JFrame implements ActionListener {
-    // ch?a b?t s? ki?n phím enter ?? submit
+    // chưa bật sự kiện phím enter để submit
     private JTextField txtUserName, txtPassWord;
     private JButton btnLogin, btnExit;
 
@@ -29,7 +32,7 @@ public class fLogin extends JFrame implements ActionListener {
         lbUserName = new JLabel("Tên đăng nhập: ");
         lbPassWord = new JLabel("Mật khẩu: ");
         txtUserName = new JTextField();
-        txtPassWord = new JTextField();
+        txtPassWord = new JPasswordField();
         btnLogin = new JButton("Đăng nhập");
         // btnLogin.setMnemonic(KeyEvent.VK_ENTER);
         btnExit = new JButton("Thoát");
@@ -68,9 +71,23 @@ public class fLogin extends JFrame implements ActionListener {
                 System.exit(1);
             }
         } else if (o.equals(btnLogin)) {
-            fQLKhachSan f = new fQLKhachSan();
-            this.setVisible(false);
-            f.setVisible(true);
+            String userName = txtUserName.getText();
+            String passWord = txtPassWord.getText();
+            if (login(userName, passWord) == true) {
+                fQLKhachSan f = new fQLKhachSan();
+                this.setVisible(false);
+                f.setVisible(true);
+            } else {
+                JOptionPane.showConfirmDialog(this, "Sai tài khoản hoặc mật khẩu", "Thông báo",
+                        JOptionPane.OK_CANCEL_OPTION);
+            }
         }
+    }
+
+    private boolean login(String userName, String passWord) {
+        TaiKhoanDAO.getInstance();
+        boolean result = TaiKhoanDAO.Login(userName, passWord);
+        System.out.println(result);
+        return result;
     }
 }

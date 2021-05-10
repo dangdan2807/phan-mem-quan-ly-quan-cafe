@@ -62,8 +62,8 @@ GO
 
 CREATE TABLE TaiKhoan
 (
-    userName NVARCHAR(100) PRIMARY KEY,
-    PassWord VARCHAR(1000) NOT NULL DEFAULT (123456),
+    userName VARCHAR(100) PRIMARY KEY,
+    passWord VARCHAR(1000) NOT NULL DEFAULT (123456),
     maNV INT NOT NULL,
     -- 1. admin || 0. nhân viên
     loaiTK INT NOT NULL DEFAULT (0),
@@ -122,12 +122,17 @@ GO
 
 -- DROP DATABASE QuanLyKhachSan
 -- INSERT INTO dbo.NhanVien (tenNV, cccd, email, sdt, luong) 
--- VALUES(N'Admin', N'123123123', N'admin@email.com', N'123123123', 0)
--- INSERT INTO dbo.NhanVien (tenNV, cccd, email, sdt, luong) 
--- VALUES(N'Chưa xác định', N'Chưa xác đinh', N'NV))@email.com', N'Chưa xác định', 0)
-
+-- VALUES(N'Admin', N'123123123', N'admin@email.com', N'123123123', 0),
+--         (N'Chưa xác định', N'Chưa xác đinh', N'NV))@email.com', N'Chưa xác định', 0)
 -- select * from dbo.NhanVien
 
--- INSERT INTO dbo.TaiKhoan VALUES(N'admin', 'admin', 1, 0)
-
+-- INSERT INTO dbo.TaiKhoan VALUES('admin', 'admin', 1, 1)
 -- SELECT * from dbo.TaiKhoan
+
+-- SELECT tk.userName, nv.tenNV, tk.maNV, tk.loaiTK
+-- FROM dbo.TaiKhoan tk JOIN dbo.NhanVien nv
+--     ON tk.maNV = nv.maNV
+
+SELECT *
+FROM dbo.TaiKhoan tk
+WHERE tk.userName = 'admin' AND tk.passWord = 'admin'

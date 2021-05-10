@@ -10,7 +10,7 @@ public class ConnectDB {
         return instance;
     }
 
-    public static void connect() throws SQLException {
+    public void connect() throws SQLException {
         String severName = "localhost";
         String databaseName = "QuanLyKhachSan";
         String userName = "sa";
@@ -29,11 +29,6 @@ public class ConnectDB {
     }
 
     public static Connection getConnection() {
-        try {
-            connect();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
         return con;
     }
 }
