@@ -17,75 +17,76 @@ GO
 -- Hóa đơn
 -- Chi tiết hóa đơn
 
-CREATE TABLE DanhMucPhong
+CREATE TABLE LoaiPhong
 (
-    maDanhMucPhong INT IDENTITY PRIMARY KEY,
-    tenLoaiPhong NVARCHAR(100) NOT NULL DEFAULT N'Chưa cập nhật',
-    donGia FLOAT NOT NULL
+    maLoaiPhong INT IDENTITY PRIMARY KEY,
+    tenLoaiPhong NVARCHAR(100) NOT NULL DEFAULT (N'Chưa cập nhật'),
+    donGia FLOAT NOT NULL DEFAULT(0)
 )
 GO
 
 CREATE TABLE Phong
 (
     maPhong INT IDENTITY PRIMARY KEY,
-    tenPhong NVARCHAR(100) NOT NULL DEFAULT N'Chưa cập nhật',
+    tenPhong NVARCHAR(100) NOT NULL DEFAULT (N'Chưa cập nhật'),
     sucChua INT NOT NULL DEFAULT(1),
     soGiuong INT NOT NULL DEFAULT(1),
-    -- trống || có người
-    tinhTrang NVARCHAR(100) NOT NULL DEFAULT N'Trống',
-    maDanhMucPhong INT NOT NULL,
+    -- trống || đã cho thuê
+    tinhTrang NVARCHAR(100) NOT NULL DEFAULT (N'Trống'),
+    maLoaiPhong INT NOT NULL,
 
-    FOREIGN KEY (maDanhMucPhong) REFERENCES dbo.DanhMucPhong (maDanhMucPhong)
+    FOREIGN KEY (maLoaiPhong) REFERENCES dbo.LoaiPhong (maLoaiPhong)
 )
 GO
 
 CREATE TABLE KhachHang
 (
     maKH INT IDENTITY PRIMARY KEY,
-    tenKH NVARCHAR(100) NOT NULL DEFAULT N'Chưa cập nhật',
-    cccd NVARCHAR(100) NOT NULL DEFAULT N'Chưa cập nhật',
+    tenKH NVARCHAR(100) NOT NULL DEFAULT (N'Chưa cập nhật'),
+    cccd NVARCHAR(100) NOT NULL DEFAULT (N'Chưa cập nhật'),
     -- 1. khách việt nam || 0. khách nước ngoài
-    loaiKhach INT NOT NULL DEFAULT 1
+    loaiKhach INT NOT NULL DEFAULT(1)
 )
 GO
 
 CREATE TABLE NhanVien
 (
     maNV INT IDENTITY PRIMARY KEY,
-    tenNV NVARCHAR(100) NOT NULL DEFAULT N'Chưa cập nhật',
-    cccd NVARCHAR(100) NOT NULL DEFAULT N'Chưa cập nhật',
-    email NVARCHAR(100) DEFAULT N'Chưa cập nhật',
-    sdt NVARCHAR(100) DEFAULT N'Chưa cập nhật',
+    tenNV NVARCHAR(100) NOT NULL DEFAULT (N'Chưa cập nhật'),
+    cccd NVARCHAR(100) NOT NULL DEFAULT (N'Chưa cập nhật'),
+    email NVARCHAR(100) DEFAULT (N'Chưa cập nhật'),
+    sdt NVARCHAR(100) DEFAULT (N'Chưa cập nhật'),
+    luong MONEY DEFAULT (0)
 )
 GO
 
 CREATE TABLE TaiKhoan
 (
     userName NVARCHAR(100) PRIMARY KEY,
-    PassWord VARCHAR(1000) NOT NULL DEFAULT 123456,
+    PassWord VARCHAR(1000) NOT NULL DEFAULT (123456),
     maNV INT NOT NULL,
     -- 1. admin || 0. nhân viên
-    loaiTK INT NOT NULL DEFAULT 0,
+    loaiTK INT NOT NULL DEFAULT (0),
 
     FOREIGN KEY (maNV) REFERENCES dbo.NhanVien (maNV)
 )
 GO
 
-CREATE TABLE DanhMucDichVu
+CREATE TABLE LoaiDichVu
 (
-    maDanhMucDV INT IDENTITY PRIMARY KEY,
-    tenDanhMucDV NVARCHAR(100) NOT NULL DEFAULT N'Chưa cập nhật',
+    maLoaiDV INT IDENTITY PRIMARY KEY,
+    tenLoaiDV NVARCHAR(100) NOT NULL DEFAULT (N'Chưa cập nhật'),
 )
 GO
 
 CREATE TABLE DichVu
 (
     maDV INT IDENTITY PRIMARY KEY,
-    tenDV NVARCHAR(100) NOT NULL DEFAULT N'Chưa cập nhật',
-    maDanhMucDV INT NOT NULL,
-    donGia FLOAT NOT NULL DEFAULT 0,
+    tenDV NVARCHAR(100) NOT NULL DEFAULT (N'Chưa cập nhật'),
+    maLoaiDV INT NOT NULL,
+    donGia FLOAT NOT NULL DEFAULT (0),
 
-    FOREIGN KEY (maDanhMucDV) REFERENCES dbo.DanhMucDichVu (maDanhMucDV)
+    FOREIGN KEY (maLoaiDV) REFERENCES dbo.LoaiDichVu (maLoaiDV)
 )
 GO
 
@@ -95,10 +96,10 @@ CREATE TABLE HoaDon
     maPhong INT NOT NULL,
     maKH INT NOT NULL,
     maNV INT NOT NULL,
-    ngayNhanPhong DATETIME DEFAULT getdate(),
+    ngayNhanPhong DATETIME DEFAULT (getdate()),
     ngayTraPhong DATETIME NOT NULL,
-    -- 1. đã thanh toán || 0. chưa thanh toán
-    tinhTrang INT NOT NULL DEFAULT 0,
+    --  0. chưa thanh toán ||  1. đã thanh toán || 2. Chưa nhận phòng
+    tinhTrang INT NOT NULL DEFAULT (0),
 
     FOREIGN KEY (maPhong) REFERENCES dbo.Phong (maPhong),
     FOREIGN KEY (maKH) REFERENCES dbo.KhachHang (maKH),
@@ -111,7 +112,7 @@ CREATE TABLE ChiTietHoaDon
     maCTHoaDon INT IDENTITY NOT NULL,
     maHoaDon INT NOT NULL,
     maDV INT NOT NULL,
-    soLuong INT NOT NULL DEFAULT 0,
+    soLuong INT NOT NULL DEFAULT (0),
 
 
     FOREIGN KEY (maHoaDon) REFERENCES dbo.HoaDon (maHoaDon),
@@ -120,3 +121,13 @@ CREATE TABLE ChiTietHoaDon
 GO
 
 -- DROP DATABASE QuanLyKhachSan
+-- INSERT INTO dbo.NhanVien (tenNV, cccd, email, sdt, luong) 
+-- VALUES(N'Admin', N'123123123', N'admin@email.com', N'123123123', 0)
+-- INSERT INTO dbo.NhanVien (tenNV, cccd, email, sdt, luong) 
+-- VALUES(N'Chưa xác định', N'Chưa xác đinh', N'NV))@email.com', N'Chưa xác định', 0)
+
+-- select * from dbo.NhanVien
+
+-- INSERT INTO dbo.TaiKhoan VALUES(N'admin', 'admin', 1, 0)
+
+-- SELECT * from dbo.TaiKhoan
