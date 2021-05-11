@@ -1,15 +1,10 @@
 package app;
 
 import javax.swing.*;
-
 import DAO.TaiKhoanDAO;
-
-// import javax.swing.event.*;
-// import java.awt.*;
 import java.awt.event.*;
 
-public class fLogin extends JFrame implements ActionListener {
-    // chưa bật sự kiện phím enter để submit
+public class fLogin extends JFrame implements ActionListener, KeyListener {
     private JTextField txtUserName, txtPassWord;
     private JButton btnLogin, btnExit;
 
@@ -55,6 +50,8 @@ public class fLogin extends JFrame implements ActionListener {
 
         btnExit.addActionListener(this);
         btnLogin.addActionListener(this);
+        txtUserName.addKeyListener(this);
+        txtPassWord.addKeyListener(this);
     }
 
     public static void main(String[] args) {
@@ -73,7 +70,7 @@ public class fLogin extends JFrame implements ActionListener {
         } else if (o.equals(btnLogin)) {
             String userName = txtUserName.getText();
             String passWord = txtPassWord.getText();
-            if (login(userName, passWord) == true) {
+            if (login(userName, passWord)) {
                 fQLKhachSan f = new fQLKhachSan();
                 this.setVisible(false);
                 f.setVisible(true);
@@ -82,6 +79,27 @@ public class fLogin extends JFrame implements ActionListener {
                         JOptionPane.OK_CANCEL_OPTION);
             }
         }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        Object o = e.getSource();
+        // bắt sự kiện nhấn phím enter tự nhấn btnLogin
+        if (o.equals(txtUserName) || o.equals(txtPassWord)) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                btnLogin.doClick();
+            }
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
     }
 
     private boolean login(String userName, String passWord) {

@@ -21,7 +21,8 @@ CREATE TABLE LoaiPhong
 (
     maLoaiPhong INT IDENTITY PRIMARY KEY,
     tenLoaiPhong NVARCHAR(100) NOT NULL DEFAULT (N'Chưa cập nhật'),
-    donGia FLOAT NOT NULL DEFAULT(0)
+    donGiaGio MONEY NOT NULL DEFAULT(0),
+    donGiaNgay MONEY NOT NULL DEFAULT(0),
 )
 GO
 
@@ -62,8 +63,8 @@ GO
 
 CREATE TABLE TaiKhoan
 (
-    userName VARCHAR(100) PRIMARY KEY,
-    passWord VARCHAR(1000) NOT NULL DEFAULT (123456),
+    userName NVARCHAR(100) PRIMARY KEY,
+    passWord NVARCHAR(1000) NOT NULL DEFAULT (123456),
     maNV INT NOT NULL,
     -- 1. admin || 0. nhân viên
     loaiTK INT NOT NULL DEFAULT (0),
@@ -120,19 +121,77 @@ CREATE TABLE ChiTietHoaDon
 )
 GO
 
+-- Insert rows into table 'dbo.NhanVien'
+INSERT INTO dbo.NhanVien
+    (tenNV, cccd, email, sdt, luong)
+-- add more rows here
+VALUES(N'Admin', N'123123123', N'admin@email.com', N'123123123', 0)
+GO
+
+-- Insert rows into table 'dbo.TaiKhoan'
+INSERT INTO dbo.TaiKhoan
+-- add more rows here
+VALUES('admin', 'admin', 1, 1)
+GO
+
+-- Insert rows into table 'dbo.LoaiPhong'
+INSERT INTO dbo.LoaiPhong
+    (tenLoaiPhong, donGiaGio, donGiaNgay)
+-- add more rows here
+VALUES
+    (N'Thường', 10000, 200000),
+    (N'Tiêu Chuẩn', 15000, 250000),
+    (N'Thương Gia', 20000, 350000)
+GO
+
+-- Insert rows into table 'dbo.Phong'
+INSERT INTO dbo.Phong
+    (tenPhong, sucChua, soGiuong, tinhTrang, maLoaiPhong)
+-- add more rows here
+VALUES
+    (N'Phòng 101', 2, 1, N'Trống', 3),
+    (N'Phòng 102', 2, 1, N'Trống', 3),
+    (N'Phòng 103', 2, 2, N'Trống', 3),
+    (N'Phòng 201', 2, 1, N'Trống', 2),
+    (N'Phòng 202', 2, 2, N'Trống', 2),
+    (N'Phòng 203', 4, 2, N'Trống', 2),
+    (N'Phòng 301', 2, 1, N'Trống', 1),
+    (N'Phòng 302', 2, 2, N'Trống', 1),
+    (N'Phòng 303', 4, 2, N'Trống', 1)
+GO
+
 -- DROP DATABASE QuanLyKhachSan
--- INSERT INTO dbo.NhanVien (tenNV, cccd, email, sdt, luong) 
--- VALUES(N'Admin', N'123123123', N'admin@email.com', N'123123123', 0),
---         (N'Chưa xác định', N'Chưa xác đinh', N'NV))@email.com', N'Chưa xác định', 0)
--- select * from dbo.NhanVien
+-- ngăn lỗi người dùng nhập ' OR 1 = 1 -- '
+GO
+CREATE PROC UDP_Login
+    @username NVARCHAR(100),
+    @password NVARCHAR(1000)
+AS
+BEGIN
+    SELECT *
+    FROM dbo.TaiKhoan
+    WHERE username = @username AND password = @password
+END
 
--- INSERT INTO dbo.TaiKhoan VALUES('admin', 'admin', 1, 1)
--- SELECT * from dbo.TaiKhoan
 
--- SELECT tk.userName, nv.tenNV, tk.maNV, tk.loaiTK
--- FROM dbo.TaiKhoan tk JOIN dbo.NhanVien nv
---     ON tk.maNV = nv.maNV
+GO
+CREATE PROC UDP_getAccountList
+AS
+SELECT tk.userName, nv.tenNV, tk.maNV, tk.loaiTK
+FROM dbo.TaiKhoan tk JOIN dbo.NhanVien nv ON tk.maNV = nv.maNV
 
+GO
+CREATE PROC UDP_getAccountByUsername
+    @username NVARCHAR(100)
+AS
+BEGIN
+    SELECT tk.userName, nv.tenNV, tk.maNV, tk.loaiTK
+    FROM dbo.TaiKhoan tk JOIN dbo.NhanVien nv ON tk.maNV = nv.maNV
+    WHERE tk.userName = @username
+END
+
+GO
+CREATE PROC UDP_getPhongList
+AS
 SELECT *
-FROM dbo.TaiKhoan tk
-WHERE tk.userName = 'admin' AND tk.passWord = 'admin'
+FROM dbo.Phong
