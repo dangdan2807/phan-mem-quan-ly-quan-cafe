@@ -1,28 +1,37 @@
 package app;
 
 import javax.swing.*;
-// import javax.swing.event.*;
+import javax.swing.border.*;
 import javax.swing.table.*;
+
+import DAO.*;
+import entity.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 
 public class fQLKhachSan extends JFrame implements ActionListener {
-
     private JMenuBar menuBar;
     private JMenuItem itemDangXuat, itemThongTinTK;
     private JComboBox<String> cboDanhMucDV, cboDV, cboPhong;
-    private JPanel pnMain;
+    private JPanel pnMain, pnShowPhong;
     private JButton btnThemDV, btnChuyenPhong, btnGiamGia, btnThanhToan;
     private SpinnerNumberModel spinSLModel, spinGiamGiaModel;
     private JSpinner spinSoLuong, spinGiamGia;
     private DefaultTableModel tableModel;
     private JTable table;
     private JTextField txtThanhToan;
+    private JMenu menuAdmin;
+    private JMenuItem itemAdmin;
+    JButton[] btnPhongList;
+
+    PhongDAO phongDAO = new PhongDAO();
+    int heightPhong = 108;
 
     public fQLKhachSan() {
         setTitle("Phần Mềm Quản Lý Khách Sạn");
-        setSize(1000, 600);
+        setSize(1040, 600);
         setResizable(false);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -42,27 +51,35 @@ public class fQLKhachSan extends JFrame implements ActionListener {
         menuTK.add(itemThongTinTK);
         menuTK.add(itemDangXuat);
 
-        JMenu menuAdmin = new JMenu("Admin");
+        menuAdmin = new JMenu("Admin");
+        itemAdmin = new JMenuItem("Quản lý");
+        menuAdmin.add(itemAdmin);
 
         menuBar.add(menuTK);
         menuBar.add(menuAdmin);
+
+        itemAdmin.addActionListener(this);
     }
 
     public void createFromQLKS() {
         pnMain = new JPanel();
         pnMain.setLayout(null);
 
-        JPanel pnLeft = new JPanel();
-        pnLeft.setBounds(0, 0, 550, 540);
-        FlowLayout flowLeft = new FlowLayout();
+        pnShowPhong = new JPanel();
+        FlowLayout flowLeft = new FlowLayout(FlowLayout.LEFT);
         flowLeft.setHgap(10);
         flowLeft.setVgap(10);
-        pnLeft.setLayout(flowLeft);
-        // pnLeft.setBackground(Color.CYAN);
+        pnShowPhong.setLayout(flowLeft);
+        pnShowPhong.setPreferredSize(new Dimension(550, heightPhong));
+        JScrollPane scpShowPhong = new JScrollPane(pnShowPhong, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scpShowPhong.setBounds(0, 0, 555, 540);
+        scpShowPhong.setBorder(new TitledBorder(null, "Danh sách phòng"));
+        scpShowPhong.getVerticalScrollBar().setUnitIncrement(10);
 
-        int wRight = 450;
+        int wRight = 460;
         JPanel pnRight = new JPanel();
-        pnRight.setBounds(550, 0, wRight, 540);
+        pnRight.setBounds(560, 0, wRight, 540);
         pnRight.setLayout(null);
 
         JPanel pnRow1 = new JPanel();
@@ -79,7 +96,7 @@ public class fQLKhachSan extends JFrame implements ActionListener {
         cboDanhMucDV.setBounds(0, 5, 190, 25);
         cboDV.setBounds(0, 31, 190, 25);
         btnThemDV.setBounds(195, 5, 100, 50);
-        lbSoLuong.setBounds(340, 5, 130, 25);
+        lbSoLuong.setBounds(340, 5, 110, 25);
         spinSoLuong.setBounds(300, 31, 130, 25);
 
         pnRow1.add(cboDanhMucDV);
@@ -89,7 +106,7 @@ public class fQLKhachSan extends JFrame implements ActionListener {
         pnRow1.add(spinSoLuong);
 
         JPanel pnRow2 = new JPanel();
-        pnRow2.setBounds(0, 60, wRight, 420);
+        pnRow2.setBounds(0, 60, wRight, 415);
         pnRow2.setLayout(null);
 
         String[] cols = { "Tên Dịch Vụ", "Giá", "Số Lượng", "Thành tiền" };
@@ -97,8 +114,8 @@ public class fQLKhachSan extends JFrame implements ActionListener {
         table = new JTable(tableModel);
 
         JScrollPane scp = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scp.setBounds(0, 0, wRight, 420);
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scp.setBounds(0, 0, wRight, 415);
         pnRow2.add(scp);
 
         JPanel pnRow3 = new JPanel();
@@ -128,22 +145,24 @@ public class fQLKhachSan extends JFrame implements ActionListener {
         int hRow3 = 27, y2Row3 = 28, y1Row3 = 0, wRow3 = 100;
         cboPhong.setBounds(0, y1Row3, 120, hRow3);
         btnChuyenPhong.setBounds(0, y2Row3, 120, hRow3);
-        spinGiamGia.setBounds(122, y1Row3, wRow3, hRow3);
-        btnGiamGia.setBounds(122, y2Row3, wRow3, hRow3);
-        lbThanhTien.setBounds(225, y1Row3, wRow3 + 7, hRow3);
-        txtThanhToan.setBounds(225, y2Row3, wRow3 + 7, hRow3);
-        btnThanhToan.setBounds(335, y1Row3, wRow3, 55);
+        spinGiamGia.setBounds(130, 0, wRow3, hRow3);
+        btnGiamGia.setBounds(130, 28, wRow3, hRow3);
+        lbThanhTien.setBounds(260, 0, 82, 27);
+        txtThanhToan.setBounds(235, 28, 125, 27);
+        btnThanhToan.setBounds(360, 0, wRow3, 55);
 
         pnRight.add(pnRow1);
         pnRight.add(pnRow2);
         pnRight.add(pnRow3);
 
-        pnMain.add(pnLeft);
+        pnMain.add(scpShowPhong);
         pnMain.add(pnRight);
         this.add(pnMain);
 
         itemDangXuat.addActionListener(this);
         itemThongTinTK.addActionListener(this);
+
+        LoadPhong();
     }
 
     public static void main(String[] args) {
@@ -157,9 +176,12 @@ public class fQLKhachSan extends JFrame implements ActionListener {
             fLogin f = new fLogin();
             this.setVisible(false);
             f.setVisible(true);
-        }
-        else if (o.equals(itemThongTinTK)) {
+        } else if (o.equals(itemThongTinTK)) {
             fAccountProfile f = new fAccountProfile();
+            f.setModal(true);
+            f.setVisible(true);
+        } else if (o.equals(itemAdmin)) {
+            fAdmin f = new fAdmin();
             f.setModal(true);
             f.setVisible(true);
         }
@@ -186,5 +208,31 @@ public class fQLKhachSan extends JFrame implements ActionListener {
                 }
             }
         });
+    }
+
+    public void LoadPhong() {
+        ArrayList<Phong> PhongList = phongDAO.getAllPhong();
+        int sizePhongList = PhongList.size();
+        btnPhongList = new JButton[sizePhongList];
+        for (int i = 0; i < sizePhongList; i++) {
+            String tenPhong = PhongList.get(i).getTenPhong();
+            String tinhTrang = PhongList.get(i).getTinhTrang();
+            String nameBtn = "<html>" + tenPhong + "<br><p style='text-align: center;'>" + tinhTrang + "</p></html>";
+            btnPhongList[i] = new JButton(nameBtn);
+            btnPhongList[i].setPreferredSize(new Dimension(PhongDAO.phongWidth, PhongDAO.phongHeight));
+            switch (tinhTrang) {
+                case "Trống":
+                    btnPhongList[i].setBackground(Color.CYAN);
+                    break;
+                default:
+                    btnPhongList[i].setBackground(Color.YELLOW);
+                    break;
+            }
+            if ((i + 1) % 5 == 0) {
+                heightPhong += 108;
+                pnShowPhong.setPreferredSize(new Dimension(550, heightPhong));
+            }
+            pnShowPhong.add(btnPhongList[i]);
+        }
     }
 }
