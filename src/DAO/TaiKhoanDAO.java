@@ -3,31 +3,32 @@ package DAO;
 import java.sql.*;
 import java.util.*;
 
-import connectDB.*;
+import connectDB.ConnectDB;
 
 public class TaiKhoanDAO {
     private static TaiKhoanDAO instance = new TaiKhoanDAO();
+    private static ConnectDB db = ConnectDB.getInstance();
 
     public static TaiKhoanDAO getInstance() {
         return instance;
     }
 
-    public static ArrayList<Vector<String>> getAllAccounts() {
+    public ArrayList<Vector<String>> getAllAccounts() {
         ArrayList<Vector<String>> accountList = new ArrayList<Vector<String>>();
+        Statement stmt = null;
+        ResultSet rs = null;
+        Connection con = null;
+        String sql = "EXEC UDP_getAccountList";
         try {
-            ConnectDB.getInstance().connect();
-            Connection con = ConnectDB.getConnection();
-
-            String sql = "select tk.userName, nv.tenNV, tk.maNV, tk.loaiTK from dbo.TaiKhoan tk join dbo.NhanVien nv on tk.maNV = nv.maNV";
-            Statement statement = con.createStatement();
-
-            ResultSet rs = statement.executeQuery(sql);
+            db.connect();
+            con = ConnectDB.getConnection();
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(sql);
             while (rs.next()) {
-                String userName = rs.getString(1);
-                String tenNV = rs.getString(2);
-                String maNV = rs.getString(3);
-                String loaiTK = rs.getString(4);
-
+                String userName = rs.getString("userName");
+                String tenNV = rs.getString("tenNV");
+                String maNV = rs.getString("maNV");
+                String loaiTK = rs.getString("loaiTK");
                 Vector<String> tk = new Vector<String>();
                 tk.add(userName);
                 tk.add(tenNV);
@@ -37,34 +38,50 @@ public class TaiKhoanDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                rs.close();
+                stmt.close();
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-        ConnectDB.getInstance().disconnect();
         return accountList;
     }
 
-    public static boolean Login(String username, String password) {
+    public static boolean Login(String userName, String passWord) {
         int count = 0;
-        ConnectDB db = ConnectDB.getInstance();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        Connection con = null;
+        String sql = "EXEC UDP_Login ? , ?";
         try {
             db.connect();
-            Connection con = ConnectDB.getConnection();
+            con = ConnectDB.getConnection();
+            stmt = con.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            stmt.setString(1, userName);
+            stmt.setString(2, passWord);
 
-            String sql = "SELECT * FROM dbo.TaiKhoan as tk" + " WHERE tk.userName = '" + username
-                    + "'AND tk.passWord = '" + password + "'";
-            Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            ResultSet rs = stmt.executeQuery(sql);
+            rs = stmt.executeQuery();
+            // đến số dòng được trả về
             rs.last();
             count = rs.getRow();
+            rs.beforeFirst();
             // cách khác
             // ResultSetMetaData rsMetaData = rs.getMetaData();
             // count = rsMetaData.getColumnCount();
-            stmt.close();
-            rs.close();
-            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                rs.close();
+                stmt.close();
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-        db.disconnect();
         return count > 0;
     }
 }
