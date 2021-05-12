@@ -152,12 +152,15 @@ VALUES
     (N'Phòng 101', 2, 1, N'Trống', 3),
     (N'Phòng 102', 2, 1, N'Trống', 3),
     (N'Phòng 103', 2, 2, N'Trống', 3),
+    (N'Phòng 104', 4, 2, N'Đã thuê', 3),
     (N'Phòng 201', 2, 1, N'Trống', 2),
     (N'Phòng 202', 2, 2, N'Trống', 2),
     (N'Phòng 203', 4, 2, N'Trống', 2),
+    (N'Phòng 204', 4, 2, N'Đã thuê', 2),
     (N'Phòng 301', 2, 1, N'Trống', 1),
     (N'Phòng 302', 2, 2, N'Trống', 1),
-    (N'Phòng 303', 4, 2, N'Trống', 1)
+    (N'Phòng 303', 4, 2, N'Trống', 1),
+    (N'Phòng 304', 4, 2, N'Đã thuê', 1)
 GO
 
 -- DROP DATABASE QuanLyKhachSan
@@ -172,7 +175,6 @@ BEGIN
     FROM dbo.TaiKhoan
     WHERE username = @username AND password = @password
 END
-
 
 GO
 CREATE PROC UDP_getAccountList
