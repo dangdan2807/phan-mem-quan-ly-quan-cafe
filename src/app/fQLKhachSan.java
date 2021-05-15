@@ -59,6 +59,8 @@ public class fQLKhachSan extends JFrame implements ActionListener {
         menuBar.add(menuAdmin);
 
         itemAdmin.addActionListener(this);
+        itemDangXuat.addActionListener(this);
+        itemThongTinTK.addActionListener(this);
     }
 
     public void createFromQLKS() {
@@ -158,9 +160,6 @@ public class fQLKhachSan extends JFrame implements ActionListener {
         pnMain.add(scpShowPhong);
         pnMain.add(pnRight);
         this.add(pnMain);
-
-        itemDangXuat.addActionListener(this);
-        itemThongTinTK.addActionListener(this);
 
         LoadPhong();
     }
