@@ -1,15 +1,22 @@
-package app;
+package UI;
 
 import javax.swing.*;
+
+import UI.PanelCustom.pnDichVu;
+import UI.PanelCustom.pnDoanhThu;
+import UI.PanelCustom.pnKhachHang;
+import UI.PanelCustom.pnLoaiDichVu;
+import UI.PanelCustom.pnLoaiPhong;
+import UI.PanelCustom.pnNhanVien;
+import UI.PanelCustom.pnPhong;
+import UI.PanelCustom.pnTaiKhoan;
+
 import java.awt.event.*;
-import DAO.*;
 
 public class fAdmin extends JDialog implements ActionListener, MouseListener {
     private JTabbedPane tpTabMain;
-    private JPanel pnMainDoanhThu, pnMainPhong, pnMainLPhong, pnMainDV, pnMainLDV, pnMainNV, pnMainKH, pnMainTK;
+    private JPanel pnMainDThu, pnMainPhong, pnMainLPhong, pnMainDV, pnMainLDV, pnMainNV, pnMainKH, pnMainTK;
     int widthPn = 770, heightPn = 500;
-
-    TaiKhoanDAO tkDao = new TaiKhoanDAO();
 
     public fAdmin() {
         setTitle("Quản lý");
@@ -30,7 +37,7 @@ public class fAdmin extends JDialog implements ActionListener, MouseListener {
 
     public void createTabControl() {
         tpTabMain = new JTabbedPane();
-        tpTabMain.addTab("Doanh thu", null, pnMainDoanhThu, "Quản lý doanh thu");
+        tpTabMain.addTab("Doanh thu", null, pnMainDThu, "Quản lý doanh thu");
         tpTabMain.addTab("Phòng", null, pnMainPhong, "Quản lý phòng");
         tpTabMain.addTab("Loại Phòng", null, pnMainLPhong, "Quản lý loại phòng");
         tpTabMain.addTab("Dịch Vụ", null, pnMainDV, "Quản lý dịch vụ");
@@ -39,21 +46,19 @@ public class fAdmin extends JDialog implements ActionListener, MouseListener {
         tpTabMain.addTab("Khách hàng", null, pnMainKH, "Quản lý Khách hàng");
         tpTabMain.addTab("Tài Khoản", null, pnMainTK, "Quản lý tài khoản");
 
-        getContentPane().add(tpTabMain);
+        this.add(tpTabMain);
     }
 
     public void createTabDoanhThu() {
-        pnMainDoanhThu = new JPanel();
-        pnMainDoanhThu.setBounds(0, 0, widthPn, heightPn);
-        pnMainDoanhThu.setLayout(null);
+        pnMainDThu = new JPanel();
+        pnMainDThu.setLayout(null);
 
         pnDoanhThu jDoanhThu = new pnDoanhThu();
-        pnMainDoanhThu.add(jDoanhThu);
+        pnMainDThu.add(jDoanhThu);
     }
 
     public void createTabPhong() {
         pnMainPhong = new JPanel();
-        pnMainPhong.setBounds(0, 0, widthPn, heightPn);
         pnMainPhong.setLayout(null);
 
         pnPhong jPhong = new pnPhong();
@@ -103,7 +108,6 @@ public class fAdmin extends JDialog implements ActionListener, MouseListener {
     public void createTabTK() {
         pnMainTK = new JPanel();
         pnMainTK.setLayout(null);
-        pnMainTK.setBounds(0, 0, widthPn, heightPn);
 
         pnTaiKhoan fTaiKhoan = new pnTaiKhoan();
         pnMainTK.add(fTaiKhoan);

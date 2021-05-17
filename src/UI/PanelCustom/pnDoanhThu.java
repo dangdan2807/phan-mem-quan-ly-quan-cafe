@@ -1,4 +1,4 @@
-package app;
+package UI.PanelCustom;
 
 import javax.swing.*;
 import javax.swing.table.*;

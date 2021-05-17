@@ -1,10 +1,11 @@
+
 USE master
 GO
 
 CREATE DATABASE QuanLyKhachSan
 GO
 
-USE QuanLyKhachSan
+USE QuanLyKhachSan 
 GO
 
 -- danh mục Phòng
@@ -97,8 +98,8 @@ CREATE TABLE HoaDon
     maPhong INT NOT NULL,
     maKH INT NOT NULL,
     maNV INT NOT NULL,
-    ngayNhanPhong DATETIME DEFAULT (getdate()),
-    ngayTraPhong DATETIME NOT NULL,
+    ngayNhanPhong DATETIME NOT NULL DEFAULT (getdate()),
+    ngayTraPhong DATETIME,
     --  0. chưa thanh toán ||  1. đã thanh toán || 2. Chưa nhận phòng
     tinhTrang INT NOT NULL DEFAULT (0),
 
@@ -114,24 +115,33 @@ CREATE TABLE ChiTietHoaDon
     maHoaDon INT NOT NULL,
     maDV INT NOT NULL,
     soLuong INT NOT NULL DEFAULT (0),
-
+    ngayGioDat datetime NOT NULL DEFAULT (getdate()),
 
     FOREIGN KEY (maHoaDon) REFERENCES dbo.HoaDon (maHoaDon),
     FOREIGN KEY (maDV) REFERENCES dbo.DichVu (maDV)
 )
 GO
 
+
 -- Insert rows into table 'dbo.NhanVien'
 INSERT INTO dbo.NhanVien
     (tenNV, cccd, email, sdt, luong)
 -- add more rows here
-VALUES(N'Admin', N'123123123', N'admin@email.com', N'123123123', 0)
+VALUES
+    (N'Admin', N'123123123', N'admin@email.com', N'123123123', 1),
+    (N'Nguyễn Văn Hưng', N'123456123', N'nguyenvanhung@gmail.com', N'03xxxxxxxx', 3000000),
+    (N'Trần Văn Minh', N'133456123', N'tranvanminh@gmail.com', N'07xxxxxxxx', 2600000),
+    (N'Bùi Thị Hoa', N'183456123', N'buithihoa@gmail.com', N'05xxxxxxxx', 1800000)
 GO
 
 -- Insert rows into table 'dbo.TaiKhoan'
 INSERT INTO dbo.TaiKhoan
--- add more rows here
-VALUES('admin', 'admin', 1, 1)
+    (userName, password, maNV, loaiTK)
+VALUES
+    ('admin', 'admin', 1, 1),
+    ('nguyenvanhung', 'nguyenvanhung', 2, 0),
+    ('tranvanminh', 'tranvanminh', 3, 0),
+    ('buithihoa', 'buithihoa', 4, 0)
 GO
 
 -- Insert rows into table 'dbo.LoaiPhong'
@@ -144,28 +154,112 @@ VALUES
     (N'Thương Gia', 20000, 350000)
 GO
 
+-- insert data
 -- Insert rows into table 'dbo.Phong'
-INSERT INTO dbo.Phong
-    (tenPhong, sucChua, soGiuong, tinhTrang, maLoaiPhong)
+DECLARE @i INT = 1, @tang INT = 1, @phong INT = 1, @tinhTrang NVARCHAR(100), @maLoaiPhong INT = 1, 
+@maphong NVARCHAR(100)
+WHILE @i <= 30 BEGIN
+    IF(@i % 5 = 0) BEGIN
+        SET @tinhTrang = N'Đã thuê';
+    END ELSE BEGIN
+        SET @tinhTrang = N'Trống';
+    END
+    IF(@i % 3 = 0 OR @i % 5 = 0)
+    BEGIN
+        SET @maLoaiPhong = 1
+    END
+    ELSE IF( @i % 2 = 0 OR @i % 7 = 0)
+    BEGIN
+        SET @maLoaiPhong = 2
+    END
+    ELSE
+    BEGIN
+        SET @maLoaiPhong = 3
+    END
+    IF(@i % 10 = 0)
+    BEGIN
+        SET @maphong = N'';
+    END
+    ELSE BEGIN
+        SET @maphong = N'0';
+    END
+    INSERT INTO dbo.Phong
+        ( tenPhong, sucChua, soGiuong, tinhTrang, maLoaiPhong )
+    VALUES
+        ( N'Phòng ' + CAST(@tang AS NVARCHAR(10)) + @maphong + CAST(@phong AS NVARCHAR(10)), 2, 1, @tinhTrang, @maLoaiPhong)
+    SET @i = @i + 1
+    SET @phong = @phong + 1
+    IF((@i -1) % 10 = 0) BEGIN
+        SET @tang = @tang + 1
+        SET @phong = 1
+    END
+END 
+GO
+
+-- Insert rows into table 'dbo.LoaiDichVu'
+INSERT INTO dbo.LoaiDichVu
+    (tenLoaiDV)
 -- add more rows here
 VALUES
-    (N'Phòng 101', 2, 1, N'Trống', 3),
-    (N'Phòng 102', 2, 1, N'Trống', 3),
-    (N'Phòng 103', 2, 2, N'Trống', 3),
-    (N'Phòng 104', 4, 2, N'Đã thuê', 3),
-    (N'Phòng 201', 2, 1, N'Trống', 2),
-    (N'Phòng 202', 2, 2, N'Trống', 2),
-    (N'Phòng 203', 4, 2, N'Trống', 2),
-    (N'Phòng 204', 4, 2, N'Đã thuê', 2),
-    (N'Phòng 301', 2, 1, N'Trống', 1),
-    (N'Phòng 302', 2, 2, N'Trống', 1),
-    (N'Phòng 303', 4, 2, N'Trống', 1),
-    (N'Phòng 304', 4, 2, N'Đã thuê', 1)
+    (N'Cơ bản'),
+    (N'Cao cấp'),
+    (N'Khác')
 GO
+
+-- Insert rows into table 'dbo.DichVu'
+INSERT INTO dbo.DichVu
+    (tenDV, donGia, maLoaiDV)
+VALUES
+    (N'Gửi xe', 5000, 1), -- cơ bản
+    (N'Rửa xe', 30000, 1), -- cơ bản
+    (N'Thức ăn tại phòng', 30000, 1), -- cơ bản
+    (N'Giặt, ủi là', 20000, 1), -- cơ bản
+    (N'Xe đưa đón sân bay', 150000, 1), -- cơ bản
+    (N'Cho thuê xe tự lái', 120000, 1), -- cơ bản
+    (N'Trông trẻ', 30000, 1), -- cơ bản
+    (N'Chăm sóc thú cưng', 50000, 1), -- cơ bản
+    (N'Spa', 300000, 2), -- cao cấp
+    (N'Đánh golf, tennis', 200000, 2) -- cao cấp
+GO
+
+-- Insert rows into table 'dbo.KhachHang'
+INSERT INTO dbo.KhachHang
+    (tenKH, cccd, loaiKhach)
+VALUES
+    (N'Chí Phèo', N'123123123', 1),
+    (N'Xuân Tóc Đỏ', N'123123123', 1),
+    (N'Lão Hạc', N'123123123', 1),
+    (N'John Wick', N'123123123', 0),
+    (N'Tony Stark', N'123123123', 0)
+GO
+
+-- Insert rows into table 'dbo.HoaDon'
+INSERT INTO dbo.HoaDon
+    (maKH, maNV, maPhong, ngayNhanPhong, ngayTraPhong, tinhTrang)
+VALUES
+    (1, 1, 1, getdate(), null, 0),
+    (2, 2, 2, getdate(), null, 0),
+    (3, 3, 3, getdate(), null, 1)
+go
+
+-- select * from dbo.HoaDon
+
+-- Insert rows into table 'dbo.ChiTietHoaDon'
+INSERT INTO dbo.ChiTietHoaDon
+    (maHoaDon, maDV, ngayGioDat, soLuong)
+VALUES
+    (1, 1, getdate(), 1),
+    (1, 3, getdate(), 1),
+    (1, 5, getdate(), 1),
+    (1, 6, getdate(), 1),
+    (2, 3, getdate(), 1),
+    (2, 7, getdate(), 1),
+    (3, 4, getdate(), 1)
+go
+
 
 -- DROP DATABASE QuanLyKhachSan
 -- ngăn lỗi người dùng nhập ' OR 1 = 1 -- '
-GO
 CREATE PROC UDP_Login
     @username NVARCHAR(100),
     @password NVARCHAR(1000)

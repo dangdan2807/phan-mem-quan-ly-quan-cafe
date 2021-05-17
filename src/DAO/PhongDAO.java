@@ -28,13 +28,7 @@ public class PhongDAO {
             stmt = con.createStatement();
             rs = stmt.executeQuery(sql);
             while (rs.next()) {
-                int maPhong = rs.getInt("maPhong");
-                String tenPhong = rs.getString("tenPhong");
-                int sucChua = rs.getInt("sucChua");
-                int soGiuong = rs.getInt("soGiuong");
-                String tinhTrang = rs.getString("tinhTrang");
-                int maLoaiPhong = rs.getInt("maLoaiPhong");
-                Phong p = new Phong(maPhong, tenPhong, sucChua, soGiuong, tinhTrang, maLoaiPhong);
+                Phong p = new Phong(rs);
                 PhongList.add(p);
             }
         } catch (SQLException e) {

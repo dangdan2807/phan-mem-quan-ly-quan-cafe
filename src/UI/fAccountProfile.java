@@ -1,4 +1,4 @@
-package app;
+package UI;
 
 import javax.swing.*;
 // import javax.swing.event.*;
