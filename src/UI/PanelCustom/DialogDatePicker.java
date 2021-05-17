@@ -1,6 +1,5 @@
 // Author : Pham Dang Dan
 // Date   : April 23, 2021
-
 package UI.PanelCustom;
 
 import javax.swing.*;
@@ -8,7 +7,8 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.*;
-import java.util.*;
+import java.util.Calendar;
+import java.sql.*;
 
 public class DialogDatePicker extends JDialog implements ActionListener, ChangeListener {
     private int width = 450, heightPn = 210, widthPn = width - 20;
@@ -125,6 +125,7 @@ public class DialogDatePicker extends JDialog implements ActionListener, ChangeL
         }
     }
 
+    // thay đổi lịch theo tháng năm
     public void displayDate() {
         for (int x = 7; x < button.length; x++)
             button[x].setText("");
@@ -150,7 +151,8 @@ public class DialogDatePicker extends JDialog implements ActionListener, ChangeL
         }
     }
 
-    public String setPickedDate() {
+    // lấy ngày chọn từ lịch
+    public String getPickedDate() {
         if (day.equals(""))
             return day;
         Calendar cal = Calendar.getInstance();
@@ -159,9 +161,21 @@ public class DialogDatePicker extends JDialog implements ActionListener, ChangeL
         return sdf.format(cal.getTime());
     }
 
+    // lấy ngày chọn từ lịch
+    public Date getDate() {
+        if (day.equals(""))
+            day = "0";
+        Calendar cal = Calendar.getInstance();
+        int date = Integer.parseInt(day);
+        cal.set(year, month, date);
+        return (Date) cal.getTime();
+    }
+
+    // lấy ngày hiện tại
     public static String getToDay() {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         return sdf.format(cal.getTimeInMillis());
     }
+
 }
