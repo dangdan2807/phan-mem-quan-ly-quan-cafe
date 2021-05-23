@@ -71,7 +71,7 @@ public class fLogin extends JFrame implements ActionListener, KeyListener {
             String userName = txtUserName.getText();
             String passWord = txtPassWord.getText();
             if (login(userName, passWord)) {
-                fQLKhachSan f = new fQLKhachSan();
+                fQLQuanCafe f = new fQLQuanCafe();
                 this.setVisible(false);
                 f.setVisible(true);
             } else {

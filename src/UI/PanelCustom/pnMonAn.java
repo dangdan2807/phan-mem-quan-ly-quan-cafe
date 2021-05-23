@@ -5,20 +5,18 @@ import javax.swing.border.*;
 import javax.swing.table.*;
 
 import java.awt.event.*;
-import java.awt.*;
-import java.util.*;
-import DAO.*;
+import java.awt.BorderLayout;
 
-public class pnTaiKhoan extends JPanel implements ActionListener, MouseListener {
+public class pnMonAn extends JPanel implements ActionListener, MouseListener{
     int widthPn = 770, heightPn = 500;
     private JPanel pnMain;
     private DefaultTableModel modelTable;
     private JTable table;
     private JButton btnTim, btnThem, btnXoa, btnXoaTrang, btnSua, btnXem;
-    private JTextField txtTim, txtMa, txtTen;
+    private JTextField txtTim, txtMa, txtTen, txtDonGia;
     private JComboBox<String> cboLoaiMon;
 
-    public pnTaiKhoan() {
+    public pnMonAn() {
         setSize(760, 440);
         setLayout(new BorderLayout(0, 0));
 
@@ -59,7 +57,7 @@ public class pnTaiKhoan extends JPanel implements ActionListener, MouseListener 
         JScrollPane scp = new JScrollPane();
         pnListView.add(scp);
 
-        String[] cols = { "Username", "Tên hiển thị", "Loại tài khoản" };
+        String[] cols = { "Mã món ăn", "Tên món ăn", "Mã loại món", "Đơn giá" };
         modelTable = new DefaultTableModel(cols, 0) {
             // khóa không cho người dùng nhập trên table
             @Override
@@ -86,17 +84,17 @@ public class pnTaiKhoan extends JPanel implements ActionListener, MouseListener 
         pnSearchDV.add(txtTim);
         txtTim.setColumns(10);
 
-        JLabel lbTim = new JLabel("Username: ");
+        JLabel lbTim = new JLabel("Tên món ăn: ");
         lbTim.setBounds(2, 0, 100, 14);
         pnSearchDV.add(lbTim);
 
         JPanel pnInfo = new JPanel();
-        pnInfo.setBorder(new TitledBorder(null, "Thông tin tài khoản"));
+        pnInfo.setBorder(new TitledBorder(null, "Thông tin món ăn "));
         pnInfo.setLayout(null);
         pnInfo.setBounds(467, 37, 282, 392);
         pnMain.add(pnInfo);
 
-        JLabel lbMa = new JLabel("Username:");
+        JLabel lbMa = new JLabel("Mã món ăn: ");
         lbMa.setBounds(10, 17, 88, 20);
         pnInfo.add(lbMa);
 
@@ -106,7 +104,7 @@ public class pnTaiKhoan extends JPanel implements ActionListener, MouseListener 
         pnInfo.add(txtMa);
         txtMa.setColumns(10);
 
-        JLabel lbTen = new JLabel("Tên hiển thị:");
+        JLabel lbTen = new JLabel("Tên món ăn: ");
         lbTen.setBounds(10, 48, 88, 20);
         pnInfo.add(lbTen);
 
@@ -115,7 +113,11 @@ public class pnTaiKhoan extends JPanel implements ActionListener, MouseListener 
         pnInfo.add(txtTen);
         txtTen.setColumns(10);
 
-        JLabel lbLoaiMon = new JLabel("Loại tài khoản:");
+        JLabel lbDonGia = new JLabel("Đơn giá:");
+        lbDonGia.setBounds(10, 110, 88, 20);
+        pnInfo.add(lbDonGia);
+
+        JLabel lbLoaiMon = new JLabel("Loại món: ");
         lbLoaiMon.setBounds(10, 79, 88, 20);
         pnInfo.add(lbLoaiMon);
 
@@ -123,9 +125,10 @@ public class pnTaiKhoan extends JPanel implements ActionListener, MouseListener 
         cboLoaiMon.setBounds(97, 79, 175, 20);
         pnInfo.add(cboLoaiMon);
 
-        JButton btnNewButton = new JButton("Đặt lại mật khẩu");
-        btnNewButton.setBounds(143, 112, 127, 26);
-        pnInfo.add(btnNewButton);
+        txtDonGia = new JTextField();
+        txtDonGia.setBounds(97, 110, 175, 20);
+        pnInfo.add(txtDonGia);
+        txtDonGia.setColumns(10);
 
         btnThem.addActionListener(this);
         btnXoa.addActionListener(this);
@@ -144,7 +147,7 @@ public class pnTaiKhoan extends JPanel implements ActionListener, MouseListener 
     @Override
     public void mouseClicked(MouseEvent e) {
         // int row = table.getSelectedRow();
-
+        
     }
 
     @Override

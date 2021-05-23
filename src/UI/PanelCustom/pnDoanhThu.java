@@ -15,7 +15,8 @@ public class pnDoanhThu extends JPanel implements ActionListener{
 
     public pnDoanhThu() {
         setLayout(null);
-        setSize(widthPn, heightPn);
+        setSize(760, 440);
+        setLayout(new BorderLayout(0, 0));
         
         pnMain = new JPanel();
         pnMain.setBounds(0, 0, widthPn, heightPn);
@@ -53,7 +54,7 @@ public class pnDoanhThu extends JPanel implements ActionListener{
         lbDenNgay.setBounds(240, wRow1, 70, h);
         dpDenNgay.setBounds(315, wRow1, 150, h);
         btnThongKe.setBounds(480, wRow1, 100, h);
-        pnTableDT.setBounds(10, 25, widthPn - 35, heightPn - 95);
+        pnTableDT.setBounds(10, 25, 740, 404);
 
         btnThongKe.addActionListener(this);
     }

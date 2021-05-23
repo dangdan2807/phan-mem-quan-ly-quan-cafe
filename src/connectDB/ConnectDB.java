@@ -12,7 +12,7 @@ public class ConnectDB {
 
     public void connect() throws SQLException {
         String severName = "localhost";
-        String databaseName = "QuanLyKhachSan";
+        String databaseName = "QuanLyQuanCafe";
         String userName = "sa";
         String passWord = "123456";
         String url = "jdbc:sqlserver://" + severName + ":1433;databaseName=" + databaseName;

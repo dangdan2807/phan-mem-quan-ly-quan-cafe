@@ -1,8 +1,8 @@
 // Author : Pham Dang Dan
-// Date   : April 23, 2021
+// Date created   : April 23, 2021
+// Last update date: May 23, 2021
 
 package UI.PanelCustom;
-
 import javax.swing.*;
 import java.awt.event.*;
 import java.text.*;
@@ -17,7 +17,10 @@ public class kDatePicker extends JPanel implements ActionListener {
 
     public kDatePicker() {
         setLayout(null);
-
+        // setSize(200, 200);
+        // setResizable(false);
+        // setLocationRelativeTo(null);
+        // setDefaultCloseOperation(EXIT_ON_CLOSE);
         createGUI();
     }
 
@@ -35,11 +38,15 @@ public class kDatePicker extends JPanel implements ActionListener {
         txt.setText(DialogDatePicker.getToDay());
 
         btn = new JButton(calenderIcon);
-        btn.setBounds(widthDefault - 30, 0, 29, 20);
+        btn.setBounds(widthDefault - 30, 0, 30, 20);
 
         this.add(txt);
         this.add(btn);
         btn.addActionListener(this);
+    }
+
+    public static void main(String[] args) {
+        new kDatePicker().setVisible(true);
     }
 
     @Override
@@ -48,10 +55,9 @@ public class kDatePicker extends JPanel implements ActionListener {
         if (o.equals(btn)) {
             f.setModal(true);
             f.setVisible(true);
-            String date = f.getPickedDate();
-            txt.setText(date);
-            if (txt.getText().equals("")) {
-                txt.setText(DialogDatePicker.getToDay());
+            String date = f.getValueString();
+            if (!(date.equals(""))) {
+                txt.setText(date);
             }
         }
     }
@@ -66,6 +72,15 @@ public class kDatePicker extends JPanel implements ActionListener {
         txt.setText(DialogDatePicker.getToDay());
     }
 
+    // set giá trị về ngày hiện tại
+    public Date getValueToDay() throws ParseException {
+        String strDate = DialogDatePicker.getToDay();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        java.util.Date date = sdf.parse(strDate);
+        Date sqlDate = new Date(date.getTime());
+        return sqlDate;
+    }
+
     // cập nhật giá trị với input java.sql.Date
     public void setValue(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
@@ -73,11 +88,10 @@ public class kDatePicker extends JPanel implements ActionListener {
     }
 
     // cập nhật giá trị với input String
-    public void setValue(String date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        Date date2 = Date.valueOf(sdf.format(date));
-        sdf = new SimpleDateFormat("dd-MM-yyyy");
-        txt.setText(sdf.format(date2));
+    public void setValue(String strDate) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        java.util.Date date = sdf.parse(strDate);
+        txt.setText(sdf.format(date));
     }
 
     // lấy ra giá trị ngày dưới dạng java.sql.Date

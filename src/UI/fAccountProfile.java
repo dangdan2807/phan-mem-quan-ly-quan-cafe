@@ -6,18 +6,16 @@ import javax.swing.*;
 import java.awt.event.*;
 
 public class fAccountProfile extends JDialog implements ActionListener {
-    private JLabel lbUserName, lbDisplayName, lbPassWord, lbNewPassWord, lbReNewPassWord, lbEmail, lbSdt, lbCCCD;
-    private JTextField txtUserName, txtDisplayName, txtPassWord, txtNewPassWord, txtReNewPassWord, txtEmail, txtSdt,
-            txtCCCD;
+    private JLabel lbUserName, lbDisplayName, lbPassWord, lbNewPassWord, lbReNewPassWord;
+    private JTextField txtUserName, txtDisplayName, txtPassWord, txtNewPassWord, txtReNewPassWord;
     private JButton btnUpdate, btnClose;
-    private JCheckBox chkHienCCCD;
     // 450
     int withPn = 400, heightPn = 315;
 
     // chưa bắt sự kiện phím enter để submit
     public fAccountProfile() {
         setTitle("Thông tin tài khoản");
-        setSize(withPn, heightPn);
+        setSize(400, 222);
         setResizable(false);
         setLocationRelativeTo(null);
 
@@ -31,9 +29,6 @@ public class fAccountProfile extends JDialog implements ActionListener {
 
         lbUserName = new JLabel("Tên đăng nhập: ");
         lbDisplayName = new JLabel("Tên nhân viên: ");
-        lbCCCD = new JLabel("Căn cước công dân:");
-        lbEmail = new JLabel("Email: ");
-        lbSdt = new JLabel("Số điện thoại: ");
         lbPassWord = new JLabel("Mật khẩu: ");
         lbNewPassWord = new JLabel("Mật khẩu mới: ");
         lbReNewPassWord = new JLabel("Nhập lại: ");
@@ -41,11 +36,6 @@ public class fAccountProfile extends JDialog implements ActionListener {
         txtUserName = new JTextField();
         txtUserName.setEditable(false);
         txtDisplayName = new JTextField();
-        txtDisplayName.setEditable(false);
-        txtCCCD = new JTextField();
-        txtCCCD.setEditable(false);
-        txtEmail = new JTextField();
-        txtSdt = new JTextField();
         txtPassWord = new JTextField();
         txtNewPassWord = new JTextField();
         txtReNewPassWord = new JTextField();
@@ -53,19 +43,10 @@ public class fAccountProfile extends JDialog implements ActionListener {
         btnUpdate = new JButton("Cập nhật");
         btnClose = new JButton("Thoát");
 
-        chkHienCCCD = new JCheckBox("Hiện");
-
         pnMain.add(lbUserName);
         pnMain.add(txtUserName);
         pnMain.add(lbDisplayName);
         pnMain.add(txtDisplayName);
-        pnMain.add(lbCCCD);
-        pnMain.add(txtCCCD);
-        pnMain.add(chkHienCCCD);
-        pnMain.add(lbEmail);
-        pnMain.add(txtEmail);
-        pnMain.add(lbSdt);
-        pnMain.add(txtSdt);
         pnMain.add(lbPassWord);
         pnMain.add(txtPassWord);
         pnMain.add(lbNewPassWord);
@@ -80,23 +61,16 @@ public class fAccountProfile extends JDialog implements ActionListener {
         txtUserName.setBounds(x2, 5, wtxt, h);
         lbDisplayName.setBounds(x1, 35, wlb, h);
         txtDisplayName.setBounds(x2, 35, wtxt, h);
-        lbCCCD.setBounds(x1, 65, wlb, h);
-        txtCCCD.setBounds(x2, 65, wtxt - 50, h);
-        chkHienCCCD.setBounds(330, 65, 100, h);
-        lbEmail.setBounds(x1, 95, wlb, h);
-        txtEmail.setBounds(x2, 95, wtxt, h);
-        lbSdt.setBounds(x1, 125, wlb, h);
-        txtSdt.setBounds(x2, 125, wtxt, h);
-        lbPassWord.setBounds(x1, 155, wlb, h);
-        txtPassWord.setBounds(x2, 155, wtxt, h);
-        lbNewPassWord.setBounds(x1, 185, wlb, h);
-        txtNewPassWord.setBounds(x2, 185, wtxt, h);
-        lbReNewPassWord.setBounds(x1, 215, wlb, h);
-        txtReNewPassWord.setBounds(x2, 215, wtxt, h);
-        btnUpdate.setBounds(175, 245, 100, h);
-        btnClose.setBounds(280, 245, 100, h);
+        lbPassWord.setBounds(10, 67, wlb, h);
+        txtPassWord.setBounds(130, 67, wtxt, h);
+        lbNewPassWord.setBounds(10, 97, wlb, h);
+        txtNewPassWord.setBounds(130, 97, wtxt, h);
+        lbReNewPassWord.setBounds(10, 127, wlb, h);
+        txtReNewPassWord.setBounds(130, 127, wtxt, h);
+        btnUpdate.setBounds(175, 157, 100, h);
+        btnClose.setBounds(280, 157, 100, h);
 
-        this.add(pnMain);
+        getContentPane().add(pnMain);
     }
 
     public static void main(String[] args) {

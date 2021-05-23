@@ -10,26 +10,26 @@ import java.util.ArrayList;
 import DAO.*;
 import entity.*;
 
-public class fQLKhachSan extends JFrame implements ActionListener {
+public class fQLQuanCafe extends JFrame implements ActionListener {
     private JMenuBar menuBar;
     private JMenu menuAdmin;
     private JMenuItem itemDangXuat, itemThongTinTK, itemAdmin;
-    private JComboBox<String> cboDanhMucDV, cboDV, cboPhong, cboLoaiPhong, cboTinhTrang;
+    private JComboBox<String> cboDanhMucDV, cboDV, cboPhong;
     private JPanel pnMain, pnShowPhong;
-    private JButton btnThemDV, btnChuyenPhong, btnGiamGia, btnThanhToan, btnDatPhong, btnTraPhong;
+    private JButton btnThemDV, btnChuyenPhong, btnGiamGia, btnThanhToan;
     private SpinnerNumberModel spinSLModel, spinGiamGiaModel;
     private JSpinner spinSoLuong, spinGiamGia;
-    private DefaultTableModel tableModelKH, tableModelDV;
-    private JTable tableDV, tableShowKH;
-    private JTextField txtThanhToan, txtTenPhong, txtSucChua, txtSoGiuong, txtMaPhong, txtNgayDat, txtNgayTra;
+    private DefaultTableModel tableModelDV;
+    private JTable tableDV;
+    private JTextField txtThanhToan;
     JButton[] btnPhongList;
 
     PhongDAO phongDAO = new PhongDAO();
     int heightPhong = 95;
 
-    public fQLKhachSan() {
+    public fQLQuanCafe() {
         setTitle("Phần Mềm Quản Lý Khách Sạn");
-        setSize(1200, 600);
+        setSize(1095, 600);
         setResizable(false);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -75,119 +75,17 @@ public class fQLKhachSan extends JFrame implements ActionListener {
         JScrollPane scpShowPhong = new JScrollPane(pnShowPhong, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scpShowPhong.setBounds(0, 0, 555, 540);
-        scpShowPhong.setBorder(new TitledBorder(null, "Danh sách phòng"));
+        scpShowPhong.setBorder(new TitledBorder(null, "Danh sách bàn"));
         scpShowPhong.getVerticalScrollBar().setUnitIncrement(10);
 
         JPanel pnInfo = new JPanel();
-        pnInfo.setBorder(new TitledBorder(null, "Th\u00F4ng tin ph\u00F2ng", TitledBorder.LEADING, TitledBorder.TOP,
+        pnInfo.setBorder(new TitledBorder(null, "Thông tin bàn", TitledBorder.LEADING, TitledBorder.TOP,
                 null, new Color(51, 51, 51)));
-        pnInfo.setBounds(560, 0, 622, 540);
+        pnInfo.setBounds(560, 0, 531, 540);
         pnInfo.setLayout(null);
 
-        JPanel pnInfoPhong = new JPanel();
-        pnInfoPhong.setBounds(5, 15, 605, 168);
-        pnInfo.add(pnInfoPhong);
-        pnInfoPhong.setLayout(null);
-
-        JLabel lbTenPhong = new JLabel("Tên Phòng:");
-        lbTenPhong.setBounds(10, 32, 72, 16);
-        pnInfoPhong.add(lbTenPhong);
-
-        txtTenPhong = new JTextField();
-        txtTenPhong.setEditable(false);
-        txtTenPhong.setBounds(85, 30, 114, 20);
-        pnInfoPhong.add(txtTenPhong);
-        txtTenPhong.setColumns(10);
-
-        JLabel lbSucChua = new JLabel("Sức chứa:");
-        lbSucChua.setBounds(211, 4, 72, 16);
-        pnInfoPhong.add(lbSucChua);
-
-        txtSucChua = new JTextField();
-        txtSucChua.setEditable(false);
-        txtSucChua.setBounds(285, 2, 114, 20);
-        pnInfoPhong.add(txtSucChua);
-        txtSucChua.setColumns(10);
-
-        JLabel lbLoaiPhong = new JLabel("Loại phòng:");
-        lbLoaiPhong.setBounds(10, 60, 72, 16);
-        pnInfoPhong.add(lbLoaiPhong);
-
-        JLabel lbSoGiuong = new JLabel("Số giường: ");
-        lbSoGiuong.setBounds(211, 32, 72, 16);
-        pnInfoPhong.add(lbSoGiuong);
-
-        txtSoGiuong = new JTextField();
-        txtSoGiuong.setEditable(false);
-        txtSoGiuong.setBounds(285, 26, 114, 20);
-        pnInfoPhong.add(txtSoGiuong);
-        txtSoGiuong.setColumns(10);
-
-        JLabel lbMaPhong = new JLabel("Mã phòng:");
-        lbMaPhong.setBounds(10, 2, 72, 16);
-        pnInfoPhong.add(lbMaPhong);
-
-        txtMaPhong = new JTextField();
-        txtMaPhong.setEditable(false);
-        txtMaPhong.setBounds(85, 0, 114, 20);
-        pnInfoPhong.add(txtMaPhong);
-        txtMaPhong.setColumns(10);
-
-        lbLoaiPhong = new JLabel("Tình trạng:");
-        lbLoaiPhong.setBounds(211, 62, 72, 16);
-        pnInfoPhong.add(lbLoaiPhong);
-
-        cboLoaiPhong = new JComboBox<String>();
-        cboLoaiPhong.setBounds(85, 58, 114, 20);
-        pnInfoPhong.add(cboLoaiPhong);
-
-        cboTinhTrang = new JComboBox<String>();
-        cboTinhTrang.setBounds(285, 56, 114, 20);
-        pnInfoPhong.add(cboTinhTrang);
-
-        JPanel pnShowKH = new JPanel();
-        pnShowKH.setBounds(0, 88, 446, 75);
-        pnInfoPhong.add(pnShowKH);
-        pnShowKH.setLayout(new BorderLayout(0, 0));
-
-        JScrollPane scpShowKH = new JScrollPane();
-        pnShowKH.add(scpShowKH, BorderLayout.CENTER);
-
-        String[] colsKH = { "Tên KH", "Loại khách" };
-        tableModelKH = new DefaultTableModel(colsKH, 0);
-        tableShowKH = new JTable(tableModelKH);
-        scpShowKH.setViewportView(tableShowKH);
-
-        btnDatPhong = new JButton("Đặt phòng");
-        btnDatPhong.setBounds(458, 89, 147, 37);
-        pnInfoPhong.add(btnDatPhong);
-
-        btnTraPhong = new JButton("Trả phòng");
-        btnTraPhong.setBounds(458, 126, 147, 37);
-        pnInfoPhong.add(btnTraPhong);
-
-        JLabel lbNgayDat = new JLabel("Ngày đặt:");
-        lbNgayDat.setBounds(417, 4, 64, 16);
-        pnInfoPhong.add(lbNgayDat);
-
-        txtNgayDat = new JTextField();
-        txtNgayDat.setEditable(false);
-        txtNgayDat.setBounds(479, 2, 126, 20);
-        pnInfoPhong.add(txtNgayDat);
-        txtNgayDat.setColumns(10);
-
-        txtNgayTra = new JTextField();
-        txtNgayTra.setEditable(false);
-        txtNgayTra.setBounds(479, 30, 126, 20);
-        pnInfoPhong.add(txtNgayTra);
-        txtNgayTra.setColumns(10);
-
-        JLabel lbNgayTra = new JLabel("Ngày trả:");
-        lbNgayTra.setBounds(417, 32, 64, 16);
-        pnInfoPhong.add(lbNgayTra);
-
         JPanel pnAddDV = new JPanel();
-        pnAddDV.setBounds(5, 184, 605, 60);
+        pnAddDV.setBounds(5, 21, 510, 60);
         pnAddDV.setLayout(null);
 
         cboDanhMucDV = new JComboBox<String>();
@@ -211,7 +109,7 @@ public class fQLKhachSan extends JFrame implements ActionListener {
         pnAddDV.add(spinSoLuong);
 
         JPanel pnTableDV = new JPanel();
-        pnTableDV.setBounds(5, 245, 605, 230);
+        pnTableDV.setBounds(5, 87, 510, 388);
 
         String[] colsDV = { "Tên Dịch Vụ", "Giá", "Số Lượng", "Thành tiền" };
         tableModelDV = new DefaultTableModel(colsDV, 0);
@@ -223,10 +121,10 @@ public class fQLKhachSan extends JFrame implements ActionListener {
         pnTableDV.add(scpTableDV, BorderLayout.CENTER);
 
         JPanel pnThanhToan = new JPanel();
-        pnThanhToan.setBounds(5, 480, 605, 55);
+        pnThanhToan.setBounds(5, 480, 510, 55);
         pnThanhToan.setLayout(null);
 
-        btnChuyenPhong = new JButton("Chuyển phòng");
+        btnChuyenPhong = new JButton("Chuyển bàn");
         cboPhong = new JComboBox<String>();
         btnGiamGia = new JButton("Giảm giá");
         spinGiamGiaModel = new SpinnerNumberModel(0, 0, 100, 1);
@@ -252,27 +150,27 @@ public class fQLKhachSan extends JFrame implements ActionListener {
         btnChuyenPhong.setBounds(0, y2Row3, 120, hRow3);
         spinGiamGia.setBounds(132, 0, wRow3, hRow3);
         btnGiamGia.setBounds(132, 28, wRow3, hRow3);
-        lbThanhTien.setBounds(244, 0, 216, 27);
-        txtThanhToan.setBounds(245, 31, 166, 23);
-        btnThanhToan.setBounds(457, 0, 148, 55);
+        lbThanhTien.setBounds(242, 0, 153, 27);
+        txtThanhToan.setBounds(245, 31, 104, 23);
+        btnThanhToan.setBounds(405, 0, 105, 55);
 
         pnInfo.add(pnAddDV);
         pnInfo.add(pnTableDV);
         pnInfo.add(pnThanhToan);
 
         JLabel lblVND = new JLabel("VND");
-        lblVND.setBounds(421, 33, 46, 16);
+        lblVND.setBounds(359, 33, 46, 16);
         pnThanhToan.add(lblVND);
 
         pnMain.add(scpShowPhong);
         pnMain.add(pnInfo);
         getContentPane().add(pnMain);
 
-        LoadPhong();
+        // LoadPhong();
     }
 
     public static void main(String[] args) {
-        new fQLKhachSan().setVisible(true);
+        new fQLQuanCafe().setVisible(true);
     }
 
     @Override
@@ -316,45 +214,45 @@ public class fQLKhachSan extends JFrame implements ActionListener {
         });
     }
 
-    public void LoadPhong() {
-        ArrayList<Phong> PhongList = phongDAO.getAllPhong();
-        int sizePhongList = PhongList.size();
-        btnPhongList = new JButton[sizePhongList];
-        for (int i = 0; i < sizePhongList; i++) {
-            Phong item = PhongList.get(i);
-            String tenPhong = item.getTenPhong();
-            String tinhTrang = item.getTinhTrang();
-            String nameBtn = "<html>" + tenPhong + "<br><p style='text-align: center;'>" + tinhTrang + "</p></html>";
-            btnPhongList[i] = new JButton(nameBtn);
-            btnPhongList[i].setPreferredSize(new Dimension(PhongDAO.phongWidth, PhongDAO.phongHeight));
-            switch (tinhTrang) {
-                case "Trống":
-                    btnPhongList[i].setBackground(Color.CYAN);
-                    break;
-                default:
-                    btnPhongList[i].setBackground(Color.YELLOW);
-                    break;
-            }
-            if ((i + 1) % 5 == 0) {
-                heightPhong += 95;
-                pnShowPhong.setPreferredSize(new Dimension(550, heightPhong));
-            }
-            btnPhongList[i].addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    int maPhong = item.getMaPhong();
-                    showHoaDon(maPhong);
-                }
-            });
-            pnShowPhong.add(btnPhongList[i]);
-        }
-    }
+    // public void LoadPhong() {
+    //     ArrayList<Phong> PhongList = phongDAO.getAllPhong();
+    //     int sizePhongList = PhongList.size();
+    //     btnPhongList = new JButton[sizePhongList];
+    //     for (int i = 0; i < sizePhongList; i++) {
+    //         Phong item = PhongList.get(i);
+    //         String tenPhong = item.getTenPhong();
+    //         String tinhTrang = item.getTinhTrang();
+    //         String nameBtn = "<html>" + tenPhong + "<br><p style='text-align: center;'>" + tinhTrang + "</p></html>";
+    //         btnPhongList[i] = new JButton(nameBtn);
+    //         btnPhongList[i].setPreferredSize(new Dimension(PhongDAO.phongWidth, PhongDAO.phongHeight));
+    //         switch (tinhTrang) {
+    //             case "Trống":
+    //                 btnPhongList[i].setBackground(Color.CYAN);
+    //                 break;
+    //             default:
+    //                 btnPhongList[i].setBackground(Color.YELLOW);
+    //                 break;
+    //         }
+    //         if ((i + 1) % 5 == 0) {
+    //             heightPhong += 95;
+    //             pnShowPhong.setPreferredSize(new Dimension(550, heightPhong));
+    //         }
+    //         btnPhongList[i].addActionListener(new ActionListener() {
+    //             @Override
+    //             public void actionPerformed(ActionEvent e) {
+    //                 int maPhong = item.getMaPhong();
+    //                 showHoaDon(maPhong);
+    //             }
+    //         });
+    //         pnShowPhong.add(btnPhongList[i]);
+    //     }
+    // }
 
-    private void showHoaDon(int maPhong) {
-        int maHD = HoaDonDAO.getInstance().getUncheckHoaDonByMaPhong(maPhong);
-        ArrayList<ChiTietHoaDon> dataCTHoaDon = ChiTietHoaDonDAO.getInstance().getListChiTietHoaDonByMaCTHoaDon(maHD);
-        for (ChiTietHoaDon item : dataCTHoaDon) {
-            tableModelDV.addRow(new Object[] { item.getMaDV(), item.getSoLuong(), "", "" });
-        }
-    }
+    // private void showHoaDon(int maPhong) {
+    //     int maHD = HoaDonDAO.getInstance().getUncheckHoaDonByMaPhong(maPhong);
+    //     ArrayList<ChiTietHoaDon> dataCTHoaDon = ChiTietHoaDonDAO.getInstance().getListChiTietHoaDonByMaCTHoaDon(maHD);
+    //     for (ChiTietHoaDon item : dataCTHoaDon) {
+    //         tableModelDV.addRow(new Object[] { item.getMaDV(), item.getSoLuong(), "", "" });
+    //     }
+    // }
 }
