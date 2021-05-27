@@ -4,20 +4,22 @@ import java.sql.*;
 import java.util.*;
 
 import connectDB.ConnectDB;
-import entity.Account;
+import entity.Table;
 
-public class AccountDAO {
-    private static AccountDAO instance = new AccountDAO();
+public class TableDAO {
+    private static TableDAO instance;
     private static ConnectDB db = ConnectDB.getInstance();
+    public static int TABLE_WIDTH = 85;
+    public static int TABLE_HEIGHT = 85;
 
-    public static AccountDAO getInstance() {
+    public static TableDAO getInstance() {
         if (instance == null)
-            instance = new AccountDAO();
+            instance = new TableDAO();
         return instance;
     }
 
-    public ArrayList<Account> ExecuteQuery(String query, Object[] parameter) {
-        ArrayList<Account> dataList = new ArrayList<Account>();
+    public ArrayList<Table> ExecuteQuery(String query, Object[] parameter) {
+        ArrayList<Table> dataList = new ArrayList<Table>();
         CallableStatement stmt = null;
         ResultSet rs = null;
         Connection con = null;
@@ -37,7 +39,7 @@ public class AccountDAO {
             }
             rs = stmt.executeQuery();
             while (rs.next()) {
-                dataList.add(new Account(rs));
+                dataList.add(new Table(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -50,12 +52,11 @@ public class AccountDAO {
     public int ExecuteNonQuery(String query, Object[] parameter) {
         int data = 0;
         CallableStatement stmt = null;
-        ResultSet rs = null;
         Connection con = null;
         try {
             db.connect();
             con = ConnectDB.getConnection();
-            stmt = con.prepareCall(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            stmt = con.prepareCall(query);
             if (parameter != null) {
                 String[] listParams = query.split(" ");
                 int i = 1;
@@ -66,9 +67,7 @@ public class AccountDAO {
                     }
                 }
             }
-            rs = stmt.executeQuery();
-            rs.last();
-            data = rs.getRow();
+            data = stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -84,7 +83,7 @@ public class AccountDAO {
     // dùng để đếm, ...
     // trả về cột đầu tiên của dùng đầu tiên của kết quả
     public Object ExecuteScalar(String query, Object[] parameter) {
-        Object data = null;
+        Object data = "";
         ResultSet rs = null;
         CallableStatement stmt = null;
         Connection con = null;
@@ -118,15 +117,9 @@ public class AccountDAO {
         return data;
     }
 
-    public ArrayList<Account> getAccountList() {
-        String query = "{CALL USP_getAccountList}";
+    public ArrayList<Table> getTableList() {
+        String query = "{CALL USP_getTableList}";
         return ExecuteQuery(query, null);
     }
 
-    public boolean Login(String username, String password) {
-        int count = 0;
-        String query = "{CALL USP_Login (? , ?)}";
-        count = (int) ExecuteNonQuery(query, new Object[] { username, password });
-        return count > 0;
-    }
 }

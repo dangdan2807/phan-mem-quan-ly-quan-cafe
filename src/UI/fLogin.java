@@ -20,6 +20,7 @@ public class fLogin extends JFrame implements ActionListener, KeyListener, Focus
     Border borderBottomUnFocus = BorderFactory.createMatteBorder(0, 0, 1, 0, Color.decode("#d0e1fd"));
     Border borderBottomError = BorderFactory.createMatteBorder(0, 0, 1, 0, Color.RED);
     int w1 = 110, w2 = 170, h = 20;
+    AccountDAO accountDAO= AccountDAO.getInstance();
 
     public fLogin() {
         setTitle("Đăng nhập");
@@ -76,7 +77,7 @@ public class fLogin extends JFrame implements ActionListener, KeyListener, Focus
 
         getContentPane().add(pnMain);
 
-        JLabel lbWelcome = new JLabel("Welcome!");
+        JLabel lbWelcome = new JLabel("Sign In!");
         lbWelcome.setHorizontalAlignment(SwingConstants.CENTER);
         lbWelcome.setFont(new Font("Dialog", Font.BOLD, 18));
         lbWelcome.setBounds(469, 93, 285, 35);
@@ -113,7 +114,7 @@ public class fLogin extends JFrame implements ActionListener, KeyListener, Focus
             String password = txtPassword.getText().trim();
             if (validData()) {
                 if (login(username, password)) {
-                    fQLQuanCafe f = new fQLQuanCafe();
+                    fManage f = new fManage();
                     this.setVisible(false);
                     f.setVisible(true);
                 } else {
@@ -193,8 +194,7 @@ public class fLogin extends JFrame implements ActionListener, KeyListener, Focus
     }
 
     private boolean login(String userName, String passWord) {
-        AccountDAO.getInstance();
-        boolean result = AccountDAO.Login(userName, passWord);
+        boolean result = accountDAO.Login(userName, passWord);
         return result;
     }
 }

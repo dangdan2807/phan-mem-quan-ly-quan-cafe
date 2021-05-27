@@ -25,7 +25,7 @@ public class fAdmin extends JDialog implements ActionListener, MouseListener {
         pnDoanhThu pnDoanhThu = new pnDoanhThu();
         pnDanhMuc pnDanhMuc = new pnDanhMuc();
         pnBan pnBan = new pnBan();
-        pnTaiKhoan pnTaiKhoan = new pnTaiKhoan();
+        pnAccount pnTaiKhoan = new pnAccount();
         tpTabMain.addTab("Doanh thu", null, pnDoanhThu, "Quản lý doanh thu");
         tpTabMain.addTab("Món ăn", null, pnMonAn, "Quản lý món ăn");
         tpTabMain.addTab("Danh Mục", null, pnDanhMuc, "Quản lý danh mục");
