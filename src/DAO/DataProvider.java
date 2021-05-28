@@ -15,7 +15,7 @@ public class DataProvider {
 
     public ResultSet ExecuteQuery(String query, Object[] parameter) {
         CallableStatement stmt = null;
-        ResultSet data = null;
+        ResultSet dataList = null;
         Connection con = null;
         try {
             db.connect();
@@ -31,17 +31,11 @@ public class DataProvider {
                     }
                 }
             }
-            data = stmt.executeQuery();
+            dataList = stmt.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
-        return data;
+        return dataList;
     }
 
     public int ExecuteNonQuery(String query, Object[] parameter) {

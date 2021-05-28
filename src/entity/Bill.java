@@ -1,8 +1,6 @@
 package entity;
 
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class Bill {
     private int id, idTable;

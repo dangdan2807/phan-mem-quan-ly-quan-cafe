@@ -242,3 +242,24 @@ BEGIN
         AND hd.[status] = 0
 END
 GO
+
+CREATE PROC USP_getListBillInfo
+    @id INT
+AS
+BEGIN
+    SELECT *
+    FROM dbo.BillInfo bi
+    WHERE bi.id =  @id
+END
+GO
+
+CREATE PROC USP_getBillInfoListByTableID
+    @id INT
+AS
+BEGIN
+    SELECT p.name, p.price, bi.[count], p.price * bi.[count] AS totalPrice
+    FROM dbo.BillInfo bi, dbo.Bill b, dbo.Product p
+    WHERE bi.idBill = b.id AND bi.idProduct = p.id AND b.idTable = @id
+        AND b.[status] = 0
+END
+GO

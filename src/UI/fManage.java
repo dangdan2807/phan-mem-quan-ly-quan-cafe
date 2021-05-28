@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 import DAO.*;
 import entity.*;
+import entity.Menu;
+
 public class fManage extends JFrame implements ActionListener, MouseListener {
     JButton[] btnTableList;
     int pnShowTableWidth = 310;
@@ -21,6 +23,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
     private JButton btnChuyenBan, btnLamMoi, btnThoat, btnSearch, btnTamTinh, btnThanhToan;
     private JTextField txtMaHD, txtMaBan, txtThanhToan, txtSearchProduct;
     private JComboBox<String> cboLoaiSP;
+
     ImageIcon transferIcon = new ImageIcon("img/transfer_16.png");
     ImageIcon logOutIcon = new ImageIcon("img/logout_16.png");
     ImageIcon refreshIcon = new ImageIcon("img/refresh_16.png");
@@ -30,8 +33,6 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
     ImageIcon coffeeDisableIcon = new ImageIcon("img/coffee_32_disable.png");
 
     int viTri = -1;
-    TableDAO tableDAO = new TableDAO();
-
     public fManage() {
         setTitle("Phần Mềm Quản Lý Quán Cafe");
         setSize(1280, 700);
@@ -293,6 +294,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
         btnThoat.addMouseListener(this);
 
         LoadTable();
+        reSizeColumnTableBillInfo();
     }
 
     public static void main(String[] args) {
@@ -307,15 +309,6 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
             this.setVisible(false);
             f.setVisible(true);
         }
-        // } else if (o.equals(itemThongTinTK)) {
-        // fAccountProfile f = new fAccountProfile();
-        // f.setModal(true);
-        // f.setVisible(true);
-        // } else if (o.equals(itemAdmin)) {
-        // fAdmin f = new fAdmin();
-        // f.setModal(true);
-        // f.setVisible(true);
-        // }
     }
 
     @Override
@@ -397,7 +390,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
     public void LoadTable() {
         Border lineBlue = new LineBorder(Color.RED, 2);
         Border lineGray = new LineBorder(Color.GRAY, 1);
-        ArrayList<Table> TableList = tableDAO.getTableList();
+        ArrayList<Table> TableList = TableDAO.getInstance().getTableList();
         int sizeTableList = TableList.size();
         btnTableList = new JButton[sizeTableList];
         for (int i = 0; i < sizeTableList; i++) {
@@ -405,7 +398,8 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
             Table item = TableList.get(i);
             String name = item.getName();
             String status = item.getStatus();
-            String nameBtn = "<html><p style='text-align: center;'>" + name + "</p></br><p style='text-align: center;'>" + status + "</p></html>";
+            String nameBtn = "<html><p style='text-align: center;'>" + name + "</p></br><p style='text-align: center;'>"
+                    + status + "</p></html>";
             JButton btn = new JButton(nameBtn);
             btn.setVerticalTextPosition(SwingConstants.BOTTOM);
             btn.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -435,6 +429,8 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
                     }
                     viTri = selection;
                     btnTableList[selection].setBorder(lineBlue);
+                    int idTable = item.getId();
+                    showBill(idTable);
                 }
             });
             btn.addMouseListener(new MouseAdapter() {
@@ -459,5 +455,25 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
             btnTableList[i] = btn;
             pnShowTable.add(btnTableList[i]);
         }
+    }
+
+    private void showBill(int idTable) {
+        ArrayList<Menu> dataList = MenuDAO.getInstance().getListMenuByTableID(idTable);
+        int i = 1;
+        modelTableBill.getDataVector().removeAllElements();
+        modelTableBill.fireTableDataChanged();
+
+        for (Menu item : dataList) {
+            modelTableBill.addRow(
+                    new Object[] { i++, item.getProductName(), item.getPrice(), item.getCount(), item.getTotalPrice() });
+        }
+    }
+
+    private void reSizeColumnTableBillInfo() {
+        tableBill.getColumnModel().getColumn(0).setPreferredWidth(15);
+        tableBill.getColumnModel().getColumn(1).setPreferredWidth(110);
+        tableBill.getColumnModel().getColumn(2).setPreferredWidth(70);
+        tableBill.getColumnModel().getColumn(3).setPreferredWidth(50);
+        tableBill.getColumnModel().getColumn(4).setPreferredWidth(80);
     }
 }
