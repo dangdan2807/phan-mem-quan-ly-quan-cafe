@@ -8,6 +8,8 @@ GO
 USE QuanLyQuanCafe 
 GO
 
+-- create table
+
 CREATE TABLE TableFood
 (
     id INT IDENTITY PRIMARY KEY,
@@ -82,6 +84,8 @@ CREATE TABLE BillInfo
     -- FOREIGN KEY (idEmployee) REFERENCES dbo.Employees(id)
 )
 GO
+
+-- insert data
 
 -- INSERT INTO dbo.Employees
 --     (name, address, phone, cmnd)
@@ -185,11 +189,10 @@ VALUES
     (1, 12, 1),
     (2, 3, 1),
     (2, 5, 1),
-    (3, 26, 1),
+    (3, 26, 1)
 GO
 
--- SELECT * FROM dbo.account where username = N'admin'
--- -- ngăn lỗi người dùng nhập ' OR 1 = 1 -- '
+-- Store procedure
 CREATE PROC USP_Login
     @username NVARCHAR(100),
     @password NVARCHAR(1000)
@@ -226,5 +229,16 @@ AS
 BEGIN
     SELECT *
     FROM dbo.TableFood
+END
+GO
+
+CREATE PROC USP_getUncheckBillByTableID
+    @id INT
+AS
+BEGIN
+    SELECT *
+    FROM dbo.Bill hd
+    WHERE hd.idTable = @id
+        AND hd.[status] = 0
 END
 GO
