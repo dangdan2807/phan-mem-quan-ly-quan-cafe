@@ -7,7 +7,7 @@ import java.awt.*;
 import java.awt.event.*;
 import DAO.AccountDAO;
 
-public class fLogin extends JFrame implements ActionListener, KeyListener, FocusListener {
+public class fLogin extends JFrame implements ActionListener, KeyListener, FocusListener, MouseListener {
     private JTextField txtUsername, txtPassword;
     private JButton btnLogin;
     private JLabel lbShowMessage;
@@ -20,7 +20,7 @@ public class fLogin extends JFrame implements ActionListener, KeyListener, Focus
     Border borderBottomUnFocus = BorderFactory.createMatteBorder(0, 0, 1, 0, Color.decode("#d0e1fd"));
     Border borderBottomError = BorderFactory.createMatteBorder(0, 0, 1, 0, Color.RED);
     int w1 = 110, w2 = 170, h = 20;
-    AccountDAO accountDAO= AccountDAO.getInstance();
+    AccountDAO accountDAO = AccountDAO.getInstance();
 
     public fLogin() {
         setTitle("Đăng nhập");
@@ -100,6 +100,8 @@ public class fLogin extends JFrame implements ActionListener, KeyListener, Focus
 
         txtUsername.addFocusListener(this);
         txtPassword.addFocusListener(this);
+
+        btnLogin.addMouseListener(this);
     }
 
     public static void main(String[] args) {
@@ -114,7 +116,7 @@ public class fLogin extends JFrame implements ActionListener, KeyListener, Focus
             String password = txtPassword.getText().trim();
             if (validData()) {
                 if (login(username, password)) {
-                    fManage f = new fManage();
+                    fPageNavigation f = new fPageNavigation();
                     this.setVisible(false);
                     f.setVisible(true);
                 } else {
@@ -162,6 +164,39 @@ public class fLogin extends JFrame implements ActionListener, KeyListener, Focus
             txtUsername.setBorder(borderBottomUnFocus);
         } else if (o.equals(txtPassword)) {
             txtPassword.setBorder(borderBottomUnFocus);
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        Object o = e.getSource();
+        if (o.equals(btnLogin)) {
+            btnLogin.setBackground(Color.BLUE);
+            btnLogin.setForeground(Color.WHITE);
+        }
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        Object o = e.getSource();
+        if (o.equals(btnLogin)) {
+            btnLogin.setBackground(Color.decode("#d0e1fd"));
+            btnLogin.setForeground(Color.decode("#1a66e3"));
         }
     }
 

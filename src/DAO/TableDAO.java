@@ -9,8 +9,8 @@ import entity.Table;
 public class TableDAO {
     private static TableDAO instance;
     private static ConnectDB db = ConnectDB.getInstance();
-    public static int TABLE_WIDTH = 85;
-    public static int TABLE_HEIGHT = 85;
+    public static int TABLE_WIDTH = 90;
+    public static int TABLE_HEIGHT = 90;
 
     public static TableDAO getInstance() {
         if (instance == null)
