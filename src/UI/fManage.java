@@ -258,21 +258,21 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         pnControlProduct.add(btnSearch);
 
         JLabel lnLoaiSp = new JLabel("Loại sản phẩm: ");
-        lnLoaiSp.setBounds(12, 40, 100, 16);
+        lnLoaiSp.setBounds(12, 70, 100, 16);
         pnControlProduct.add(lnLoaiSp);
 
         cboCategory = new JComboBox<String>();
-        cboCategory.setBounds(110, 38, 170, 20);
+        cboCategory.setBounds(110, 67, 170, 20);
         cboCategory.setBackground(Color.WHITE);
         pnControlProduct.add(cboCategory);
 
         JLabel lbCount = new JLabel("Số lượng: ");
-        lbCount.setBounds(12, 67, 90, 16);
+        lbCount.setBounds(12, 38, 90, 16);
         pnControlProduct.add(lbCount);
 
         spinCount = new JSpinner();
         spinCount.setModel(new SpinnerNumberModel(1, 1, null, 1));
-        spinCount.setBounds(110, 65, 170, 20);
+        spinCount.setBounds(110, 35, 170, 20);
         pnControlProduct.add(spinCount);
 
         btnAdd = new JButton("Thêm", addIcon);
@@ -325,6 +325,8 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         btnExit.addMouseListener(this);
         btnAdd.addMouseListener(this);
         btnDelete.addMouseListener(this);
+        tableProduct.addMouseListener(this);
+        tableBill.addMouseListener(this);
 
         cboCategory.addItemListener(this);
 
@@ -345,12 +347,49 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
             fLogin f = new fLogin();
             this.setVisible(false);
             f.setVisible(true);
+        } else if (o.equals(btnAdd)) {
+            int billID = -1;
+            int tableID = -1;
+            if (txtTableID.getText().trim().equals("")) {
+                JOptionPane.showMessageDialog(this, "Bạn cần phải chọn bàn trước");
+            } else {
+                int count = (int) spinCount.getValue();
+                String productName = txtSearchProduct.getText().trim();
+                Product product = ProductDAO.getInstance().getProductByProductName(productName);
+                int productID = product.getId();
+                if (!(txtBillID.getText().trim().equals("")))
+                    billID = Integer.parseInt(txtBillID.getText());
+                tableID = Integer.parseInt(txtTableID.getText().trim().split(" ")[1]);
+                // create new bill
+                if (billID == -1) {
+                    BillDAO.getInstance().insertBill(tableID);
+                    billID = BillDAO.getInstance().getMaxIDBill();
+                    BillInfoDAO.getInstance().insertBillInfo(billID, productID, count);
+                } else {
+                    BillInfoDAO.getInstance().insertBillInfo(billID, productID, count);
+                }
+                showBill(tableID);
+            }
+        } else if (o.equals(btnDelete)) {
+
         }
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
+        Object o = e.getSource();
+        if (o.equals(tableProduct)) {
+            int row = tableProduct.getSelectedRow();
+            String productName = modelTableProduct.getValueAt(row, 1).toString();
+            txtSearchProduct.setText(productName);
+            spinCount.setValue(1);
+        } else if (o.equals(tableBill)) {
+            int row = tableBill.getSelectedRow();
+            String productName = modelTableBill.getValueAt(row, 1).toString();
+            txtSearchProduct.setText(productName);
+            int count = Integer.parseInt(modelTableBill.getValueAt(row, 3).toString());
+            spinCount.setValue(count);
+        }
     }
 
     @Override
@@ -490,6 +529,8 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
                         txtBillID.setText(String.valueOf(billID));
                     else
                         txtBillID.setText("");
+                    txtSearchProduct.setText("");
+                    spinCount.setValue(1);
                 }
             });
             btn.addMouseListener(new MouseAdapter() {

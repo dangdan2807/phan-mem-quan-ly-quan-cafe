@@ -186,9 +186,9 @@ INSERT INTO dbo.BillInfo
     (idBill, idProduct, [count])
 VALUES
     (1, 12, 1),
-    (2, 3, 1),
+    (2, 3, 2),
     (2, 5, 1),
-    (3, 26, 1)
+    (3, 26, 3)
 GO
 
 -- Store procedure
@@ -281,3 +281,67 @@ BEGIN
         AND pc.name = @name
 END
 GO
+
+CREATE PROC USP_insertBill
+    @idTable INT
+AS
+BEGIN
+    INSERT INTO dbo.Bill
+        (DateCheckIn, DateCheckOut, idTable, [status])
+    VALUES
+        (getdate(), NULL, @idTable, 0)
+END
+GO
+
+CREATE PROC USP_insertBillInfo
+    @idBill INT,
+    @idProduct INT,
+    @count INT
+AS
+BEGIN
+    DECLARE @isExitsBillInfo INT
+    DECLARE @foodCount INT = 1
+
+    SELECT @isExitsBillInfo = b.id , @foodCount = b.count
+    FROM dbo.BillInfo b
+    WHERE idBill = @idBill
+        AND idProduct = @idProduct
+
+    IF(@isExitsBillInfo > 0)
+    BEGIN
+        DECLARE @newCount INT = @foodCount + @count
+        IF(@newCount > 0)
+        BEGIN
+            UPDATE dbo.BillInfo
+            SET [count] = @newCount
+            WHERE idBill = @idBill
+                AND idProduct = @idProduct
+        END
+        ELSE
+        BEGIN
+            DELETE FROM dbo.BillInfo
+            WHERE idBill = @idBill
+                AND idProduct = @idProduct
+        END
+    END
+    ELSE
+    BEGIN
+        INSERT INTO dbo.BillInfo
+            (idBill, idProduct, [count])
+        VALUES
+            (@idBill, @idProduct, @count)
+    END
+END
+GO
+
+CREATE PROC USP_getProductByProductName 
+    @productName NVARCHAR(100)
+AS
+BEGIN
+    SELECT *
+    FROM dbo.product p
+    WHERE p.Name = @productName
+END
+GO
+
+EXEC USP_getProductByProductName N'Aquafina'

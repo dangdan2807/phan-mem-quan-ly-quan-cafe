@@ -18,7 +18,7 @@ public class BillInfoDAO {
     public ArrayList<BillInfo> getListBillInfo(int idBill) {
         ArrayList<BillInfo> dataList = new ArrayList<BillInfo>();
         Object[] parameter = new Object[] { idBill };
-        String query = "{CALL USP_getListBillInfo (?)}";
+        String query = "{CALL USP_getListBillInfo ( ? )}";
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
         try {
             while (rs.next()) {
@@ -28,5 +28,11 @@ public class BillInfoDAO {
             e.printStackTrace();
         }
         return dataList;
+    }
+
+    public void insertBillInfo(int billID, int productID, int count) {
+        Object[] parameter = new Object[] { billID, productID, count };
+        String query = "{CALL USP_insertBillInfo ( ? , ? , ? )}";
+        DataProvider.getInstance().ExecuteNonQuery(query, parameter);
     }
 }

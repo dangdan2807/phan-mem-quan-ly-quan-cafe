@@ -21,7 +21,7 @@ public class BillDAO {
     /// <param name="id"></param>
     /// <returns></returns>
     public int getUncheckBillByTableID(int tableID) {
-        String query = "{CALL USP_getUncheckBillByTableID (?) }";
+        String query = "{CALL USP_getUncheckBillByTableID ( ? )}";
         Object[] parameter = new Object[] { tableID };
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
         ArrayList<Bill> dataList = new ArrayList<Bill>();
@@ -37,5 +37,20 @@ public class BillDAO {
             return bill.getId();
         }
         return -1;
+    }
+
+    public void insertBill(int tableID) {
+        Object[] parameter = new Object[] { tableID };
+        String query = "{CALL USP_insertBill ( ? )}";
+        DataProvider.getInstance().ExecuteNonQuery(query, parameter);
+    }
+
+    public int getMaxIDBill() {
+        try {
+            String query = "Select MAX(id) dbo.Bill";
+            return (int) DataProvider.getInstance().ExecuteScalar(query, null);
+        } catch (Exception e) {
+            return 1;
+        }
     }
 }

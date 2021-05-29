@@ -16,7 +16,7 @@ public class ProductDAO {
 
     public ArrayList<Product> getListProductByCategoryName(String categoryName) {
         ArrayList<Product> dataList = new ArrayList<Product>();
-        String query = "{CALL USP_getListProductByCategoryName (?)}";
+        String query = "{CALL USP_getListProductByCategoryName ( ? )}";
         Object[] parameter = new Object[] { categoryName };
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
         try {
@@ -27,5 +27,19 @@ public class ProductDAO {
             e.printStackTrace();
         }
         return dataList;
+    }
+
+    public Product getProductByProductName(String productName) {
+        Product data = null;
+        String query = "{CALL USP_getProductByProductName ( ? )}";
+        Object[] parameter = new Object[] { productName };
+        ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
+        try {
+            rs.next();
+            data = new Product(rs);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return data;
     }
 }

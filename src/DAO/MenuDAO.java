@@ -17,7 +17,7 @@ public class MenuDAO {
 
     public ArrayList<Menu> getListMenuByTableID(int tableID) {
         ArrayList<Menu> dataList = new ArrayList<Menu>();
-        String query = "{CALL USP_getListMenuByTableID (?)}";
+        String query = "{CALL USP_getListMenuByTableID ( ? )}";
         Object[] parameter = new Object[] { tableID };
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
         try {

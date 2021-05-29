@@ -30,7 +30,7 @@ public class AccountDAO {
 
     public boolean Login(String username, String password) {
         int count = 0;
-        String query = "{CALL USP_Login (? , ?)}";
+        String query = "{CALL USP_Login ( ? , ? )}";
         Object[] parameter = new Object[] { username, password };
         count = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
         return count > 0;
