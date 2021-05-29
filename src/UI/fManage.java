@@ -5,6 +5,7 @@ import javax.swing.border.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import DAO.*;
@@ -20,9 +21,10 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
     private DefaultTableModel modelTableBill, modelTableProduct;
     private JTable tableBill, tableProduct;
     private JLabel lbShowTime;
-    private JButton btnChuyenBan, btnLamMoi, btnThoat, btnSearch, btnTamTinh, btnThanhToan;
-    private JTextField txtMaHD, txtMaBan, txtThanhToan, txtSearchProduct;
-    private JComboBox<String> cboLoaiSP;
+    private JButton btnChuyenBan, btnRefresh, btnExit, btnSearch, btnTamTinh, btnTotalPrice, btnAdd, btnDelete;
+    private JTextField txtBillID, txtTableID, txtTotalPrice, txtSearchProduct;
+    private JComboBox<String> cboCategory;
+    private JSpinner spinCount;
 
     ImageIcon transferIcon = new ImageIcon("img/transfer_16.png");
     ImageIcon logOutIcon = new ImageIcon("img/logout_16.png");
@@ -31,8 +33,11 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
     ImageIcon searchIcon = new ImageIcon("img/search_16.png");
     ImageIcon coffeeActionIcon = new ImageIcon("img/coffee_32_action.png");
     ImageIcon coffeeDisableIcon = new ImageIcon("img/coffee_32_disable.png");
+    ImageIcon addIcon = new ImageIcon("img/blueAdd_16.png");
+    ImageIcon trashIcon = new ImageIcon("img/trash_16.png");
 
     int viTri = -1;
+
     public fManage() {
         setTitle("Phần Mềm Quản Lý Quán Cafe");
         setSize(1280, 700);
@@ -95,17 +100,17 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
         btnChuyenBan.setForeground(Color.decode("#1a66e3"));
         pnControlTable.add(btnChuyenBan);
 
-        btnLamMoi = new JButton("Làm mới", refreshIcon);
-        btnLamMoi.setBounds(12, 0, 142, 27);
-        btnLamMoi.setBackground(Color.decode("#d0e1fd"));
-        btnLamMoi.setForeground(Color.decode("#1a66e3"));
-        pnControlTable.add(btnLamMoi);
+        btnRefresh = new JButton("Làm mới", refreshIcon);
+        btnRefresh.setBounds(12, 0, 142, 27);
+        btnRefresh.setBackground(Color.decode("#d0e1fd"));
+        btnRefresh.setForeground(Color.decode("#1a66e3"));
+        pnControlTable.add(btnRefresh);
 
-        btnThoat = new JButton("Thoát", logOutIcon);
-        btnThoat.setBounds(166, 0, 142, 26);
-        btnThoat.setBackground(Color.decode("#d0e1fd"));
-        btnThoat.setForeground(Color.decode("#1a66e3"));
-        pnControlTable.add(btnThoat);
+        btnExit = new JButton("Thoát", logOutIcon);
+        btnExit.setBounds(166, 0, 142, 26);
+        btnExit.setBackground(Color.decode("#d0e1fd"));
+        btnExit.setForeground(Color.decode("#1a66e3"));
+        pnControlTable.add(btnExit);
 
         pnShowTable = new JPanel();
         pnShowTable.setBackground(Color.WHITE);
@@ -162,23 +167,25 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
         lbMaHD.setBounds(12, 16, 85, 20);
         pnBillInfo.add(lbMaHD);
 
-        txtMaHD = new JTextField();
-        txtMaHD.setEditable(false);
-        txtMaHD.setBounds(90, 16, 148, 20);
-        txtMaHD.setBackground(Color.WHITE);
-        pnBillInfo.add(txtMaHD);
-        txtMaHD.setColumns(10);
+        txtBillID = new JTextField();
+        txtBillID.setFont(new Font("Tahoma", Font.BOLD, 11));
+        txtBillID.setEditable(false);
+        txtBillID.setBounds(90, 16, 148, 20);
+        txtBillID.setBackground(Color.WHITE);
+        pnBillInfo.add(txtBillID);
+        txtBillID.setColumns(10);
 
         JLabel lblMaBan = new JLabel("Bàn số: ");
         lblMaBan.setBounds(256, 16, 57, 20);
         pnBillInfo.add(lblMaBan);
 
-        txtMaBan = new JTextField();
-        txtMaBan.setEditable(false);
-        txtMaBan.setBounds(331, 16, 130, 20);
-        txtMaBan.setBackground(Color.WHITE);
-        pnBillInfo.add(txtMaBan);
-        txtMaBan.setColumns(10);
+        txtTableID = new JTextField();
+        txtTableID.setFont(new Font("Tahoma", Font.BOLD, 11));
+        txtTableID.setEditable(false);
+        txtTableID.setBounds(331, 16, 130, 20);
+        txtTableID.setBackground(Color.WHITE);
+        pnBillInfo.add(txtTableID);
+        txtTableID.setColumns(10);
 
         JLabel lbTime = new JLabel("Thời gian: ");
         lbTime.setBounds(12, 53, 85, 16);
@@ -194,24 +201,25 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
         btnTamTinh.setForeground(Color.decode("#1a66e3"));
         pnBillInfo.add(btnTamTinh);
 
-        btnThanhToan = new JButton("Thanh toán", paymentIcon);
-        btnThanhToan.setBounds(331, 86, 130, 26);
-        btnThanhToan.setBackground(Color.decode("#d0e1fd"));
-        btnThanhToan.setForeground(Color.decode("#1a66e3"));
-        pnBillInfo.add(btnThanhToan);
+        btnTotalPrice = new JButton("Thanh toán", paymentIcon);
+        btnTotalPrice.setBounds(331, 86, 130, 26);
+        btnTotalPrice.setBackground(Color.decode("#d0e1fd"));
+        btnTotalPrice.setForeground(Color.decode("#1a66e3"));
+        pnBillInfo.add(btnTotalPrice);
 
         JLabel lblTongTien = new JLabel("Tổng tiền: ");
         lblTongTien.setBounds(12, 89, 85, 20);
         pnBillInfo.add(lblTongTien);
 
-        txtThanhToan = new JTextField();
-        txtThanhToan.setHorizontalAlignment(SwingConstants.RIGHT);
-        txtThanhToan.setText("0.0");
-        txtThanhToan.setEditable(false);
-        txtThanhToan.setBounds(90, 89, 148, 20);
-        txtThanhToan.setBackground(Color.WHITE);
-        pnBillInfo.add(txtThanhToan);
-        txtThanhToan.setColumns(10);
+        txtTotalPrice = new JTextField();
+        txtTotalPrice.setFont(new Font("Tahoma", Font.BOLD, 11));
+        txtTotalPrice.setHorizontalAlignment(SwingConstants.RIGHT);
+        txtTotalPrice.setText("0.0");
+        txtTotalPrice.setEditable(false);
+        txtTotalPrice.setBounds(90, 89, 148, 20);
+        txtTotalPrice.setBackground(Color.WHITE);
+        pnBillInfo.add(txtTotalPrice);
+        txtTotalPrice.setColumns(10);
 
         JLabel lbVND = new JLabel("(VND)");
         lbVND.setBounds(245, 89, 57, 20);
@@ -229,7 +237,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
         pnProduct.setLayout(new BorderLayout(0, 0));
 
         JPanel pnControlProduct = new JPanel();
-        pnControlProduct.setPreferredSize(new Dimension(445, 70));
+        pnControlProduct.setPreferredSize(new Dimension(445, 105));
         pnControlProduct.setBackground(Color.WHITE);
         pnProduct.add(pnControlProduct, BorderLayout.NORTH);
         pnControlProduct.setLayout(null);
@@ -253,10 +261,31 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
         lnLoaiSp.setBounds(12, 40, 100, 16);
         pnControlProduct.add(lnLoaiSp);
 
-        cboLoaiSP = new JComboBox<String>();
-        cboLoaiSP.setBounds(110, 38, 170, 20);
-        cboLoaiSP.setBackground(Color.WHITE);
-        pnControlProduct.add(cboLoaiSP);
+        cboCategory = new JComboBox<String>();
+        cboCategory.setBounds(110, 38, 170, 20);
+        cboCategory.setBackground(Color.WHITE);
+        pnControlProduct.add(cboCategory);
+
+        JLabel lbCount = new JLabel("Số lượng: ");
+        lbCount.setBounds(12, 67, 90, 16);
+        pnControlProduct.add(lbCount);
+
+        spinCount = new JSpinner();
+        spinCount.setModel(new SpinnerNumberModel(1, 1, null, 1));
+        spinCount.setBounds(110, 65, 170, 20);
+        pnControlProduct.add(spinCount);
+
+        btnAdd = new JButton("Thêm", addIcon);
+        btnAdd.setBackground(Color.decode("#d0e1fd"));
+        btnAdd.setForeground(Color.decode("#1a66e3"));
+        btnAdd.setBounds(292, 40, 131, 26);
+        pnControlProduct.add(btnAdd);
+
+        btnDelete = new JButton("Hủy", trashIcon);
+        btnDelete.setBackground(Color.decode("#d0e1fd"));
+        btnDelete.setForeground(Color.decode("#1a66e3"));
+        btnDelete.setBounds(292, 76, 131, 26);
+        pnControlProduct.add(btnDelete);
 
         JPanel pnProductList = new JPanel();
         pnProductList.setBackground(Color.WHITE);
@@ -280,18 +309,22 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
         pnProductList.add(scpProductList);
 
         btnChuyenBan.addActionListener(this);
-        btnLamMoi.addActionListener(this);
+        btnRefresh.addActionListener(this);
         btnSearch.addActionListener(this);
         btnTamTinh.addActionListener(this);
-        btnThanhToan.addActionListener(this);
-        btnThoat.addActionListener(this);
+        btnTotalPrice.addActionListener(this);
+        btnExit.addActionListener(this);
+        btnAdd.addActionListener(this);
+        btnDelete.addActionListener(this);
 
         btnChuyenBan.addMouseListener(this);
-        btnLamMoi.addMouseListener(this);
+        btnRefresh.addMouseListener(this);
         btnSearch.addMouseListener(this);
         btnTamTinh.addMouseListener(this);
-        btnThanhToan.addMouseListener(this);
-        btnThoat.addMouseListener(this);
+        btnTotalPrice.addMouseListener(this);
+        btnExit.addMouseListener(this);
+        btnAdd.addMouseListener(this);
+        btnDelete.addMouseListener(this);
 
         LoadTable();
         reSizeColumnTableBillInfo();
@@ -304,7 +337,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
-        if (o.equals(btnThoat)) {
+        if (o.equals(btnExit)) {
             fLogin f = new fLogin();
             this.setVisible(false);
             f.setVisible(true);
@@ -332,21 +365,24 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
         if (o.equals(btnChuyenBan)) {
             btnChuyenBan.setBackground(Color.decode("#a3c5fb"));
             btnChuyenBan.setForeground(Color.WHITE);
-        } else if (o.equals(btnLamMoi)) {
-            btnLamMoi.setBackground(Color.decode("#a3c5fb"));
-            btnLamMoi.setForeground(Color.WHITE);
+        } else if (o.equals(btnRefresh)) {
+            btnRefresh.setBackground(Color.decode("#a3c5fb"));
+            btnRefresh.setForeground(Color.WHITE);
         } else if (o.equals(btnSearch)) {
             btnSearch.setBackground(Color.decode("#a3c5fb"));
             btnSearch.setForeground(Color.WHITE);
         } else if (o.equals(btnTamTinh)) {
             btnTamTinh.setBackground(Color.decode("#a3c5fb"));
             btnTamTinh.setForeground(Color.WHITE);
-        } else if (o.equals(btnThanhToan)) {
-            btnThanhToan.setBackground(Color.decode("#a3c5fb"));
-            btnThanhToan.setForeground(Color.WHITE);
-        } else if (o.equals(btnThoat)) {
-            btnThoat.setBackground(Color.decode("#a3c5fb"));
-            btnThoat.setForeground(Color.WHITE);
+        } else if (o.equals(btnTotalPrice)) {
+            btnTotalPrice.setBackground(Color.decode("#a3c5fb"));
+            btnTotalPrice.setForeground(Color.WHITE);
+        } else if (o.equals(btnAdd)) {
+            btnAdd.setBackground(Color.decode("#a3c5fb"));
+            btnAdd.setForeground(Color.WHITE);
+        } else if (o.equals(btnDelete)) {
+            btnDelete.setBackground(Color.decode("#a3c5fb"));
+            btnDelete.setForeground(Color.WHITE);
         }
     }
 
@@ -356,21 +392,27 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
         if (o.equals(btnChuyenBan)) {
             btnChuyenBan.setBackground(Color.decode("#d0e1fd"));
             btnChuyenBan.setForeground(Color.decode("#1a66e3"));
-        } else if (o.equals(btnLamMoi)) {
-            btnLamMoi.setBackground(Color.decode("#d0e1fd"));
-            btnLamMoi.setForeground(Color.decode("#1a66e3"));
+        } else if (o.equals(btnRefresh)) {
+            btnRefresh.setBackground(Color.decode("#d0e1fd"));
+            btnRefresh.setForeground(Color.decode("#1a66e3"));
         } else if (o.equals(btnSearch)) {
             btnSearch.setBackground(Color.decode("#d0e1fd"));
             btnSearch.setForeground(Color.decode("#1a66e3"));
         } else if (o.equals(btnTamTinh)) {
             btnTamTinh.setBackground(Color.decode("#d0e1fd"));
             btnTamTinh.setForeground(Color.decode("#1a66e3"));
-        } else if (o.equals(btnThanhToan)) {
-            btnThanhToan.setBackground(Color.decode("#d0e1fd"));
-            btnThanhToan.setForeground(Color.decode("#1a66e3"));
-        } else if (o.equals(btnThoat)) {
-            btnThoat.setBackground(Color.decode("#d0e1fd"));
-            btnThoat.setForeground(Color.decode("#1a66e3"));
+        } else if (o.equals(btnTotalPrice)) {
+            btnTotalPrice.setBackground(Color.decode("#d0e1fd"));
+            btnTotalPrice.setForeground(Color.decode("#1a66e3"));
+        } else if (o.equals(btnExit)) {
+            btnExit.setBackground(Color.decode("#d0e1fd"));
+            btnExit.setForeground(Color.decode("#1a66e3"));
+        } else if (o.equals(btnAdd)) {
+            btnAdd.setBackground(Color.decode("#d0e1fd"));
+            btnAdd.setForeground(Color.decode("#1a66e3"));
+        } else if (o.equals(btnDelete)) {
+            btnDelete.setBackground(Color.decode("#d0e1fd"));
+            btnDelete.setForeground(Color.decode("#1a66e3"));
         }
     }
 
@@ -390,12 +432,12 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
     public void LoadTable() {
         Border lineBlue = new LineBorder(Color.RED, 2);
         Border lineGray = new LineBorder(Color.GRAY, 1);
-        ArrayList<Table> TableList = TableDAO.getInstance().getTableList();
-        int sizeTableList = TableList.size();
+        ArrayList<Table> tableList = TableDAO.getInstance().getTableList();
+        int sizeTableList = tableList.size();
         btnTableList = new JButton[sizeTableList];
         for (int i = 0; i < sizeTableList; i++) {
             final int selection = i;
-            Table item = TableList.get(i);
+            Table item = tableList.get(i);
             String name = item.getName();
             String status = item.getStatus();
             String nameBtn = "<html><p style='text-align: center;'>" + name + "</p></br><p style='text-align: center;'>"
@@ -422,8 +464,6 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
             btn.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    // int maPhong = item.getId();
-                    // showHoaDon(maPhong);
                     if (viTri != -1) {
                         btnTableList[viTri].setBorder(lineGray);
                     }
@@ -431,6 +471,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
                     btnTableList[selection].setBorder(lineBlue);
                     int idTable = item.getId();
                     showBill(idTable);
+                    txtTableID.setText(name);
                 }
             });
             btn.addMouseListener(new MouseAdapter() {
@@ -459,14 +500,20 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
 
     private void showBill(int idTable) {
         ArrayList<Menu> dataList = MenuDAO.getInstance().getListMenuByTableID(idTable);
+        DecimalFormat df = new DecimalFormat("#,###.##");
         int i = 1;
         modelTableBill.getDataVector().removeAllElements();
         modelTableBill.fireTableDataChanged();
-
+        double totalPrice = 0;
         for (Menu item : dataList) {
-            modelTableBill.addRow(
-                    new Object[] { i++, item.getProductName(), item.getPrice(), item.getCount(), item.getTotalPrice() });
+            totalPrice += item.getTotalPrice();
+            String stt = df.format(i++);
+            String totalPriceStr = df.format(item.getTotalPrice());
+            String priceStr = df.format(item.getPrice());
+            String countStr = df.format(item.getCount());
+            modelTableBill.addRow(new Object[] { stt, item.getProductName(), priceStr, countStr, totalPriceStr });
         }
+        txtTotalPrice.setText(df.format(totalPrice));
     }
 
     private void reSizeColumnTableBillInfo() {
