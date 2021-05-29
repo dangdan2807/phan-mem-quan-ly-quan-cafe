@@ -14,8 +14,8 @@ public class AccountDAO {
         return instance;
     }
 
-    public ArrayList<Account> getAccountList() {
-        String query = "{CALL USP_getAccountList}";
+    public ArrayList<Account> getListAccount() {
+        String query = "{CALL USP_getListAccount}";
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, null);
         ArrayList<Account> dataList = new ArrayList<Account>();
         try {

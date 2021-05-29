@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class BillInfo {
-    private int id, idBill, idProduct, count;
+    private int id, billID, productID, count;
 
     public int getId() {
         return id;
@@ -14,20 +14,20 @@ public class BillInfo {
         this.id = id;
     }
 
-    public int getIdBill() {
-        return idBill;
+    public int getBillID() {
+        return billID;
     }
 
-    public void setIdBill(int idBill) {
-        this.idBill = idBill;
+    public void setBillID(int billID) {
+        this.billID = billID;
     }
 
-    public int getIdProduct() {
-        return idProduct;
+    public int getProductID() {
+        return productID;
     }
 
-    public void setIdProduct(int idProduct) {
-        this.idProduct = idProduct;
+    public void setProductID(int productID) {
+        this.productID = productID;
     }
 
     public int getCount() {
@@ -38,10 +38,12 @@ public class BillInfo {
         this.count = count;
     }
 
-    public BillInfo(int id, int idBill, int idProduct, int count) {
+    
+
+    public BillInfo(int id, int billID, int productID, int count) {
         this.id = id;
-        this.idBill = idBill;
-        this.idProduct = idProduct;
+        this.billID = billID;
+        this.productID = productID;
         this.count = count;
     }
 

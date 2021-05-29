@@ -119,7 +119,6 @@ go
 INSERT INTO dbo.ProductCategory
     (name)
 VALUES
-    (N'Chưa phân nhóm'),
     (N'Nước uống đóng chai'),
     (N'Trà'),
     (N'Sinh Tố'),
@@ -206,7 +205,7 @@ GO
 
 -- EXEC UDP_Login N'admin', N'admin'
 
-CREATE PROC USP_getAccountList
+CREATE PROC USP_getListAccount
 AS
 BEGIN
     SELECT *
@@ -224,7 +223,7 @@ BEGIN
 END
 GO
 
-CREATE PROC USP_getTableList
+CREATE PROC USP_getListTable
 AS
 BEGIN
     SELECT *
@@ -253,7 +252,7 @@ BEGIN
 END
 GO
 
-CREATE PROC USP_getBillInfoListByTableID
+CREATE PROC USP_getListMenuByTableID
     @id INT
 AS
 BEGIN
@@ -261,5 +260,24 @@ BEGIN
     FROM dbo.BillInfo bi, dbo.Bill b, dbo.Product p
     WHERE bi.idBill = b.id AND bi.idProduct = p.id AND b.idTable = @id
         AND b.[status] = 0
+END
+GO
+
+CREATE PROC USP_getListCategory
+AS
+BEGIN
+    SELECT *
+    FROM dbo.ProductCategory
+END
+GO
+
+CREATE PROC USP_getListProductByCategoryName
+    @name NVARCHAR(100)
+AS
+BEGIN
+    SELECT p.id, p.name, p.idCategory, p.price
+    FROM dbo.Product p, dbo.ProductCategory pc
+        WHERE p.idCategory = pc.id
+        AND pc.name = @name
 END
 GO

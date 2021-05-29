@@ -16,8 +16,8 @@ public class TableDAO {
         return instance;
     }
 
-    public ArrayList<Table> getTableList() {
-        String query = "{CALL USP_getTableList}";
+    public ArrayList<Table> getListTable() {
+        String query = "{CALL USP_getListTable}";
         ArrayList<Table> dataList = new ArrayList<Table>();
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, null);
         try {

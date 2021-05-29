@@ -12,7 +12,7 @@ import DAO.*;
 import entity.*;
 import entity.Menu;
 
-public class fManage extends JFrame implements ActionListener, MouseListener {
+public class fManage extends JFrame implements ActionListener, MouseListener, ItemListener {
     JButton[] btnTableList;
     int pnShowTableWidth = 310;
     int heightPhong = 140;
@@ -326,8 +326,12 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
         btnAdd.addMouseListener(this);
         btnDelete.addMouseListener(this);
 
+        cboCategory.addItemListener(this);
+
         LoadTable();
         reSizeColumnTableBillInfo();
+        loadCategory();
+        reSizeColumnTableProduct();
     }
 
     public static void main(String[] args) {
@@ -416,6 +420,15 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
         }
     }
 
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        Object o = e.getSource();
+        if (o.equals(cboCategory)) {
+            String categoryName = cboCategory.getSelectedItem().toString();
+            loadProductListByCategoryName(categoryName);
+        }
+    }
+
     // mô tả: Bắt sự kiện khi click btn close(x), sẽ show 1 form xác nhận đăng xuất
     // hay thoát chương trình
     public void setCloseAction(JFrame jframe) {
@@ -432,7 +445,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
     public void LoadTable() {
         Border lineBlue = new LineBorder(Color.RED, 2);
         Border lineGray = new LineBorder(Color.GRAY, 1);
-        ArrayList<Table> tableList = TableDAO.getInstance().getTableList();
+        ArrayList<Table> tableList = TableDAO.getInstance().getListTable();
         int sizeTableList = tableList.size();
         btnTableList = new JButton[sizeTableList];
         for (int i = 0; i < sizeTableList; i++) {
@@ -469,9 +482,14 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
                     }
                     viTri = selection;
                     btnTableList[selection].setBorder(lineBlue);
-                    int idTable = item.getId();
-                    showBill(idTable);
+                    int tableID = item.getId();
+                    showBill(tableID);
                     txtTableID.setText(name);
+                    int billID = BillDAO.getInstance().getUncheckBillByTableID(tableID);
+                    if (billID != -1)
+                        txtBillID.setText(String.valueOf(billID));
+                    else
+                        txtBillID.setText("");
                 }
             });
             btn.addMouseListener(new MouseAdapter() {
@@ -516,11 +534,56 @@ public class fManage extends JFrame implements ActionListener, MouseListener {
         txtTotalPrice.setText(df.format(totalPrice));
     }
 
+    private void loadCategory() {
+        ArrayList<Category> dataList = CategoryDAO.getInstance().getListCategory();
+        for (Category item : dataList) {
+            cboCategory.addItem(item.getName());
+        }
+    }
+
+    private void loadProductListByCategoryName(String categoryName) {
+        ArrayList<Product> dataList = ProductDAO.getInstance().getListProductByCategoryName(categoryName);
+        DecimalFormat df = new DecimalFormat("#,###.##");
+        int i = 1;
+        modelTableProduct.getDataVector().removeAllElements();
+        modelTableProduct.fireTableDataChanged();
+        for (Product item : dataList) {
+            String stt = df.format(i++);
+            String priceStr = df.format(item.getPrice());
+            modelTableProduct.addRow(new Object[] { stt, item.getName(), priceStr });
+        }
+    }
+
     private void reSizeColumnTableBillInfo() {
         tableBill.getColumnModel().getColumn(0).setPreferredWidth(15);
         tableBill.getColumnModel().getColumn(1).setPreferredWidth(110);
         tableBill.getColumnModel().getColumn(2).setPreferredWidth(70);
-        tableBill.getColumnModel().getColumn(3).setPreferredWidth(50);
+        tableBill.getColumnModel().getColumn(3).setPreferredWidth(45);
         tableBill.getColumnModel().getColumn(4).setPreferredWidth(80);
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+
+        tableBill.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        tableBill.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+        tableBill.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        tableBill.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
     }
+
+    private void reSizeColumnTableProduct() {
+        tableProduct.getColumnModel().getColumn(0).setPreferredWidth(15);
+        tableProduct.getColumnModel().getColumn(1).setPreferredWidth(210);
+        tableProduct.getColumnModel().getColumn(2).setPreferredWidth(80);
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+
+        tableProduct.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        tableProduct.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+    }
+
 }

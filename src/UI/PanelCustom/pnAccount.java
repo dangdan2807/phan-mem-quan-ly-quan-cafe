@@ -178,7 +178,7 @@ public class pnAccount extends JFrame implements ActionListener, MouseListener {
     }
 
     private void loadAccountList() {
-        ArrayList<Account> dataList = accountList.getAccountList();
+        ArrayList<Account> dataList = accountList.getListAccount();
         for (Account account : dataList) {
             String type = "Nhân viên";
             if (account.getType() == 1)
