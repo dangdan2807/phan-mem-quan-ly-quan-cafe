@@ -347,13 +347,15 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
             fLogin f = new fLogin();
             this.setVisible(false);
             f.setVisible(true);
-        } else if (o.equals(btnAdd)) {
+        } else if (o.equals(btnAdd) || o.equals(btnDelete)) {
             int billID = -1;
             int tableID = -1;
             if (txtTableID.getText().trim().equals("")) {
                 JOptionPane.showMessageDialog(this, "Bạn cần phải chọn bàn trước");
             } else {
                 int count = (int) spinCount.getValue();
+                if(o.equals(btnDelete))
+                    count *= -1;
                 String productName = txtSearchProduct.getText().trim();
                 Product product = ProductDAO.getInstance().getProductByProductName(productName);
                 int productID = product.getId();
@@ -370,8 +372,6 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
                 }
                 showBill(tableID);
             }
-        } else if (o.equals(btnDelete)) {
-
         }
     }
 
