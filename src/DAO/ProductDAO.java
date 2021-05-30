@@ -42,4 +42,19 @@ public class ProductDAO {
         }
         return data;
     }
+
+    public ArrayList<Product> getListProductByProductName(String productName) {
+        ArrayList<Product> dataList = new ArrayList<Product>();
+        String query = "{CALL USP_getListProductByProductName ( ? )}";
+        Object[] parameter = new Object[] { productName };
+        ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
+        try {
+            while (rs.next()) {
+                dataList.add(new Product(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dataList;
+    }
 }

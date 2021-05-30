@@ -344,4 +344,14 @@ BEGIN
 END
 GO
 
-EXEC USP_getProductByProductName N'Aquafina'
+CREATE PROC USP_getListProductByProductName
+    @productName NVARCHAR(100)
+AS
+BEGIN   
+    DECLARE @name NVARCHAR(102) = N'%' + @productName + N'%'
+    SELECT p.id, p.idCategory, p.name, p.price
+    FROM dbo.product p, dbo.ProductCategory c
+    WHERE p.idCategory = c.id
+        AND p.name like @name
+END
+GO

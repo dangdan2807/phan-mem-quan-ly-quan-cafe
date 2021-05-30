@@ -21,8 +21,8 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
     private DefaultTableModel modelTableBill, modelTableProduct;
     private JTable tableBill, tableProduct;
     private JLabel lbShowTime;
-    private JButton btnChuyenBan, btnRefresh, btnExit, btnSearch, btnTamTinh, btnTotalPrice, btnAdd, btnDelete;
-    private JTextField txtBillID, txtTableID, txtTotalPrice, txtSearchProduct;
+    private JButton btnMoveTable, btnRefresh, btnExit, btnSearch, btnTamTinh, btnTotalPrice, btnAdd, btnDelete;
+    private JTextField txtBillID, txtTableID, txtTotalPrice, txtProductName;
     private JComboBox<String> cboCategory;
     private JSpinner spinCount;
 
@@ -94,11 +94,11 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         pnControlTable.setLayout(null);
         pnControlTable.setPreferredSize(new Dimension(330, 60));
 
-        btnChuyenBan = new JButton("Chuyển bàn", transferIcon);
-        btnChuyenBan.setBounds(12, 33, 296, 27);
-        btnChuyenBan.setBackground(Color.decode("#d0e1fd"));
-        btnChuyenBan.setForeground(Color.decode("#1a66e3"));
-        pnControlTable.add(btnChuyenBan);
+        btnMoveTable = new JButton("Chuyển bàn", transferIcon);
+        btnMoveTable.setBounds(12, 33, 296, 27);
+        btnMoveTable.setBackground(Color.decode("#d0e1fd"));
+        btnMoveTable.setForeground(Color.decode("#1a66e3"));
+        pnControlTable.add(btnMoveTable);
 
         btnRefresh = new JButton("Làm mới", refreshIcon);
         btnRefresh.setBounds(12, 0, 142, 27);
@@ -246,10 +246,10 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         lbNameProduct.setBounds(12, 12, 90, 16);
         pnControlProduct.add(lbNameProduct);
 
-        txtSearchProduct = new JTextField();
-        txtSearchProduct.setBounds(110, 10, 170, 20);
-        pnControlProduct.add(txtSearchProduct);
-        txtSearchProduct.setColumns(10);
+        txtProductName = new JTextField();
+        txtProductName.setBounds(110, 10, 170, 20);
+        pnControlProduct.add(txtProductName);
+        txtProductName.setColumns(10);
 
         btnSearch = new JButton("Tìm", searchIcon);
         btnSearch.setBounds(292, 7, 131, 26);
@@ -308,7 +308,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         scpProductList.getViewport().setBackground(Color.WHITE);
         pnProductList.add(scpProductList);
 
-        btnChuyenBan.addActionListener(this);
+        btnMoveTable.addActionListener(this);
         btnRefresh.addActionListener(this);
         btnSearch.addActionListener(this);
         btnTamTinh.addActionListener(this);
@@ -317,7 +317,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         btnAdd.addActionListener(this);
         btnDelete.addActionListener(this);
 
-        btnChuyenBan.addMouseListener(this);
+        btnMoveTable.addMouseListener(this);
         btnRefresh.addMouseListener(this);
         btnSearch.addMouseListener(this);
         btnTamTinh.addMouseListener(this);
@@ -354,9 +354,9 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
                 JOptionPane.showMessageDialog(this, "Bạn cần phải chọn bàn trước");
             } else {
                 int count = (int) spinCount.getValue();
-                if(o.equals(btnDelete))
+                if (o.equals(btnDelete))
                     count *= -1;
-                String productName = txtSearchProduct.getText().trim();
+                String productName = txtProductName.getText().trim();
                 Product product = ProductDAO.getInstance().getProductByProductName(productName);
                 int productID = product.getId();
                 if (!(txtBillID.getText().trim().equals("")))
@@ -372,6 +372,14 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
                 }
                 showBill(tableID);
             }
+        } else if (o.equals(btnSearch)) {
+            String productName = txtProductName.getText().trim();
+            if (productName.equals("")) {
+                JOptionPane.showMessageDialog(this, "Tên sản phẩm không được rỗng");
+            } else {
+                ArrayList<Product> productList = ProductDAO.getInstance().getListProductByProductName(productName);
+                loadProductListToTable(productList);
+            }
         }
     }
 
@@ -381,12 +389,12 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         if (o.equals(tableProduct)) {
             int row = tableProduct.getSelectedRow();
             String productName = modelTableProduct.getValueAt(row, 1).toString();
-            txtSearchProduct.setText(productName);
+            txtProductName.setText(productName);
             spinCount.setValue(1);
         } else if (o.equals(tableBill)) {
             int row = tableBill.getSelectedRow();
             String productName = modelTableBill.getValueAt(row, 1).toString();
-            txtSearchProduct.setText(productName);
+            txtProductName.setText(productName);
             int count = Integer.parseInt(modelTableBill.getValueAt(row, 3).toString());
             spinCount.setValue(count);
         }
@@ -405,9 +413,9 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
     @Override
     public void mouseEntered(MouseEvent e) {
         Object o = e.getSource();
-        if (o.equals(btnChuyenBan)) {
-            btnChuyenBan.setBackground(Color.decode("#a3c5fb"));
-            btnChuyenBan.setForeground(Color.WHITE);
+        if (o.equals(btnMoveTable)) {
+            btnMoveTable.setBackground(Color.decode("#a3c5fb"));
+            btnMoveTable.setForeground(Color.WHITE);
         } else if (o.equals(btnRefresh)) {
             btnRefresh.setBackground(Color.decode("#a3c5fb"));
             btnRefresh.setForeground(Color.WHITE);
@@ -432,9 +440,9 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
     @Override
     public void mouseExited(MouseEvent e) {
         Object o = e.getSource();
-        if (o.equals(btnChuyenBan)) {
-            btnChuyenBan.setBackground(Color.decode("#d0e1fd"));
-            btnChuyenBan.setForeground(Color.decode("#1a66e3"));
+        if (o.equals(btnMoveTable)) {
+            btnMoveTable.setBackground(Color.decode("#d0e1fd"));
+            btnMoveTable.setForeground(Color.decode("#1a66e3"));
         } else if (o.equals(btnRefresh)) {
             btnRefresh.setBackground(Color.decode("#d0e1fd"));
             btnRefresh.setForeground(Color.decode("#1a66e3"));
@@ -529,7 +537,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
                         txtBillID.setText(String.valueOf(billID));
                     else
                         txtBillID.setText("");
-                    txtSearchProduct.setText("");
+                    txtProductName.setText("");
                     spinCount.setValue(1);
                 }
             });
@@ -582,8 +590,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         }
     }
 
-    private void loadProductListByCategoryName(String categoryName) {
-        ArrayList<Product> dataList = ProductDAO.getInstance().getListProductByCategoryName(categoryName);
+    public void loadProductListToTable(ArrayList<Product> dataList) {
         DecimalFormat df = new DecimalFormat("#,###.##");
         int i = 1;
         modelTableProduct.getDataVector().removeAllElements();
@@ -593,6 +600,11 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
             String priceStr = df.format(item.getPrice());
             modelTableProduct.addRow(new Object[] { stt, item.getName(), priceStr });
         }
+    }
+
+    private void loadProductListByCategoryName(String categoryName) {
+        ArrayList<Product> dataList = ProductDAO.getInstance().getListProductByCategoryName(categoryName);
+        loadProductListToTable(dataList);
     }
 
     private void reSizeColumnTableBillInfo() {
