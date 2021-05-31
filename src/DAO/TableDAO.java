@@ -29,4 +29,19 @@ public class TableDAO {
         }
         return dataList;
     }
+
+    public Table getTableByTableID(int tableID) {
+        String query = "select * FROM dbo.TableFood t WHERE t.id = ?";
+        Object[] parameter = new Object[] { tableID };
+        ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
+        Table table = null;
+        try {
+            while (rs.next()) {
+                table = new Table(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return table;
+    }
 }

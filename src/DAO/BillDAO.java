@@ -47,10 +47,17 @@ public class BillDAO {
 
     public int getMaxIDBill() {
         try {
-            String query = "Select MAX(id) dbo.Bill";
-            return (int) DataProvider.getInstance().ExecuteScalar(query, null);
+            String query = "Select MAX(id) FROM dbo.Bill";
+            int data = (int) DataProvider.getInstance().ExecuteScalar(query, null);
+            return data;
         } catch (Exception e) {
             return 1;
         }
+    }
+
+    public void checkOut(int billID) {
+        String query = "UPDATE dbo.Bill SET Status = 1 WHERE id = ?";
+        Object[] param = new Object[] { billID };
+        DataProvider.getInstance().ExecuteNonQuery(query, param);
     }
 }

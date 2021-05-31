@@ -32,7 +32,14 @@ public class AccountDAO {
         int count = 0;
         String query = "{CALL USP_Login ( ? , ? )}";
         Object[] parameter = new Object[] { username, password };
-        count = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
+        ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
+        try {
+            rs.next();
+            count = rs.getRow();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return count > 0;
     }
 }

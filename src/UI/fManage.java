@@ -21,7 +21,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
     private DefaultTableModel modelTableBill, modelTableProduct;
     private JTable tableBill, tableProduct;
     private JLabel lbShowTime;
-    private JButton btnMoveTable, btnRefresh, btnExit, btnSearch, btnTamTinh, btnTotalPrice, btnAdd, btnDelete;
+    private JButton btnMoveTable, btnRefresh, btnExit, btnSearch, /* btnTamTinh, */ btnPayment, btnAdd, btnDelete;
     private JTextField txtBillID, txtTableID, txtTotalPrice, txtProductName;
     private JComboBox<String> cboCategory;
     private JSpinner spinCount;
@@ -195,17 +195,17 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         lbShowTime.setBounds(90, 53, 223, 16);
         pnBillInfo.add(lbShowTime);
 
-        btnTamTinh = new JButton("Tạm tính");
-        btnTamTinh.setBounds(331, 48, 130, 26);
-        btnTamTinh.setBackground(Color.decode("#d0e1fd"));
-        btnTamTinh.setForeground(Color.decode("#1a66e3"));
-        pnBillInfo.add(btnTamTinh);
+        // btnTamTinh = new JButton("Tạm tính");
+        // btnTamTinh.setBounds(331, 48, 130, 26);
+        // btnTamTinh.setBackground(Color.decode("#d0e1fd"));
+        // btnTamTinh.setForeground(Color.decode("#1a66e3"));
+        // pnBillInfo.add(btnTamTinh);
 
-        btnTotalPrice = new JButton("Thanh toán", paymentIcon);
-        btnTotalPrice.setBounds(331, 86, 130, 26);
-        btnTotalPrice.setBackground(Color.decode("#d0e1fd"));
-        btnTotalPrice.setForeground(Color.decode("#1a66e3"));
-        pnBillInfo.add(btnTotalPrice);
+        btnPayment = new JButton("Thanh toán", paymentIcon);
+        btnPayment.setBounds(331, 86, 130, 26);
+        btnPayment.setBackground(Color.decode("#d0e1fd"));
+        btnPayment.setForeground(Color.decode("#1a66e3"));
+        pnBillInfo.add(btnPayment);
 
         JLabel lblTongTien = new JLabel("Tổng tiền: ");
         lblTongTien.setBounds(12, 89, 85, 20);
@@ -311,8 +311,8 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         btnMoveTable.addActionListener(this);
         btnRefresh.addActionListener(this);
         btnSearch.addActionListener(this);
-        btnTamTinh.addActionListener(this);
-        btnTotalPrice.addActionListener(this);
+        // btnTamTinh.addActionListener(this);
+        btnPayment.addActionListener(this);
         btnExit.addActionListener(this);
         btnAdd.addActionListener(this);
         btnDelete.addActionListener(this);
@@ -320,8 +320,8 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         btnMoveTable.addMouseListener(this);
         btnRefresh.addMouseListener(this);
         btnSearch.addMouseListener(this);
-        btnTamTinh.addMouseListener(this);
-        btnTotalPrice.addMouseListener(this);
+        // btnTamTinh.addMouseListener(this);
+        btnPayment.addMouseListener(this);
         btnExit.addMouseListener(this);
         btnAdd.addMouseListener(this);
         btnDelete.addMouseListener(this);
@@ -330,7 +330,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
 
         cboCategory.addItemListener(this);
 
-        LoadTable();
+        LoadListTable();
         reSizeColumnTableBillInfo();
         loadCategory();
         reSizeColumnTableProduct();
@@ -348,10 +348,10 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
             this.setVisible(false);
             f.setVisible(true);
         } else if (o.equals(btnAdd) || o.equals(btnDelete)) {
-            int billID = -1;
-            int tableID = -1;
             if (txtTableID.getText().trim().equals("")) {
                 JOptionPane.showMessageDialog(this, "Bạn cần phải chọn bàn trước");
+            } else if (txtProductName.getText().trim().equals("")) {
+                JOptionPane.showMessageDialog(this, "Bạn cần phải chọn sản phẩm khách gọi");
             } else {
                 int count = (int) spinCount.getValue();
                 if (o.equals(btnDelete))
@@ -359,18 +359,20 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
                 String productName = txtProductName.getText().trim();
                 Product product = ProductDAO.getInstance().getProductByProductName(productName);
                 int productID = product.getId();
-                if (!(txtBillID.getText().trim().equals("")))
-                    billID = Integer.parseInt(txtBillID.getText());
-                tableID = Integer.parseInt(txtTableID.getText().trim().split(" ")[1]);
+                int tableID = Integer.parseInt(txtTableID.getText().trim().split(" ")[1]);
+                int billID = BillDAO.getInstance().getUncheckBillByTableID(tableID);
                 // create new bill
                 if (billID == -1) {
                     BillDAO.getInstance().insertBill(tableID);
                     billID = BillDAO.getInstance().getMaxIDBill();
+                    // create new bill info
                     BillInfoDAO.getInstance().insertBillInfo(billID, productID, count);
                 } else {
+                    // create new bill info
                     BillInfoDAO.getInstance().insertBillInfo(billID, productID, count);
                 }
                 showBill(tableID);
+                loadTable(tableID);
             }
         } else if (o.equals(btnSearch)) {
             String productName = txtProductName.getText().trim();
@@ -380,6 +382,29 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
                 ArrayList<Product> productList = ProductDAO.getInstance().getListProductByProductName(productName);
                 loadProductListToTable(productList);
             }
+        } else if (o.equals(btnPayment)) {
+            String tableName = txtTableID.getText().trim();
+            int tableID = Integer.parseInt(tableName.split(" ")[1]);
+            // c1
+            // String billText = txtBillID.getText().trim();
+            // int billID = Integer.parseInt(billText);
+            // c2
+            int billID = BillDAO.getInstance().getUncheckBillByTableID(tableID);
+            if (billID != -1) {
+                if (JOptionPane.showConfirmDialog(this, "Bạn có chắc thanh toán hóa đơn cho " + tableName,
+                        "Xác nhận thanh toán", JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.INFORMATION_MESSAGE) == JOptionPane.OK_OPTION) {
+                    BillDAO.getInstance().checkOut(billID);
+                    showBill(tableID);
+                    loadTable(tableID);
+                    txtBillID.setText(String.valueOf(billID));
+                }
+            }
+
+        } else if (o.equals(btnRefresh)) {
+
+        } else if (o.equals(btnMoveTable)) {
+
         }
     }
 
@@ -422,12 +447,12 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         } else if (o.equals(btnSearch)) {
             btnSearch.setBackground(Color.decode("#a3c5fb"));
             btnSearch.setForeground(Color.WHITE);
-        } else if (o.equals(btnTamTinh)) {
-            btnTamTinh.setBackground(Color.decode("#a3c5fb"));
-            btnTamTinh.setForeground(Color.WHITE);
-        } else if (o.equals(btnTotalPrice)) {
-            btnTotalPrice.setBackground(Color.decode("#a3c5fb"));
-            btnTotalPrice.setForeground(Color.WHITE);
+            // } else if (o.equals(btnTamTinh)) {
+            // btnTamTinh.setBackground(Color.decode("#a3c5fb"));
+            // btnTamTinh.setForeground(Color.WHITE);
+        } else if (o.equals(btnPayment)) {
+            btnPayment.setBackground(Color.decode("#a3c5fb"));
+            btnPayment.setForeground(Color.WHITE);
         } else if (o.equals(btnAdd)) {
             btnAdd.setBackground(Color.decode("#a3c5fb"));
             btnAdd.setForeground(Color.WHITE);
@@ -449,12 +474,12 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         } else if (o.equals(btnSearch)) {
             btnSearch.setBackground(Color.decode("#d0e1fd"));
             btnSearch.setForeground(Color.decode("#1a66e3"));
-        } else if (o.equals(btnTamTinh)) {
-            btnTamTinh.setBackground(Color.decode("#d0e1fd"));
-            btnTamTinh.setForeground(Color.decode("#1a66e3"));
-        } else if (o.equals(btnTotalPrice)) {
-            btnTotalPrice.setBackground(Color.decode("#d0e1fd"));
-            btnTotalPrice.setForeground(Color.decode("#1a66e3"));
+            // } else if (o.equals(btnTamTinh)) {
+            // btnTamTinh.setBackground(Color.decode("#d0e1fd"));
+            // btnTamTinh.setForeground(Color.decode("#1a66e3"));
+        } else if (o.equals(btnPayment)) {
+            btnPayment.setBackground(Color.decode("#d0e1fd"));
+            btnPayment.setForeground(Color.decode("#1a66e3"));
         } else if (o.equals(btnExit)) {
             btnExit.setBackground(Color.decode("#d0e1fd"));
             btnExit.setForeground(Color.decode("#1a66e3"));
@@ -489,7 +514,32 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         });
     }
 
-    public void LoadTable() {
+    private void loadTable(int tableID) {
+        Table table = TableDAO.getInstance().getTableByTableID(tableID);
+        String status = table.getStatus();
+        String nameBtn = "<html><p style='text-align: center;'>" + table.getName()
+                + "</p></br><p style='text-align: center;'>" + status + "</p></html>";
+        btnTableList[tableID - 1].setText(nameBtn);
+        btnTableList[tableID - 1].setVerticalTextPosition(SwingConstants.BOTTOM);
+        btnTableList[tableID - 1].setHorizontalTextPosition(SwingConstants.CENTER);
+        btnTableList[tableID - 1].setPreferredSize(new Dimension(TableDAO.TABLE_WIDTH, TableDAO.TABLE_HEIGHT));
+        switch (status) {
+            case "Trống":
+                btnTableList[tableID - 1].setBackground(Color.CYAN);
+                btnTableList[tableID - 1].setIcon(coffeeActionIcon);
+                btnPayment.setEnabled(false);
+                break;
+            default:
+                btnTableList[tableID - 1].setBackground(Color.decode("#E0FFFF"));
+                btnTableList[tableID - 1].setIcon(coffeeDisableIcon);
+                btnPayment.setEnabled(true);
+                break;
+        }
+        pnShowTable.revalidate();
+        pnShowTable.repaint();
+    }
+
+    private void LoadListTable() {
         Border lineBlue = new LineBorder(Color.RED, 2);
         Border lineGray = new LineBorder(Color.GRAY, 1);
         ArrayList<Table> tableList = TableDAO.getInstance().getListTable();
@@ -497,31 +547,16 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         btnTableList = new JButton[sizeTableList];
         for (int i = 0; i < sizeTableList; i++) {
             final int selection = i;
-            Table item = tableList.get(i);
-            String name = item.getName();
-            String status = item.getStatus();
-            String nameBtn = "<html><p style='text-align: center;'>" + name + "</p></br><p style='text-align: center;'>"
-                    + status + "</p></html>";
-            JButton btn = new JButton(nameBtn);
-            btn.setVerticalTextPosition(SwingConstants.BOTTOM);
-            btn.setHorizontalTextPosition(SwingConstants.CENTER);
-            btn.setPreferredSize(new Dimension(TableDAO.TABLE_WIDTH, TableDAO.TABLE_HEIGHT));
-            btn.setBorder(lineGray);
-            switch (status) {
-                case "Trống":
-                    btn.setBackground(Color.CYAN);
-                    btn.setIcon(coffeeActionIcon);
-                    break;
-                default:
-                    btn.setBackground(Color.decode("#E0FFFF"));
-                    btn.setIcon(coffeeDisableIcon);
-                    break;
-            }
+            Table table = tableList.get(i);
+            int tableID = table.getId();
+            btnTableList[selection] = new JButton("");
+            loadTable(tableID);
+            btnTableList[selection].setBorder(lineGray);
             if ((i + 1) % 3 == 0) {
                 heightPhong += TableDAO.TABLE_HEIGHT;
                 pnShowTable.setPreferredSize(new Dimension(pnShowTableWidth, heightPhong));
             }
-            btn.addActionListener(new ActionListener() {
+            btnTableList[selection].addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (viTri != -1) {
@@ -529,39 +564,48 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
                     }
                     viTri = selection;
                     btnTableList[selection].setBorder(lineBlue);
-                    int tableID = item.getId();
                     showBill(tableID);
-                    txtTableID.setText(name);
+                    txtTableID.setText(table.getName());
                     int billID = BillDAO.getInstance().getUncheckBillByTableID(tableID);
                     if (billID != -1)
                         txtBillID.setText(String.valueOf(billID));
                     else
                         txtBillID.setText("");
-                    txtProductName.setText("");
                     spinCount.setValue(1);
-                }
-            });
-            btn.addMouseListener(new MouseAdapter() {
-
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    btn.setBackground(Color.YELLOW);
-                }
-
-                @Override
-                public void mouseExited(MouseEvent e) {
+                    Table tableActiveE = TableDAO.getInstance().getTableByTableID(tableID);
+                    String status = tableActiveE.getStatus();
                     switch (status) {
                         case "Trống":
-                            btn.setBackground(Color.CYAN);
+                            btnPayment.setEnabled(false);
                             break;
                         default:
-                            btn.setBackground(Color.decode("#E0FFFF"));
+                            btnPayment.setEnabled(true);
                             break;
                     }
                 }
             });
-            btnTableList[i] = btn;
-            pnShowTable.add(btnTableList[i]);
+            btnTableList[selection].addMouseListener(new MouseAdapter() {
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    btnTableList[selection].setBackground(Color.YELLOW);
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    Table tableActiveE = TableDAO.getInstance().getTableByTableID(tableID);
+                    String status = tableActiveE.getStatus();
+                    switch (status) {
+                        case "Trống":
+                            btnTableList[selection].setBackground(Color.CYAN);
+                            break;
+                        default:
+                            btnTableList[selection].setBackground(Color.decode("#E0FFFF"));
+                            break;
+                    }
+                }
+            });
+            pnShowTable.add(btnTableList[selection]);
         }
     }
 
@@ -590,7 +634,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         }
     }
 
-    public void loadProductListToTable(ArrayList<Product> dataList) {
+    private void loadProductListToTable(ArrayList<Product> dataList) {
         DecimalFormat df = new DecimalFormat("#,###.##");
         int i = 1;
         modelTableProduct.getDataVector().removeAllElements();

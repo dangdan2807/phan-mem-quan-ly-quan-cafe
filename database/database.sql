@@ -1,8 +1,10 @@
-
 USE master
 GO
 
-create DATABASE QuanLyQuanCafe
+-- DROP DATABASE QuanLyQuanCafe
+-- GO
+
+CREATE DATABASE QuanLyQuanCafe
 GO
 
 USE QuanLyQuanCafe 
@@ -111,14 +113,10 @@ BEGIN
 END
 GO
 
-update dbo.TableFood
-set status = N'Có Người'
-WHERE id between 1 and 2
-go
-
 INSERT INTO dbo.ProductCategory
     (name)
 VALUES
+    (N'Cafe'),
     (N'Nước uống đóng chai'),
     (N'Trà'),
     (N'Sinh Tố'),
@@ -130,6 +128,17 @@ GO
 INSERT INTO dbo.Product
     (name, idCategory, Price)
 VALUES
+    (N'Cafe đá', 1, 18000),
+    (N'Cafe sữa', 1, 20000),
+    (N'Espresso', 1, 24000),
+    (N'Latte Macchiato', 1, 24000),
+    (N'Cappuccino', 1, 24000),
+    (N'Cafe Latte', 1, 24000),
+    (N'Cafe Mocha', 1, 24000),
+    (N'Americano', 1, 24000),
+    (N'Espresso Con Panna', 1, 24000),
+    (N'Cappuccino Viennese', 1, 24000),
+
     (N'Red bull', 2, 12000),
     (N'7-up', 2, 12000),
     (N'Aquafina', 2, 12000),
@@ -172,23 +181,6 @@ VALUES
 
     (N'Trà sữa matcha', 7, 2200),
     (N'Trà sữa việt quốc', 7, 2200)
-GO
-
-INSERT INTO dbo.Bill
-    (DateCheckIn, DateCheckOut, idTable, [status])
-VALUES
-    (getdate(), null, 1, 0),
-    (getdate(), null, 2, 0),
-    (getdate(), getdate(), 3, 1)
-GO
-
-INSERT INTO dbo.BillInfo 
-    (idBill, idProduct, [count])
-VALUES
-    (1, 12, 1),
-    (2, 3, 2),
-    (2, 5, 1),
-    (3, 26, 3)
 GO
 
 -- Store procedure
@@ -355,3 +347,52 @@ BEGIN
         AND p.name like @name
 END
 GO
+
+CREATE TRIGGER UTG_UpdateBillInfo
+ON dbo.BillInfo FOR INSERT, UPDATE
+AS
+    BEGIN
+    DECLARE @idBill INT, @idTable INT
+
+    SELECT @idBill = idBill
+    FROM inserted
+
+    SELECT @idTable = idTable
+    FROM dbo.Bill
+    WHERE id = @idBill
+        AND status = 0
+
+    UPDATE dbo.TableFood 
+        SET status = N'Có người'
+        WHERE id = @idTable
+END
+GO
+
+CREATE TRIGGER UTG_UpdateBill
+ON dbo.Bill FOR UPDATE
+AS
+    BEGIN
+    DECLARE @idTable INT, @idBill INT, @count INT
+    SELECT @idBill = id
+    FROM inserted
+
+    SELECT @idTable = idTable
+    FROM dbo.Bill
+    WHERE id = @idBill
+
+    SELECT @count = count(*)
+    FROM dbo.Bill
+    WHERE id = @idBill
+        AND status = 0
+
+    IF (@count = 0)
+        UPDATE dbo.TableFood 
+        SET status = N'Trống'
+        WHERE id = @idTable
+END
+GO
+
+-- Delete dbo.BillInfo
+-- Delete dbo.Bill
+
+-- EXEC USP_Login N'admin', N'admin'

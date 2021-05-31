@@ -38,7 +38,7 @@ public class DataProvider {
         return dataList;
     }
 
-    public int ExecuteNonQuery(String query, Object[] parameter) {
+    public int ExecuteNonQuery(String query, Object[] param) {
         int data = 0;
         CallableStatement stmt = null;
         Connection con = null;
@@ -46,12 +46,12 @@ public class DataProvider {
             db.connect();
             con = ConnectDB.getConnection();
             stmt = con.prepareCall(query);
-            if (parameter != null) {
+            if (param != null) {
                 String[] listParams = query.split(" ");
                 int i = 1;
                 for (String item : listParams) {
                     if (item.contains("?")) {
-                        stmt.setObject(i, parameter[i - 1]);
+                        stmt.setObject(i, param[i - 1]);
                         i++;
                     }
                 }
@@ -72,7 +72,7 @@ public class DataProvider {
     // dùng để đếm, ...
     // trả về cột đầu tiên của dùng đầu tiên của kết quả
     public Object ExecuteScalar(String query, Object[] parameter) {
-        Object data = "";
+        Object data = null;
         ResultSet rs = null;
         CallableStatement stmt = null;
         Connection con = null;
@@ -92,7 +92,7 @@ public class DataProvider {
             }
             rs = stmt.executeQuery();
             while (rs.next()) {
-                data = rs.getString(1);
+                data = rs.getObject(1);
             }
         } catch (SQLException e) {
             e.printStackTrace();
