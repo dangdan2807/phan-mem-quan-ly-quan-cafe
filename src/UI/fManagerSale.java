@@ -438,7 +438,8 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
             int tableID = table.getId();
             int discount = (int) spinDiscount.getValue();
             int billID = BillDAO.getInstance().getUncheckBillByTableID(tableID);
-            String totalPricePayment = txtPayment.getText();
+            String totalPricePayment = txtPayment.getText().trim();
+            double totalPrice = Double.parseDouble(totalPricePayment.replace(",", ""));
             if (billID != -1) {
                 String message = String.format(
                         "Bạn có chắc chắn thanh toán hóa đơn cho %s \nSố tiền khách hàng cần phải trả là: %s VND",
@@ -446,7 +447,7 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
                 int select = JOptionPane.showConfirmDialog(this, message, "Xác nhận thanh toán",
                         JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
                 if (select == JOptionPane.OK_OPTION) {
-                    BillDAO.getInstance().checkOut(billID, discount);
+                    BillDAO.getInstance().checkOut(billID, discount, totalPrice);
                     showBill(tableID);
                     loadTable(tableID);
                     txtBillID.setText(String.valueOf(billID));

@@ -69,6 +69,7 @@ CREATE TABLE Bill
     --  0. chưa thanh toán ||  1. đã thanh toán
     status INT NOT NULL DEFAULT(0),
     Discount INT DEFAULT(0),
+    totalPrice FLOAT DEFAULT(0),
 
     FOREIGN KEY (idTable) REFERENCES dbo.TableFood (id),
 )
@@ -451,4 +452,16 @@ BEGIN
 END 
 GO
 
-SELECT * FROM dbo.Bill
+CREATE PROC USP_getListBillByDate
+    @dateCheckIn DATE,
+    @dateCheckOut DATE
+AS
+    BEGIN
+        SELECT t.name, b.id, b.totalPrice, b.DateCheckIn, b.DateCheckOut, b.Discount
+        FROM dbo.Bill b, dbo.TableFood t
+        WHERE b.DateCheckIn >= @dateCheckIn
+            AND b.DateCheckOut <= @dateCheckOut 
+            AND b.[status] = 1
+            AND t.id = b.idTable
+    END
+GO
