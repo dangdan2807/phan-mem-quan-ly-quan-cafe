@@ -44,4 +44,25 @@ public class TableDAO {
         }
         return table;
     }
+
+    public Table getTableByTableName(String tableName) {
+        String query = "select * FROM dbo.TableFood t WHERE t.name = ?";
+        Object[] parameter = new Object[] { tableName };
+        ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
+        Table table = null;
+        try {
+            while (rs.next()) {
+                table = new Table(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return table;
+    }
+
+    public void switchTable(int tableID1, int tableID2) {
+        String query = "{CALL USP_SwitchTable( ? , ? )}";
+        Object[] parameter = new Object[] { tableID1, tableID2 };
+        DataProvider.getInstance().ExecuteNonQuery(query, parameter);
+    }
 }

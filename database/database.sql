@@ -363,8 +363,18 @@ AS
     WHERE id = @idBill
         AND status = 0
 
+    DECLARE @count INT
+    SELECT @count = count(*)
+    FROM dbo.BillInfo
+    WHERE idBill = @idBill
+
+    IF(@count > 0)
     UPDATE dbo.TableFood 
         SET status = N'Có người'
+        WHERE id = @idTable
+    ELSE
+    UPDATE dbo.TableFood 
+        SET status = N'Trống'
         WHERE id = @idTable
 END
 GO
@@ -374,6 +384,7 @@ ON dbo.Bill FOR UPDATE
 AS
     BEGIN
     DECLARE @idTable INT, @idBill INT, @count INT
+
     SELECT @idBill = id
     FROM inserted
 
@@ -391,4 +402,86 @@ AS
         SET status = N'Trống'
         WHERE id = @idTable
 END
+GO
+
+CREATE PROC USP_SwitchTable
+    @idTable1 INT,
+    @idTable2 INT
+AS
+BEGIN
+    DECLARE @idFirstBill INT
+    DECLARE @idSecondBill INT
+    DECLARE @isFirstTableEmpty INT = 1
+    DECLARE @isSecondTableEmpty INT = 1
+
+    SELECT @idSecondBill = id
+    FROM dbo.Bill
+    WHERE id = @idTable2 AND [status] = 0
+
+    SELECT @idFirstBill = id
+    FROM dbo.Bill
+    WHERE id = @idTable1 AND [status] = 0
+
+    IF(@idFirstBill IS NULL)
+    BEGIN
+        INSERT INTO dbo.Bill
+            (DateCheckIn, DateCheckOut, Status, idTable, discount)
+        VALUES
+            (getdate(), NULL, 0, @idTable1, 0)
+
+        SELECT @idFirstBill = MAX(id)
+        FROM dbo.Bill
+        WHERE idTable = @idTable1 AND [status] = 0
+        -- chưa xóa bill của bàn cũ
+    END
+
+    SELECT @isFirstTableEmpty = Count(*)
+    FROM dbo.BillInfo
+    WHERE idBill = @idFirstBill
+
+    IF(@idSecondBill IS NULL)
+    BEGIN
+        INSERT INTO dbo.Bill
+            (DateCheckIn, DateCheckOut, Status, idTable, discount)
+        VALUES
+            (getdate(), NULL, 0, @idTable2, 0)
+
+        SELECT @idSecondBill = MAX(id)
+        FROM dbo.Bill
+        WHERE idTable = @idTable2 AND [status] = 0
+        -- chưa xóa bill của bàn cũ
+    END
+
+    SELECT @isSecondTableEmpty = Count(*)
+    FROM dbo.BillInfo
+    WHERE idBill = @idSecondBill
+
+    SELECT id
+    INTO IDBillInfoTable
+    FROM dbo.BillInfo
+    WHERE idBill = @idSecondBill
+
+    UPDATE dbo.BillInfo 
+    SET idBill = @idSecondBill 
+    WHERE idBill = @idFirstBill
+
+    UPDATE dbo.BillInfo
+    SET idBill = @idFirstBill
+    WHERE id IN (
+        SELECT *
+        FROM dbo.IDBillInfoTable
+    )
+
+    DROP TABLE dbo.IDBillInfoTable
+
+    IF (@isFirstTableEmpty = 0) 
+        UPDATE dbo.TableFood 
+        SET status = N'Trống'
+        WHERE id = @idTable2
+
+    IF (@isSecondTableEmpty = 0) 
+        UPDATE dbo.TableFood 
+        SET status = N'Trống'
+        WHERE id = @idTable1
+END 
 GO

@@ -22,9 +22,9 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
     private DefaultTableModel modelTableBill, modelTableProduct;
     private JTable tableBill, tableProduct;
     private JLabel lbShowTime;
-    private JButton btnMoveTable, btnRefresh, btnExit, btnSearch, btnPayment, btnAdd, btnDelete;
-    private JTextField txtBillID, txtTableID, txtTotalPrice, txtProductName, txtPayment;
-    private JComboBox<String> cboCategory;
+    private JButton btnSwitchTable, btnRefresh, btnExit, btnSearch, btnPayment, btnAdd, btnDelete;
+    private JTextField txtBillID, txtTableName, txtTotalPrice, txtProductName, txtPayment;
+    private JComboBox<String> cboCategory, cboTableName;
     private JSpinner spinCount, spinDiscount;
 
     ImageIcon transferIcon = new ImageIcon("img/transfer_16.png");
@@ -96,23 +96,28 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         pnControlTable.setLayout(null);
         pnControlTable.setPreferredSize(new Dimension(330, 60));
 
-        btnMoveTable = new JButton("Chuyển - gộp bàn", transferIcon);
-        btnMoveTable.setBounds(12, 33, 296, 27);
-        btnMoveTable.setBackground(Color.decode("#d0e1fd"));
-        btnMoveTable.setForeground(Color.decode("#1a66e3"));
-        pnControlTable.add(btnMoveTable);
+        btnSwitchTable = new JButton("Chuyển - gộp bàn", transferIcon);
+        btnSwitchTable.setBounds(144, 33, 164, 27);
+        btnSwitchTable.setBackground(Color.decode("#d0e1fd"));
+        btnSwitchTable.setForeground(Color.decode("#1a66e3"));
+        pnControlTable.add(btnSwitchTable);
 
         btnRefresh = new JButton("Làm mới", refreshIcon);
-        btnRefresh.setBounds(12, 0, 142, 27);
+        btnRefresh.setBounds(12, 0, 120, 27);
         btnRefresh.setBackground(Color.decode("#d0e1fd"));
         btnRefresh.setForeground(Color.decode("#1a66e3"));
         pnControlTable.add(btnRefresh);
 
         btnExit = new JButton("Thoát", logOutIcon);
-        btnExit.setBounds(166, 0, 142, 26);
+        btnExit.setBounds(144, 0, 164, 26);
         btnExit.setBackground(Color.decode("#d0e1fd"));
         btnExit.setForeground(Color.decode("#1a66e3"));
         pnControlTable.add(btnExit);
+
+        cboTableName = new JComboBox<String>();
+        cboTableName.setBackground(Color.WHITE);
+        cboTableName.setBounds(12, 33, 120, 27);
+        pnControlTable.add(cboTableName);
 
         pnShowTable = new JPanel();
         pnShowTable.setBackground(Color.WHITE);
@@ -181,13 +186,13 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         lblMaBan.setBounds(256, 16, 57, 20);
         pnBillInfo.add(lblMaBan);
 
-        txtTableID = new JTextField();
-        txtTableID.setFont(new Font("Tahoma", Font.BOLD, 11));
-        txtTableID.setEditable(false);
-        txtTableID.setBounds(331, 16, 130, 20);
-        txtTableID.setBackground(Color.decode("#f9f9f9"));
-        pnBillInfo.add(txtTableID);
-        txtTableID.setColumns(10);
+        txtTableName = new JTextField();
+        txtTableName.setFont(new Font("Tahoma", Font.BOLD, 11));
+        txtTableName.setEditable(false);
+        txtTableName.setBounds(331, 16, 130, 20);
+        txtTableName.setBackground(Color.decode("#f9f9f9"));
+        pnBillInfo.add(txtTableName);
+        txtTableName.setColumns(10);
 
         JLabel lbTime = new JLabel("Thời gian: ");
         lbTime.setBounds(12, 53, 85, 16);
@@ -332,7 +337,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         scpProductList.getViewport().setBackground(Color.WHITE);
         pnProductList.add(scpProductList);
 
-        btnMoveTable.addActionListener(this);
+        btnSwitchTable.addActionListener(this);
         btnRefresh.addActionListener(this);
         btnSearch.addActionListener(this);
         btnPayment.addActionListener(this);
@@ -342,7 +347,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
 
         spinDiscount.addChangeListener(this);
 
-        btnMoveTable.addMouseListener(this);
+        btnSwitchTable.addMouseListener(this);
         btnRefresh.addMouseListener(this);
         btnSearch.addMouseListener(this);
         btnPayment.addMouseListener(this);
@@ -357,6 +362,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         LoadListTable();
         reSizeColumnTableBillInfo();
         loadCategory();
+        loadCboTable();
         reSizeColumnTableProduct();
     }
 
@@ -372,7 +378,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
             this.setVisible(false);
             f.setVisible(true);
         } else if (o.equals(btnAdd) || o.equals(btnDelete)) {
-            if (txtTableID.getText().trim().equals("")) {
+            if (txtTableName.getText().trim().equals("")) {
                 JOptionPane.showMessageDialog(this, "Bạn cần phải chọn bàn trước");
             } else if (txtProductName.getText().trim().equals("")) {
                 JOptionPane.showMessageDialog(this, "Bạn cần phải chọn sản phẩm khách gọi");
@@ -383,7 +389,9 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
                 String productName = txtProductName.getText().trim();
                 Product product = ProductDAO.getInstance().getProductByProductName(productName);
                 int productID = product.getId();
-                int tableID = Integer.parseInt(txtTableID.getText().trim().split(" ")[1]);
+                String tableName = txtTableName.getText().trim();
+                Table table = TableDAO.getInstance().getTableByTableName(tableName);
+                int tableID = table.getId();
                 int billID = BillDAO.getInstance().getUncheckBillByTableID(tableID);
                 // create new bill
                 if (billID == -1) {
@@ -407,15 +415,16 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
                 loadProductListToTable(productList);
             }
         } else if (o.equals(btnPayment)) {
-            String tableName = txtTableID.getText().trim();
-            int tableID = Integer.parseInt(tableName.split(" ")[1]);
+            String tableName = txtTableName.getText().trim();
+            Table table = TableDAO.getInstance().getTableByTableName(tableName);
+            int tableID = table.getId();
             int discount = (int) spinDiscount.getValue();
             int billID = BillDAO.getInstance().getUncheckBillByTableID(tableID);
             String totalPricePayment = txtPayment.getText();
             if (billID != -1) {
                 String message = String.format(
-                        "Bạn có chắc thanh toán hóa đơn cho %s \nSố tiền khách hàng cần phải trả là: %s VND", tableName,
-                        totalPricePayment);
+                        "Bạn có chắc chắn thanh toán hóa đơn cho %s \nSố tiền khách hàng cần phải trả là: %s VND",
+                        tableName, totalPricePayment);
                 int select = JOptionPane.showConfirmDialog(this, message, "Xác nhận thanh toán",
                         JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
                 if (select == JOptionPane.OK_OPTION) {
@@ -423,15 +432,29 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
                     showBill(tableID);
                     loadTable(tableID);
                     txtBillID.setText(String.valueOf(billID));
+                    // btnPayment.setEnabled(false);
                 }
             }
 
         } else if (o.equals(btnRefresh)) {
+            LoadListTable();
+        } else if (o.equals(btnSwitchTable)) {
+            String tableName1 = txtTableName.getText().trim();
+            Table table1 = TableDAO.getInstance().getTableByTableName(tableName1);
+            int tableID1 = table1.getId();
 
-        } else if (o.equals(btnMoveTable)) {
+            String tableName2 = cboTableName.getSelectedItem().toString().trim();
+            Table table2 = TableDAO.getInstance().getTableByTableName(tableName2);
+            int tableID2 = table2.getId();
 
-        } else if (o.equals(spinDiscount)) {
-
+            String message = String.format("Bạn có chắc chắn muốn chuyển từ bàn %d qua bàn %d", tableID1, tableID2);
+            int select = JOptionPane.showConfirmDialog(this, message, "Xác nhận chuyển bàn",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+            if (select == JOptionPane.OK_OPTION) {
+                TableDAO.getInstance().switchTable(tableID1, tableID2);
+                loadTable(tableID1);
+                loadTable(tableID2);
+            }
         }
     }
 
@@ -465,9 +488,9 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
     @Override
     public void mouseEntered(MouseEvent e) {
         Object o = e.getSource();
-        if (o.equals(btnMoveTable)) {
-            btnMoveTable.setBackground(Color.decode("#a3c5fb"));
-            btnMoveTable.setForeground(Color.WHITE);
+        if (o.equals(btnSwitchTable)) {
+            btnSwitchTable.setBackground(Color.decode("#a3c5fb"));
+            btnSwitchTable.setForeground(Color.WHITE);
         } else if (o.equals(btnRefresh)) {
             btnRefresh.setBackground(Color.decode("#a3c5fb"));
             btnRefresh.setForeground(Color.WHITE);
@@ -489,9 +512,9 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
     @Override
     public void mouseExited(MouseEvent e) {
         Object o = e.getSource();
-        if (o.equals(btnMoveTable)) {
-            btnMoveTable.setBackground(Color.decode("#d0e1fd"));
-            btnMoveTable.setForeground(Color.decode("#1a66e3"));
+        if (o.equals(btnSwitchTable)) {
+            btnSwitchTable.setBackground(Color.decode("#d0e1fd"));
+            btnSwitchTable.setForeground(Color.decode("#1a66e3"));
         } else if (o.equals(btnRefresh)) {
             btnRefresh.setBackground(Color.decode("#d0e1fd"));
             btnRefresh.setForeground(Color.decode("#1a66e3"));
@@ -552,6 +575,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         String status = table.getStatus();
         String nameBtn = "<html><p style='text-align: center;'>" + table.getName()
                 + "</p></br><p style='text-align: center;'>" + status + "</p></html>";
+        // warning - tương lai sẽ lỗi nếu xóa và thêm bàn (vì id tự tăng)
         btnTableList[tableID - 1].setText(nameBtn);
         btnTableList[tableID - 1].setVerticalTextPosition(SwingConstants.BOTTOM);
         btnTableList[tableID - 1].setHorizontalTextPosition(SwingConstants.CENTER);
@@ -572,6 +596,10 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
     }
 
     private void LoadListTable() {
+        heightPhong = 140;
+        pnShowTable.removeAll();
+        pnShowTable.revalidate();
+        pnShowTable.repaint();
         Border lineBlue = new LineBorder(Color.RED, 2);
         Border lineGray = new LineBorder(Color.GRAY, 1);
         ArrayList<Table> tableList = TableDAO.getInstance().getListTable();
@@ -597,7 +625,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
                     viTri = selection;
                     btnTableList[selection].setBorder(lineBlue);
                     showBill(tableID);
-                    txtTableID.setText(table.getName());
+                    txtTableName.setText(table.getName());
                     int billID = BillDAO.getInstance().getUncheckBillByTableID(tableID);
                     if (billID != -1)
                         txtBillID.setText(String.valueOf(billID));
@@ -640,6 +668,13 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
                 }
             });
             pnShowTable.add(btnTableList[selection]);
+        }
+    }
+
+    private void loadCboTable() {
+        ArrayList<Table> tableList = TableDAO.getInstance().getListTable();
+        for (Table table : tableList) {
+            cboTableName.addItem(table.getName());
         }
     }
 
@@ -719,5 +754,4 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         tableProduct.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
         tableProduct.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
     }
-
 }
