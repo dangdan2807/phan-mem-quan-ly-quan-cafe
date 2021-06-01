@@ -5,6 +5,7 @@
 package UI.PanelCustom;
 import javax.swing.*;
 import java.awt.event.*;
+import java.awt.*;
 import java.text.*;
 import java.sql.Date;
 
@@ -12,6 +13,7 @@ public class kDatePicker extends JPanel implements ActionListener {
     private JTextField txt;
     private JButton btn;
     private int widthDefault = 150;
+    private int heightDefault = 20;
     DialogDatePicker f = new DialogDatePicker();
     ImageIcon calenderIcon = new ImageIcon("data/images/calender_16.png");
 
@@ -24,21 +26,23 @@ public class kDatePicker extends JPanel implements ActionListener {
         createGUI();
     }
 
-    public kDatePicker(int width) {
+    public kDatePicker(int width, int height) {
         setLayout(null);
-        setBounds(0, 0, width, 20);
+        setBounds(0, 0, width, height);
         widthDefault = width;
+        heightDefault = height;
         createGUI();
     }
 
     private void createGUI() {
         txt = new JTextField();
-        txt.setBounds(0, 0, widthDefault - 30, 20);
+        txt.setBounds(0, 0, widthDefault - 30, heightDefault);
         txt.setEditable(false);
         txt.setText(DialogDatePicker.getToDay());
+        txt.setBackground(Color.decode("#f9f9f9"));
 
         btn = new JButton(calenderIcon);
-        btn.setBounds(widthDefault - 30, 0, 30, 20);
+        btn.setBounds(widthDefault - 30, 0, 30, heightDefault);
 
         this.add(txt);
         this.add(btn);

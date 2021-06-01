@@ -15,7 +15,7 @@ public class AccountDAO {
     }
 
     public ArrayList<Account> getListAccount() {
-        String query = "{CALL USP_getListAccount}";
+        String query = "SELECT * FROM dbo.Account";
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, null);
         ArrayList<Account> dataList = new ArrayList<Account>();
         try {

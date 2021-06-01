@@ -101,11 +101,13 @@ public class fPageNavigation extends JFrame implements ActionListener, MouseList
             this.setVisible(false);
             f.setVisible(true);
         } else if (o.equals(btnQLBanHang)) {
-            fManage f = new fManage();
+            fManagerSale f = new fManagerSale();
             this.setVisible(false);
             f.setVisible(true);
         } else if (o.equals(btnQLHeThong)) {
-
+            fAdmin f = new fAdmin();
+            this.setVisible(false);
+            f.setVisible(true);
         }
     }
 

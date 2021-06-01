@@ -6,31 +6,32 @@ import UI.PanelCustom.*;
 
 import java.awt.event.*;
 
-public class fAdmin extends JDialog implements ActionListener, MouseListener {
+public class fAdmin extends JFrame implements ActionListener, MouseListener {
     private JTabbedPane tpTabMain;
-    int widthPn = 770, heightPn = 500;
+    // private ImageIcon userIcon = new ImageIcon("img/user_16.png");
 
     public fAdmin() {
-        setTitle("Quản lý");
-        setSize(widthPn, heightPn);
+        setTitle("Quản lý Hệ Thống");
+        setSize(1280, 700);
         setResizable(false);
         setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         createTabControl();
     }
 
     public void createTabControl() {
         tpTabMain = new JTabbedPane();
-        pnProduct pnMonAn = new pnProduct();
-        pnDoanhThu pnDoanhThu = new pnDoanhThu();
-        Category pnDanhMuc = new Category();
-        pnTable pnBan = new pnTable();
-        pnAccount pnTaiKhoan = new pnAccount();
-        tpTabMain.addTab("Doanh thu", null, pnDoanhThu, "Quản lý doanh thu");
-        tpTabMain.addTab("Món ăn", null, pnMonAn, "Quản lý món ăn");
-        tpTabMain.addTab("Danh Mục", null, pnDanhMuc, "Quản lý danh mục");
-        tpTabMain.addTab("Bàn", null, pnBan, "Quản lý bàn");
-        tpTabMain.addTab("Tài Khoản", null, pnTaiKhoan, "Quản lý tài khoản");
+        pnRevenue pnRevenue = new pnRevenue();
+        // pnProduct pnProduct = new pnProduct();
+        // pnCategory pnCategory = new pnCategory();
+        // pnTable pnTable = new pnTable();
+        // pnAccount pnAccount = new pnAccount();
+        tpTabMain.addTab("Doanh thu", null, pnRevenue, "Quản lý doanh thu");
+        // tpTabMain.addTab("Sản phẩm", null, pnProduct, "Quản lý sản phẩm");
+        // tpTabMain.addTab("Loại sản phẩm", null, pnCategory, "Quản lý loại sản phẩm");
+        // tpTabMain.addTab("Bàn", null, pnTable, "Quản lý bàn");
+        // tpTabMain.addTab("Tài Khoản", userIcon, pnAccount, "Quản lý tài khoản");
         getContentPane().add(tpTabMain);
     }
 

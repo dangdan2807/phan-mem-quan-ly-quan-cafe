@@ -18,7 +18,7 @@ public class BillInfoDAO {
     public ArrayList<BillInfo> getListBillInfo(int idBill) {
         ArrayList<BillInfo> dataList = new ArrayList<BillInfo>();
         Object[] parameter = new Object[] { idBill };
-        String query = "{CALL USP_getListBillInfo ( ? )}";
+        String query = "SELECT * FROM dbo.BillInfo bi WHERE bi.id = ?";
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
         try {
             while (rs.next()) {

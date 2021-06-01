@@ -13,7 +13,7 @@ import DAO.*;
 import entity.*;
 import entity.Menu;
 
-public class fManage extends JFrame implements ActionListener, MouseListener, ItemListener, ChangeListener {
+public class fManagerSale extends JFrame implements ActionListener, MouseListener, ItemListener, ChangeListener {
     JButton[] btnTableList;
     int pnShowTableWidth = 310;
     int heightPhong = 140;
@@ -39,8 +39,11 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
     ImageIcon billIcon = new ImageIcon("img/bill_16.png");
 
     int viTri = -1;
+    private JMenuBar menuBar;
+    private JMenuItem itemThongTinTK;
+    private JMenuItem itemDangXuat;
 
-    public fManage() {
+    public fManagerSale() {
         setTitle("Phần Mềm Quản Lý Quán Cafe");
         setSize(1280, 700);
         setResizable(false);
@@ -54,6 +57,20 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
     }
 
     public void createMenuBar() {
+        menuBar = new JMenuBar();
+        this.setJMenuBar(menuBar);
+
+        JMenu menuTK = new JMenu("Tài khoản");
+        itemThongTinTK = new JMenuItem("Thông tin tài khoản");
+        itemDangXuat = new JMenuItem("Đăng xuất");
+
+        menuTK.add(itemThongTinTK);
+        menuTK.add(itemDangXuat);
+
+        menuBar.add(menuTK);
+
+        itemDangXuat.addActionListener(this);
+        itemThongTinTK.addActionListener(this);
     }
 
     public void createFromQLKS() {
@@ -86,7 +103,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         JPanel pnTableList = new JPanel();
         pnTableList.setBackground(Color.WHITE);
         pnTableList.setBorder(new TitledBorder(null, "Bàn", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        pnTableList.setBounds(0, 80, 330, 581);
+        pnTableList.setBounds(0, 80, 330, 557);
         pnMain.add(pnTableList);
         pnTableList.setLayout(new BorderLayout(0, 0));
 
@@ -136,7 +153,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
 
         JPanel pnBill = new JPanel();
         pnBill.setBackground(Color.WHITE);
-        pnBill.setBounds(330, 40, 488, 622);
+        pnBill.setBounds(330, 40, 488, 597);
 
         JPanel pnBillInfo = new JPanel();
         pnBillInfo.setBackground(Color.WHITE);
@@ -261,7 +278,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         pnProduct.setBackground(Color.WHITE);
         pnProduct.setBorder(
                 new TitledBorder(null, "Thông tin sản phẩm", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        pnProduct.setBounds(819, 40, 445, 622);
+        pnProduct.setBounds(819, 40, 445, 597);
         pnMain.add(pnProduct);
         pnProduct.setLayout(new BorderLayout(0, 0));
 
@@ -367,14 +384,14 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
     }
 
     public static void main(String[] args) {
-        new fManage().setVisible(true);
+        new fManagerSale().setVisible(true);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
         if (o.equals(btnExit)) {
-            fLogin f = new fLogin();
+            fPageNavigation f = new fPageNavigation();
             this.setVisible(false);
             f.setVisible(true);
         } else if (o.equals(btnAdd) || o.equals(btnDelete)) {
@@ -405,6 +422,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
                 }
                 showBill(tableID);
                 loadTable(tableID);
+                btnPayment.setEnabled(true);
             }
         } else if (o.equals(btnSearch)) {
             String productName = txtProductName.getText().trim();
@@ -455,6 +473,14 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
                 loadTable(tableID1);
                 loadTable(tableID2);
             }
+        } else if (o.equals(itemThongTinTK)) {
+            fAccountProfile f = new fAccountProfile();
+            f.setModal(true);
+            f.setVisible(true);
+        } else if (o.equals(itemDangXuat)) {
+            fLogin f = new fLogin();
+            this.setVisible(false);
+            f.setVisible(true);
         }
     }
 

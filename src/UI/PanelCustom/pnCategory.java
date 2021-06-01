@@ -6,7 +6,7 @@ import javax.swing.table.*;
 import java.awt.event.*;
 import java.awt.BorderLayout;
 
-public class Category extends JPanel implements ActionListener, MouseListener {
+public class pnCategory extends JPanel implements ActionListener, MouseListener {
     int widthPn = 770, heightPn = 500;
     private JPanel pnMain;
     private DefaultTableModel modelTable;
@@ -14,7 +14,7 @@ public class Category extends JPanel implements ActionListener, MouseListener {
     private JButton btnThem, btnXoa, btnXoaTrang, btnSua, btnXem;
     private JTextField txtMa, txtTen;
 
-    public Category() {
+    public pnCategory() {
         setSize(760, 440);
         setLayout(new BorderLayout(0, 0));
 

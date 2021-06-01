@@ -197,15 +197,6 @@ END
 GO
 
 -- EXEC UDP_Login N'admin', N'admin'
-
-CREATE PROC USP_getListAccount
-AS
-BEGIN
-    SELECT *
-    FROM dbo.Account
-END
-GO
-
 CREATE PROC USP_getAccountByUsername
     @username NVARCHAR(100)
 AS
@@ -213,14 +204,6 @@ BEGIN
     SELECT *
     FROM dbo.Account tk
     WHERE tk.userName = @username
-END
-GO
-
-CREATE PROC USP_getListTable
-AS
-BEGIN
-    SELECT *
-    FROM dbo.TableFood
 END
 GO
 
@@ -235,16 +218,6 @@ BEGIN
 END
 GO
 
-CREATE PROC USP_getListBillInfo
-    @id INT
-AS
-BEGIN
-    SELECT *
-    FROM dbo.BillInfo bi
-    WHERE bi.id =  @id
-END
-GO
-
 CREATE PROC USP_getListMenuByTableID
     @id INT
 AS
@@ -253,14 +226,6 @@ BEGIN
     FROM dbo.BillInfo bi, dbo.Bill b, dbo.Product p
     WHERE bi.idBill = b.id AND bi.idProduct = p.id AND b.idTable = @id
         AND b.[status] = 0
-END
-GO
-
-CREATE PROC USP_getListCategory
-AS
-BEGIN
-    SELECT *
-    FROM dbo.ProductCategory
 END
 GO
 
@@ -485,3 +450,5 @@ BEGIN
         WHERE id = @idTable1
 END 
 GO
+
+SELECT * FROM dbo.Bill

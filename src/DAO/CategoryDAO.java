@@ -16,7 +16,7 @@ public class CategoryDAO {
 
     public ArrayList<Category> getListCategory() {
         ArrayList<Category> dataList = new ArrayList<Category>();
-        String query = "{CALL USP_getListCategory}";
+        String query = "SELECT * FROM dbo.ProductCategory";
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, null);
         try {
             while (rs.next()) {

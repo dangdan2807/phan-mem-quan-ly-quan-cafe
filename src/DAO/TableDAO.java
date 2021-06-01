@@ -17,7 +17,7 @@ public class TableDAO {
     }
 
     public ArrayList<Table> getListTable() {
-        String query = "{CALL USP_getListTable}";
+        String query = "SELECT * FROM dbo.TableFood";
         ArrayList<Table> dataList = new ArrayList<Table>();
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, null);
         try {

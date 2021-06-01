@@ -56,7 +56,7 @@ public class BillDAO {
     }
 
     public void checkOut(int billID, int discount) {
-        String query = "UPDATE dbo.Bill SET Status = 1, discount = ? WHERE id = ?";
+        String query = "UPDATE dbo.Bill SET Status = 1, DateCheckOut = GETDATE(), discount = ? WHERE id = ?";
         Object[] param = new Object[] { discount, billID };
         DataProvider.getInstance().ExecuteNonQuery(query, param);
     }
