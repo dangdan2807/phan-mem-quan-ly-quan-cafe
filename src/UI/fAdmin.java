@@ -21,10 +21,10 @@ public class fAdmin extends JDialog implements ActionListener, MouseListener {
 
     public void createTabControl() {
         tpTabMain = new JTabbedPane();
-        pnMonAn pnMonAn = new pnMonAn();
+        pnProduct pnMonAn = new pnProduct();
         pnDoanhThu pnDoanhThu = new pnDoanhThu();
-        pnDanhMuc pnDanhMuc = new pnDanhMuc();
-        pnBan pnBan = new pnBan();
+        Category pnDanhMuc = new Category();
+        pnTable pnBan = new pnTable();
         pnAccount pnTaiKhoan = new pnAccount();
         tpTabMain.addTab("Doanh thu", null, pnDoanhThu, "Quản lý doanh thu");
         tpTabMain.addTab("Món ăn", null, pnMonAn, "Quản lý món ăn");

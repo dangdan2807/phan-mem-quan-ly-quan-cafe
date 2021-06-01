@@ -68,6 +68,7 @@ CREATE TABLE Bill
     DateCheckOut DATETIME,
     --  0. chưa thanh toán ||  1. đã thanh toán
     status INT NOT NULL DEFAULT(0),
+    Discount INT DEFAULT(0),
 
     FOREIGN KEY (idTable) REFERENCES dbo.TableFood (id),
 )
@@ -179,8 +180,8 @@ VALUES
     (N'Trân châu trắng', 6, 7000),
     (N'Trân châu đen', 6, 7000),
 
-    (N'Trà sữa matcha', 7, 2200),
-    (N'Trà sữa việt quốc', 7, 2200)
+    (N'Trà sữa matcha', 7, 22000),
+    (N'Trà sữa việt quốc', 7, 22000)
 GO
 
 -- Store procedure
@@ -279,9 +280,9 @@ CREATE PROC USP_insertBill
 AS
 BEGIN
     INSERT INTO dbo.Bill
-        (DateCheckIn, DateCheckOut, idTable, [status])
+        (DateCheckIn, DateCheckOut, idTable, [status], discount)
     VALUES
-        (getdate(), NULL, @idTable, 0)
+        (getdate(), NULL, @idTable, 0, 0)
 END
 GO
 
@@ -391,8 +392,3 @@ AS
         WHERE id = @idTable
 END
 GO
-
--- Delete dbo.BillInfo
--- Delete dbo.Bill
-
--- EXEC USP_Login N'admin', N'admin'

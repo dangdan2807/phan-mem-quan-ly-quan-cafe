@@ -7,7 +7,7 @@ import javax.swing.table.*;
 import java.awt.event.*;
 import java.awt.BorderLayout;
 
-public class pnMonAn extends JPanel implements ActionListener, MouseListener{
+public class pnProduct extends JPanel implements ActionListener, MouseListener{
     int widthPn = 770, heightPn = 500;
     private JPanel pnMain;
     private DefaultTableModel modelTable;
@@ -16,7 +16,7 @@ public class pnMonAn extends JPanel implements ActionListener, MouseListener{
     private JTextField txtTim, txtMa, txtTen, txtDonGia;
     private JComboBox<String> cboLoaiMon;
 
-    public pnMonAn() {
+    public pnProduct() {
         setSize(760, 440);
         setLayout(new BorderLayout(0, 0));
 

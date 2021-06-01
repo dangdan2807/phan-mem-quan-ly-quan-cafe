@@ -55,9 +55,9 @@ public class BillDAO {
         }
     }
 
-    public void checkOut(int billID) {
-        String query = "UPDATE dbo.Bill SET Status = 1 WHERE id = ?";
-        Object[] param = new Object[] { billID };
+    public void checkOut(int billID, int discount) {
+        String query = "UPDATE dbo.Bill SET Status = 1, discount = ? WHERE id = ?";
+        Object[] param = new Object[] { discount, billID };
         DataProvider.getInstance().ExecuteNonQuery(query, param);
     }
 }

@@ -2,6 +2,7 @@ package UI;
 
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.event.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -12,7 +13,7 @@ import DAO.*;
 import entity.*;
 import entity.Menu;
 
-public class fManage extends JFrame implements ActionListener, MouseListener, ItemListener {
+public class fManage extends JFrame implements ActionListener, MouseListener, ItemListener, ChangeListener {
     JButton[] btnTableList;
     int pnShowTableWidth = 310;
     int heightPhong = 140;
@@ -21,10 +22,10 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
     private DefaultTableModel modelTableBill, modelTableProduct;
     private JTable tableBill, tableProduct;
     private JLabel lbShowTime;
-    private JButton btnMoveTable, btnRefresh, btnExit, btnSearch, /* btnTamTinh, */ btnPayment, btnAdd, btnDelete;
-    private JTextField txtBillID, txtTableID, txtTotalPrice, txtProductName;
+    private JButton btnMoveTable, btnRefresh, btnExit, btnSearch, btnPayment, btnAdd, btnDelete;
+    private JTextField txtBillID, txtTableID, txtTotalPrice, txtProductName, txtPayment;
     private JComboBox<String> cboCategory;
-    private JSpinner spinCount;
+    private JSpinner spinCount, spinDiscount;
 
     ImageIcon transferIcon = new ImageIcon("img/transfer_16.png");
     ImageIcon logOutIcon = new ImageIcon("img/logout_16.png");
@@ -35,6 +36,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
     ImageIcon coffeeDisableIcon = new ImageIcon("img/coffee_32_disable.png");
     ImageIcon addIcon = new ImageIcon("img/blueAdd_16.png");
     ImageIcon trashIcon = new ImageIcon("img/trash_16.png");
+    ImageIcon billIcon = new ImageIcon("img/bill_16.png");
 
     int viTri = -1;
 
@@ -94,7 +96,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         pnControlTable.setLayout(null);
         pnControlTable.setPreferredSize(new Dimension(330, 60));
 
-        btnMoveTable = new JButton("Chuyển bàn", transferIcon);
+        btnMoveTable = new JButton("Chuyển - gộp bàn", transferIcon);
         btnMoveTable.setBounds(12, 33, 296, 27);
         btnMoveTable.setBackground(Color.decode("#d0e1fd"));
         btnMoveTable.setForeground(Color.decode("#1a66e3"));
@@ -136,7 +138,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         pnBillInfo.setBorder(
                 new TitledBorder(null, "Thông tin hóa đơn", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         pnBillInfo.setLayout(null);
-        pnBillInfo.setPreferredSize(new Dimension(488, 120));
+        pnBillInfo.setPreferredSize(new Dimension(488, 155));
 
         JPanel pnBillList = new JPanel();
         pnBillList.setBackground(Color.WHITE);
@@ -171,7 +173,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         txtBillID.setFont(new Font("Tahoma", Font.BOLD, 11));
         txtBillID.setEditable(false);
         txtBillID.setBounds(90, 16, 148, 20);
-        txtBillID.setBackground(Color.WHITE);
+        txtBillID.setBackground(Color.decode("#f9f9f9"));
         pnBillInfo.add(txtBillID);
         txtBillID.setColumns(10);
 
@@ -183,7 +185,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         txtTableID.setFont(new Font("Tahoma", Font.BOLD, 11));
         txtTableID.setEditable(false);
         txtTableID.setBounds(331, 16, 130, 20);
-        txtTableID.setBackground(Color.WHITE);
+        txtTableID.setBackground(Color.decode("#f9f9f9"));
         pnBillInfo.add(txtTableID);
         txtTableID.setColumns(10);
 
@@ -192,17 +194,11 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         pnBillInfo.add(lbTime);
 
         lbShowTime = new JLabel("dd/MM/yyyy HH:mm:ss");
-        lbShowTime.setBounds(90, 53, 223, 16);
+        lbShowTime.setBounds(90, 53, 148, 16);
         pnBillInfo.add(lbShowTime);
 
-        // btnTamTinh = new JButton("Tạm tính");
-        // btnTamTinh.setBounds(331, 48, 130, 26);
-        // btnTamTinh.setBackground(Color.decode("#d0e1fd"));
-        // btnTamTinh.setForeground(Color.decode("#1a66e3"));
-        // pnBillInfo.add(btnTamTinh);
-
         btnPayment = new JButton("Thanh toán", paymentIcon);
-        btnPayment.setBounds(331, 86, 130, 26);
+        btnPayment.setBounds(296, 116, 165, 26);
         btnPayment.setBackground(Color.decode("#d0e1fd"));
         btnPayment.setForeground(Color.decode("#1a66e3"));
         pnBillInfo.add(btnPayment);
@@ -217,13 +213,41 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         txtTotalPrice.setText("0.0");
         txtTotalPrice.setEditable(false);
         txtTotalPrice.setBounds(90, 89, 148, 20);
-        txtTotalPrice.setBackground(Color.WHITE);
+        txtTotalPrice.setBackground(Color.decode("#f9f9f9"));
         pnBillInfo.add(txtTotalPrice);
         txtTotalPrice.setColumns(10);
 
         JLabel lbVND = new JLabel("(VND)");
-        lbVND.setBounds(245, 89, 57, 20);
+        lbVND.setBounds(240, 88, 57, 20);
         pnBillInfo.add(lbVND);
+
+        JLabel lbDiscount = new JLabel("Giảm giá: ");
+        lbDiscount.setBounds(256, 53, 77, 16);
+        pnBillInfo.add(lbDiscount);
+
+        spinDiscount = new JSpinner();
+        spinDiscount.setModel(new SpinnerNumberModel(0, 0, null, 1));
+        spinDiscount.setBounds(331, 48, 130, 20);
+        pnBillInfo.add(spinDiscount);
+
+        JLabel lblPayment = new JLabel("KH cần trả: ");
+        lblPayment.setBounds(12, 121, 85, 16);
+        pnBillInfo.add(lblPayment);
+
+        txtPayment = new JTextField();
+        txtPayment.setText("0.0");
+        txtPayment.setHorizontalAlignment(SwingConstants.RIGHT);
+        txtPayment.setFont(new Font("Tahoma", Font.BOLD, 11));
+        txtPayment.setEditable(false);
+        txtPayment.setColumns(10);
+        txtPayment.setBackground(Color.decode("#f9f9f9"));
+        txtPayment.setBounds(90, 119, 148, 20);
+        pnBillInfo.add(txtPayment);
+
+        JLabel lbVND_1 = new JLabel("(VND)");
+        lbVND_1.setBounds(240, 121, 57, 20);
+        pnBillInfo.add(lbVND_1);
+
         pnBill.add(pnBillList);
         pnMain.add(pnBill);
         getContentPane().add(pnMain);
@@ -311,16 +335,16 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         btnMoveTable.addActionListener(this);
         btnRefresh.addActionListener(this);
         btnSearch.addActionListener(this);
-        // btnTamTinh.addActionListener(this);
         btnPayment.addActionListener(this);
         btnExit.addActionListener(this);
         btnAdd.addActionListener(this);
         btnDelete.addActionListener(this);
 
+        spinDiscount.addChangeListener(this);
+
         btnMoveTable.addMouseListener(this);
         btnRefresh.addMouseListener(this);
         btnSearch.addMouseListener(this);
-        // btnTamTinh.addMouseListener(this);
         btnPayment.addMouseListener(this);
         btnExit.addMouseListener(this);
         btnAdd.addMouseListener(this);
@@ -385,16 +409,17 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         } else if (o.equals(btnPayment)) {
             String tableName = txtTableID.getText().trim();
             int tableID = Integer.parseInt(tableName.split(" ")[1]);
-            // c1
-            // String billText = txtBillID.getText().trim();
-            // int billID = Integer.parseInt(billText);
-            // c2
+            int discount = (int) spinDiscount.getValue();
             int billID = BillDAO.getInstance().getUncheckBillByTableID(tableID);
+            String totalPricePayment = txtPayment.getText();
             if (billID != -1) {
-                if (JOptionPane.showConfirmDialog(this, "Bạn có chắc thanh toán hóa đơn cho " + tableName,
-                        "Xác nhận thanh toán", JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.INFORMATION_MESSAGE) == JOptionPane.OK_OPTION) {
-                    BillDAO.getInstance().checkOut(billID);
+                String message = String.format(
+                        "Bạn có chắc thanh toán hóa đơn cho %s \nSố tiền khách hàng cần phải trả là: %s VND", tableName,
+                        totalPricePayment);
+                int select = JOptionPane.showConfirmDialog(this, message, "Xác nhận thanh toán",
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+                if (select == JOptionPane.OK_OPTION) {
+                    BillDAO.getInstance().checkOut(billID, discount);
                     showBill(tableID);
                     loadTable(tableID);
                     txtBillID.setText(String.valueOf(billID));
@@ -404,6 +429,8 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         } else if (o.equals(btnRefresh)) {
 
         } else if (o.equals(btnMoveTable)) {
+
+        } else if (o.equals(spinDiscount)) {
 
         }
     }
@@ -447,9 +474,6 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         } else if (o.equals(btnSearch)) {
             btnSearch.setBackground(Color.decode("#a3c5fb"));
             btnSearch.setForeground(Color.WHITE);
-            // } else if (o.equals(btnTamTinh)) {
-            // btnTamTinh.setBackground(Color.decode("#a3c5fb"));
-            // btnTamTinh.setForeground(Color.WHITE);
         } else if (o.equals(btnPayment)) {
             btnPayment.setBackground(Color.decode("#a3c5fb"));
             btnPayment.setForeground(Color.WHITE);
@@ -474,9 +498,6 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         } else if (o.equals(btnSearch)) {
             btnSearch.setBackground(Color.decode("#d0e1fd"));
             btnSearch.setForeground(Color.decode("#1a66e3"));
-            // } else if (o.equals(btnTamTinh)) {
-            // btnTamTinh.setBackground(Color.decode("#d0e1fd"));
-            // btnTamTinh.setForeground(Color.decode("#1a66e3"));
         } else if (o.equals(btnPayment)) {
             btnPayment.setBackground(Color.decode("#d0e1fd"));
             btnPayment.setForeground(Color.decode("#1a66e3"));
@@ -498,6 +519,18 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         if (o.equals(cboCategory)) {
             String categoryName = cboCategory.getSelectedItem().toString();
             loadProductListByCategoryName(categoryName);
+        }
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        Object o = e.getSource();
+        if (o.equals(spinDiscount)) {
+            int discount = (int) spinDiscount.getValue();
+            double totalPrice = Double.parseDouble(txtTotalPrice.getText().replace(",", ""));
+            double totalPricePayment = totalPrice - (totalPrice / 100) * discount;
+            DecimalFormat df = new DecimalFormat("#,###.##");
+            txtPayment.setText(df.format(totalPricePayment));
         }
     }
 
@@ -532,7 +565,6 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
             default:
                 btnTableList[tableID - 1].setBackground(Color.decode("#E0FFFF"));
                 btnTableList[tableID - 1].setIcon(coffeeDisableIcon);
-                btnPayment.setEnabled(true);
                 break;
         }
         pnShowTable.revalidate();
@@ -577,9 +609,11 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
                     switch (status) {
                         case "Trống":
                             btnPayment.setEnabled(false);
+                            // btnTempBill.setEnabled(false);
                             break;
                         default:
                             btnPayment.setEnabled(true);
+                            // btnTempBill.setEnabled(true);
                             break;
                     }
                 }
@@ -616,6 +650,7 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
         modelTableBill.getDataVector().removeAllElements();
         modelTableBill.fireTableDataChanged();
         double totalPrice = 0;
+        int discount = (int) spinDiscount.getValue();
         for (Menu item : dataList) {
             totalPrice += item.getTotalPrice();
             String stt = df.format(i++);
@@ -625,6 +660,8 @@ public class fManage extends JFrame implements ActionListener, MouseListener, It
             modelTableBill.addRow(new Object[] { stt, item.getProductName(), priceStr, countStr, totalPriceStr });
         }
         txtTotalPrice.setText(df.format(totalPrice));
+        totalPrice = totalPrice - (totalPrice / 100) * discount;
+        txtPayment.setText(df.format(totalPrice));
     }
 
     private void loadCategory() {
