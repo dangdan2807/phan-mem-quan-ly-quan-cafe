@@ -14,13 +14,13 @@ public class DataProvider {
     }
 
     public ResultSet ExecuteQuery(String query, Object[] parameter) {
-        CallableStatement stmt = null;
+        PreparedStatement stmt = null;
         ResultSet dataList = null;
         Connection con = null;
         try {
             db.connect();
             con = ConnectDB.getConnection();
-            stmt = con.prepareCall(query);
+            stmt = con.prepareStatement(query);
             if (parameter != null) {
                 String[] listParams = query.split(" ");
                 int i = 1;
@@ -40,12 +40,12 @@ public class DataProvider {
 
     public int ExecuteNonQuery(String query, Object[] param) {
         int data = 0;
-        CallableStatement stmt = null;
+        PreparedStatement stmt = null;
         Connection con = null;
         try {
             db.connect();
             con = ConnectDB.getConnection();
-            stmt = con.prepareCall(query);
+            stmt = con.prepareStatement(query);
             if (param != null) {
                 String[] listParams = query.split(" ");
                 int i = 1;
@@ -74,12 +74,12 @@ public class DataProvider {
     public Object ExecuteScalar(String query, Object[] parameter) {
         Object data = null;
         ResultSet rs = null;
-        CallableStatement stmt = null;
+        PreparedStatement stmt = null;
         Connection con = null;
         try {
             db.connect();
             con = ConnectDB.getConnection();
-            stmt = con.prepareCall(query);
+            stmt = con.prepareStatement(query);
             if (parameter != null) {
                 String[] listParams = query.split(" ");
                 int i = 1;

@@ -55,4 +55,11 @@ public class AccountDAO {
         }
         return account;
     }
+
+    public boolean updateAccount(String username, String displayName, String password, String newPassword) {
+        String query = "{CALL UPS_updateAccount ( ? , ? , ? , ? )}";
+        Object[] parameter = new Object[] { username, displayName, password, newPassword };
+        int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
+        return result > 0;
+    }
 }

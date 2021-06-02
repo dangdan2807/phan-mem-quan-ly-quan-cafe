@@ -14,9 +14,9 @@ import entity.*;
 import entity.Menu;
 
 public class fManagerSale extends JFrame implements ActionListener, MouseListener, ItemListener, ChangeListener {
-    JButton[] btnTableList;
-    int pnShowTableWidth = 310;
-    int heightPhong = 140;
+    private JButton[] btnTableList;
+    private int pnShowTableWidth = 310;
+    private int heightPhong = 140;
 
     private JPanel pnMain, pnShowTable;
     private DefaultTableModel modelTableBill, modelTableProduct;
@@ -29,19 +29,18 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
     private JMenuBar menuBar;
     private JMenuItem itemThongTinTK, itemDangXuat;
 
-    ImageIcon transferIcon = new ImageIcon("img/transfer_16.png");
-    ImageIcon logOutIcon = new ImageIcon("img/logout_16.png");
-    ImageIcon refreshIcon = new ImageIcon("img/refresh_16.png");
-    ImageIcon paymentIcon = new ImageIcon("img/payment_16.png");
-    ImageIcon searchIcon = new ImageIcon("img/search_16.png");
-    ImageIcon coffeeActionIcon = new ImageIcon("img/coffee_32_action.png");
-    ImageIcon coffeeDisableIcon = new ImageIcon("img/coffee_32_disable.png");
-    ImageIcon addIcon = new ImageIcon("img/blueAdd_16.png");
-    ImageIcon trashIcon = new ImageIcon("img/trash_16.png");
-    ImageIcon billIcon = new ImageIcon("img/bill_16.png");
+    private ImageIcon transferIcon = new ImageIcon("img/transfer_16.png");
+    private ImageIcon logOutIcon = new ImageIcon("img/logout_16.png");
+    private ImageIcon refreshIcon = new ImageIcon("img/refresh_16.png");
+    private ImageIcon paymentIcon = new ImageIcon("img/payment_16.png");
+    private ImageIcon searchIcon = new ImageIcon("img/search_16.png");
+    private ImageIcon coffeeActionIcon = new ImageIcon("img/coffee_32_action.png");
+    private ImageIcon coffeeDisableIcon = new ImageIcon("img/coffee_32_disable.png");
+    private ImageIcon addIcon = new ImageIcon("img/blueAdd_16.png");
+    private ImageIcon trashIcon = new ImageIcon("img/trash_16.png");
 
-    int viTri = -1;
-    Account loginAccount = null;
+    private int viTri = -1;
+    private Account loginAccount = null;
 
     public fManagerSale(Account account) {
         setTitle("Phần Mềm Quản Lý Quán Cafe");
@@ -476,11 +475,9 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
                 loadTable(tableID2);
             }
         } else if (o.equals(itemThongTinTK)) {
-            fAccountProfile f = new fAccountProfile(loginAccount);
+            fAccountProfile f = new fAccountProfile(this, loginAccount);
             f.setModal(true);
             f.setVisible(true);
-            loginAccount = AccountDAO.getInstance().getAccountByUsername(loginAccount.getUsername());
-            changeAccount(loginAccount);
         } else if (o.equals(itemDangXuat)) {
             fLogin f = new fLogin();
             this.setVisible(false);
@@ -536,6 +533,9 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
         } else if (o.equals(btnDelete)) {
             btnDelete.setBackground(Color.decode("#a3c5fb"));
             btnDelete.setForeground(Color.WHITE);
+        } else if (o.equals(btnExit)) {
+            btnExit.setBackground(Color.decode("#a3c5fb"));
+            btnExit.setForeground(Color.WHITE);
         }
     }
 
@@ -755,6 +755,10 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
 
     private void changeAccount(Account account) {
         lbEmpName.setText(account.getDisplayName());
+    }
+    
+    public void setEmpName(String empName) {
+        lbEmpName.setText(empName);
     }
 
     private void reSizeColumnTableBillInfo() {

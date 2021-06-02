@@ -465,3 +465,36 @@ AS
             AND t.id = b.idTable
     END
 GO
+
+CREATE PROC UPS_updateAccount
+    @username NVARCHAR(100),
+    @displayName NVARCHAR(100),
+    @password NVARCHAR(100),
+    @newPassword NVARCHAR(100)
+AS
+BEGIN
+    DECLARE @isRightsPass INT
+    SELECT @isRightsPass = count(*)
+    FROM dbo.Account a
+    WHERE a.Username = @username
+        AND a.Password = @password
+
+    IF(@isRightsPass = 1)
+        BEGIN
+        IF(@newPassword IS NULL OR @newPassword = '')
+        BEGIN
+            UPDATE dbo.Account
+                SET DisplayName = @DisplayName
+                WHERE username = @username
+        END
+        
+        ELSE
+        BEGIN
+            UPDATE dbo.Account
+                SET DisplayName = @DisplayName,
+                    [PassWord] = @PassWord
+                WHERE username = @username
+        END
+    END
+END
+GO
