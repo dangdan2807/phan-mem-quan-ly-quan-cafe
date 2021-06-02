@@ -84,6 +84,16 @@ public class pnRevenue extends JPanel implements ActionListener {
         pnTableRevenue.setBounds(10, 25, 1250, 600);
 
         btnThongKe.addActionListener(this);
+        reSizeColumnTable();
+        Date dateCheckIn = null;
+        Date dateCheckOut = null;
+        try {
+            dateCheckIn = dpTuNgay.getFullDate();
+            dateCheckOut = dpDenNgay.getFullDate();
+        } catch (ParseException e1) {
+            e1.printStackTrace();
+        }
+        loadListBillByDate(dateCheckIn, dateCheckOut);
     }
 
     @Override
@@ -107,7 +117,7 @@ public class pnRevenue extends JPanel implements ActionListener {
         modelTable.fireTableDataChanged();
         ResultSet rs = BillDAO.getInstance().getBillListByDate(dateCheckIn, dateCheckOut);
         DecimalFormat df = new DecimalFormat("#,###.##");
-        int i = 0;
+        int i = 1;
         try {
             while (rs.next()) {
                 String billID = String.valueOf(rs.getInt("id"));
@@ -118,7 +128,6 @@ public class pnRevenue extends JPanel implements ActionListener {
                 int discount = rs.getInt("discount");
                 String stt = df.format(i++);
                 modelTable.addRow(new Object[] { stt, billID, name, checkIn, checkOut, discount, totalPrice });
-                ++i;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -130,5 +139,27 @@ public class pnRevenue extends JPanel implements ActionListener {
             return "Chưa cập nhật";
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         return sdf.format(date);
+    }
+
+    private void reSizeColumnTable() {
+        table.getColumnModel().getColumn(0).setPreferredWidth(20);
+        table.getColumnModel().getColumn(1).setPreferredWidth(50);
+        table.getColumnModel().getColumn(2).setPreferredWidth(250);
+        table.getColumnModel().getColumn(3).setPreferredWidth(100);
+        table.getColumnModel().getColumn(4).setPreferredWidth(100);
+        table.getColumnModel().getColumn(5).setPreferredWidth(100);
+        table.getColumnModel().getColumn(6).setPreferredWidth(100);
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+
+        table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
+        table.getColumnModel().getColumn(6).setCellRenderer(rightRenderer);
     }
 }

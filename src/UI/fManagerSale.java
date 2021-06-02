@@ -21,11 +21,13 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
     private JPanel pnMain, pnShowTable;
     private DefaultTableModel modelTableBill, modelTableProduct;
     private JTable tableBill, tableProduct;
-    private JLabel lbShowTime;
+    private JLabel lbShowTime, lbEmpName;
     private JButton btnSwitchTable, btnRefresh, btnExit, btnSearch, btnPayment, btnAdd, btnDelete;
     private JTextField txtBillID, txtTableName, txtTotalPrice, txtProductName, txtPayment;
     private JComboBox<String> cboCategory, cboTableName;
     private JSpinner spinCount, spinDiscount;
+    private JMenuBar menuBar;
+    private JMenuItem itemThongTinTK, itemDangXuat;
 
     ImageIcon transferIcon = new ImageIcon("img/transfer_16.png");
     ImageIcon logOutIcon = new ImageIcon("img/logout_16.png");
@@ -39,18 +41,15 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
     ImageIcon billIcon = new ImageIcon("img/bill_16.png");
 
     int viTri = -1;
-    private JMenuBar menuBar;
-    private JMenuItem itemThongTinTK;
-    private JMenuItem itemDangXuat;
+    Account loginAccount = null;
 
-    public fManagerSale() {
+    public fManagerSale(Account account) {
         setTitle("Phần Mềm Quản Lý Quán Cafe");
         setSize(1280, 700);
         setResizable(false);
         setLocationRelativeTo(null);
-        // setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-
+        this.loginAccount = account;
         createMenuBar();
         createFromQLKS();
         // setCloseAction(this);
@@ -95,10 +94,10 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
         pnMain.add(pnNameEmp);
         pnNameEmp.setLayout(null);
 
-        JLabel lbTenNV = new JLabel("name");
-        lbTenNV.setBounds(12, 12, 306, 21);
-        pnNameEmp.add(lbTenNV);
-        lbTenNV.setFont(new Font("Dialog", Font.BOLD, 18));
+        lbEmpName = new JLabel("Name");
+        lbEmpName.setBounds(12, 12, 306, 21);
+        pnNameEmp.add(lbEmpName);
+        lbEmpName.setFont(new Font("Dialog", Font.BOLD, 18));
 
         JPanel pnTableList = new JPanel();
         pnTableList.setBackground(Color.WHITE);
@@ -376,6 +375,7 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
 
         cboCategory.addItemListener(this);
 
+        changeAccount(loginAccount);
         LoadListTable();
         reSizeColumnTableBillInfo();
         loadCategory();
@@ -384,14 +384,15 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
     }
 
     public static void main(String[] args) {
-        new fManagerSale().setVisible(true);
+        Account account = AccountDAO.getInstance().getAccountByUsername("admin");
+        new fManagerSale(account).setVisible(true);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
         if (o.equals(btnExit)) {
-            fPageNavigation f = new fPageNavigation();
+            fPageNavigation f = new fPageNavigation(loginAccount);
             this.setVisible(false);
             f.setVisible(true);
         } else if (o.equals(btnAdd) || o.equals(btnDelete)) {
@@ -475,9 +476,11 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
                 loadTable(tableID2);
             }
         } else if (o.equals(itemThongTinTK)) {
-            fAccountProfile f = new fAccountProfile();
+            fAccountProfile f = new fAccountProfile(loginAccount);
             f.setModal(true);
             f.setVisible(true);
+            loginAccount = AccountDAO.getInstance().getAccountByUsername(loginAccount.getUsername());
+            changeAccount(loginAccount);
         } else if (o.equals(itemDangXuat)) {
             fLogin f = new fLogin();
             this.setVisible(false);
@@ -748,6 +751,10 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
     private void loadProductListByCategoryName(String categoryName) {
         ArrayList<Product> dataList = ProductDAO.getInstance().getListProductByCategoryName(categoryName);
         loadProductListToTable(dataList);
+    }
+
+    private void changeAccount(Account account) {
+        lbEmpName.setText(account.getDisplayName());
     }
 
     private void reSizeColumnTableBillInfo() {

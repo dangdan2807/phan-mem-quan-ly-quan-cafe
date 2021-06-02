@@ -39,7 +39,20 @@ public class AccountDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return count > 0;
+    }
+
+    public Account getAccountByUsername(String username) {
+        String query = "Select * from dbo.Account where username = ?";
+        Object[] parameter = new Object[] { username };
+        ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
+        Account account = null;
+        try {
+            rs.next();
+            account = new Account(rs);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return account;
     }
 }

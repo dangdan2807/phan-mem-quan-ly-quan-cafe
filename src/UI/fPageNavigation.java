@@ -3,26 +3,30 @@ package UI;
 import javax.swing.*;
 import javax.swing.border.*;
 
+import entity.Account;
+
 import java.awt.*;
 import java.awt.event.*;
 
 public class fPageNavigation extends JFrame implements ActionListener, MouseListener {
 
     private JButton btnLogOut, btnQLBanHang, btnQLHeThong;
-    // private String username = "";
+    private Account loginAccount = null;
+    private int EMPLOYEE_ACCOUNT = 0, MANAGER_ACCOUNT = 1;
 
-    public fPageNavigation() {
+    public fPageNavigation(Account account) {
         setTitle("Điều hướng quản lý");
         setSize(600, 375);
         setResizable(false);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
-        createFormManage();
+        loginAccount = account;
+        createFormManage(loginAccount.getType());
         setCloseAction(this);
     }
 
-    public void createFormManage() {
+    public void createFormManage(int type) {
         JPanel pnMain = new JPanel();
         pnMain.setBackground(Color.WHITE);
         getContentPane().add(pnMain, BorderLayout.CENTER);
@@ -87,10 +91,11 @@ public class fPageNavigation extends JFrame implements ActionListener, MouseList
         btnLogOut.addMouseListener(this);
         btnQLBanHang.addMouseListener(this);
         btnQLHeThong.addMouseListener(this);
+        checkAccount(type);
     }
 
     public static void main(String[] args) {
-        new fPageNavigation().setVisible(true);
+        new fPageNavigation(null).setVisible(true);
     }
 
     @Override
@@ -101,7 +106,7 @@ public class fPageNavigation extends JFrame implements ActionListener, MouseList
             this.setVisible(false);
             f.setVisible(true);
         } else if (o.equals(btnQLBanHang)) {
-            fManagerSale f = new fManagerSale();
+            fManagerSale f = new fManagerSale(loginAccount);
             this.setVisible(false);
             f.setVisible(true);
         } else if (o.equals(btnQLHeThong)) {
@@ -136,8 +141,10 @@ public class fPageNavigation extends JFrame implements ActionListener, MouseList
             btnQLBanHang.setBackground(Color.decode("#73cdf5"));
             btnQLBanHang.setForeground(Color.WHITE);
         } else if (o.equals(btnQLHeThong)) {
-            btnQLHeThong.setBackground(Color.decode("#73cdf5"));
-            btnQLHeThong.setForeground(Color.WHITE);
+            if (loginAccount.getType() == MANAGER_ACCOUNT) {
+                btnQLHeThong.setBackground(Color.decode("#73cdf5"));
+                btnQLHeThong.setForeground(Color.WHITE);
+            }
         }
     }
 
@@ -151,8 +158,10 @@ public class fPageNavigation extends JFrame implements ActionListener, MouseList
             btnQLBanHang.setBackground(Color.decode("#d0e1fd"));
             btnQLBanHang.setForeground(new Color(255, 153, 0));
         } else if (o.equals(btnQLHeThong)) {
-            btnQLHeThong.setBackground(Color.decode("#d0e1fd"));
-            btnQLHeThong.setForeground(Color.BLUE);
+            if (loginAccount.getType() == MANAGER_ACCOUNT) {
+                btnQLHeThong.setBackground(Color.decode("#d0e1fd"));
+                btnQLHeThong.setForeground(Color.BLUE);
+            }
         }
     }
 
@@ -167,5 +176,11 @@ public class fPageNavigation extends JFrame implements ActionListener, MouseList
                 f.setVisible(true);
             }
         });
+    }
+
+    private void checkAccount(int type) {
+        if (type == EMPLOYEE_ACCOUNT) {
+            btnQLHeThong.setEnabled(false);
+        }
     }
 }

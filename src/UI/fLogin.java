@@ -6,6 +6,7 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import DAO.AccountDAO;
+import entity.Account;
 
 public class fLogin extends JFrame implements ActionListener, KeyListener, FocusListener, MouseListener {
     private JTextField txtUsername, txtPassword;
@@ -116,7 +117,8 @@ public class fLogin extends JFrame implements ActionListener, KeyListener, Focus
             String password = txtPassword.getText().trim();
             if (validData()) {
                 if (login(username, password)) {
-                    fPageNavigation f = new fPageNavigation();
+                    Account loginAccount = AccountDAO.getInstance().getAccountByUsername(username);
+                    fPageNavigation f = new fPageNavigation(loginAccount);
                     this.setVisible(false);
                     f.setVisible(true);
                 } else {
