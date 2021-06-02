@@ -10,7 +10,7 @@ import java.util.*;
 import DAO.*;
 import entity.Account;
 
-public class pnAccount extends JFrame implements ActionListener, MouseListener {
+public class pnAccount extends JPanel implements ActionListener, MouseListener {
     int widthPn = 770, heightPn = 500;
     private JPanel pnMain;
     private DefaultTableModel modelTable;
@@ -22,9 +22,9 @@ public class pnAccount extends JFrame implements ActionListener, MouseListener {
 
     public pnAccount() {
         setSize(760, 440);
-        setResizable(false);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        // setResizable(false);
+        // setLocationRelativeTo(null);
+        // setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout(0, 0));
 
         pnMain = new JPanel();
@@ -178,7 +178,7 @@ public class pnAccount extends JFrame implements ActionListener, MouseListener {
     }
 
     private void loadAccountList() {
-        ArrayList<Account> dataList = accountList.getAccountList();
+        ArrayList<Account> dataList = accountList.getListAccount();
         for (Account account : dataList) {
             String type = "Nhân viên";
             if (account.getType() == 1)

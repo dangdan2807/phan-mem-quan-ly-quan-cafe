@@ -1,22 +1,20 @@
 package UI.PanelCustom;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
+import javax.swing.border.*;
 import javax.swing.table.*;
-
 import java.awt.event.*;
-import java.awt.*;
+import java.awt.BorderLayout;
 
-public class pnBan extends JPanel implements ActionListener, MouseListener {
+public class pnCategory extends JPanel implements ActionListener, MouseListener {
     int widthPn = 770, heightPn = 500;
     private JPanel pnMain;
     private DefaultTableModel modelTable;
     private JTable table;
-    private JButton btnTim, btnThem, btnXoa, btnXoaTrang, btnSua, btnXem;
-    private JTextField txtTim, txtMa, txtTen;
-    private JComboBox<String> cboLoaiMon;
+    private JButton btnThem, btnXoa, btnXoaTrang, btnSua, btnXem;
+    private JTextField txtMa, txtTen;
 
-    public pnBan() {
+    public pnCategory() {
         setSize(760, 440);
         setLayout(new BorderLayout(0, 0));
 
@@ -57,7 +55,7 @@ public class pnBan extends JPanel implements ActionListener, MouseListener {
         JScrollPane scp = new JScrollPane();
         pnListView.add(scp);
 
-        String[] cols = { "Mã bàn", "Tên bàn", "Tình trạng" };
+        String[] cols = { "Mã danh mục", "Tên danh mục" };
         modelTable = new DefaultTableModel(cols, 0) {
             // khóa không cho người dùng nhập trên table
             @Override
@@ -70,31 +68,13 @@ public class pnBan extends JPanel implements ActionListener, MouseListener {
 
         this.add(pnMain);
 
-        JPanel pnSearchDV = new JPanel();
-        pnSearchDV.setLayout(null);
-        pnSearchDV.setBounds(467, 0, 282, 36);
-        pnMain.add(pnSearchDV);
-
-        btnTim = new JButton("Tìm");
-        btnTim.setBounds(192, 0, 89, 36);
-        pnSearchDV.add(btnTim);
-
-        txtTim = new JTextField();
-        txtTim.setBounds(2, 14, 185, 20);
-        pnSearchDV.add(txtTim);
-        txtTim.setColumns(10);
-
-        JLabel lbTim = new JLabel("Tên bàn: ");
-        lbTim.setBounds(2, 0, 100, 14);
-        pnSearchDV.add(lbTim);
-
         JPanel pnInfo = new JPanel();
-        pnInfo.setBorder(new TitledBorder(null, "Thông tin bàn "));
+        pnInfo.setBorder(new TitledBorder(null, "Thông tin danh mục "));
         pnInfo.setLayout(null);
         pnInfo.setBounds(467, 37, 282, 392);
         pnMain.add(pnInfo);
 
-        JLabel lbMa = new JLabel("Mã bàn: ");
+        JLabel lbMa = new JLabel("Mã loại: ");
         lbMa.setBounds(10, 17, 88, 20);
         pnInfo.add(lbMa);
 
@@ -104,7 +84,7 @@ public class pnBan extends JPanel implements ActionListener, MouseListener {
         pnInfo.add(txtMa);
         txtMa.setColumns(10);
 
-        JLabel lbTen = new JLabel("Tên bàn: ");
+        JLabel lbTen = new JLabel("Tên loại: ");
         lbTen.setBounds(10, 48, 88, 20);
         pnInfo.add(lbTen);
 
@@ -112,14 +92,6 @@ public class pnBan extends JPanel implements ActionListener, MouseListener {
         txtTen.setBounds(97, 48, 175, 20);
         pnInfo.add(txtTen);
         txtTen.setColumns(10);
-
-        JLabel lbLoaiMon = new JLabel("Tình trạng:");
-        lbLoaiMon.setBounds(10, 79, 88, 20);
-        pnInfo.add(lbLoaiMon);
-
-        cboLoaiMon = new JComboBox<String>();
-        cboLoaiMon.setBounds(97, 79, 175, 20);
-        pnInfo.add(cboLoaiMon);
 
         btnThem.addActionListener(this);
         btnXoa.addActionListener(this);
@@ -159,5 +131,4 @@ public class pnBan extends JPanel implements ActionListener, MouseListener {
     public void mouseExited(MouseEvent e) {
 
     }
-
 }
