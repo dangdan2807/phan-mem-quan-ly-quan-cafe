@@ -11,11 +11,11 @@ import java.sql.*;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import javax.swing.border.TitledBorder;
 
-public class pnRevenue extends JPanel implements ActionListener {
-    private JPanel pnBtn;
+public class pnRevenue extends JPanel implements interBtn, ActionListener, MouseListener {
     private kDatePicker dpTuNgay, dpDenNgay;
-    private JButton btnThongKe;
+    private JButton btnStatistic, btnExit, btnLogOut;
     private JTable table;
     private DefaultTableModel modelTable;
 
@@ -24,20 +24,20 @@ public class pnRevenue extends JPanel implements ActionListener {
         setSize(1270, 630);
         setLayout(new BorderLayout(0, 0));
 
-        pnBtn = new JPanel();
-        pnBtn.setBackground(Color.WHITE);
-        pnBtn.setPreferredSize(new Dimension(10, 80));
-        pnBtn.setLayout(null);
-        this.add(pnBtn, BorderLayout.NORTH);
+        JPanel pnTop = new JPanel();
+        pnTop.setBackground(Color.WHITE);
+        pnTop.setPreferredSize(new Dimension(10, 100));
+        pnTop.setLayout(null);
+        this.add(pnTop, BorderLayout.NORTH);
 
         JLabel lbTuNgay = new JLabel("Từ ngày: ");
         JLabel lbDenNgay = new JLabel("Đến ngày: ");
 
         dpTuNgay = new kDatePicker();
         dpDenNgay = new kDatePicker();
-        btnThongKe = new JButton("Thống kê");
-        btnThongKe.setBackground(Color.decode("#d0e1fd"));
-        btnThongKe.setForeground(Color.decode("#1a66e3"));
+        btnStatistic = new JButton("Thống kê");
+        btnStatistic.setBackground(Color.decode("#d0e1fd"));
+        btnStatistic.setForeground(Color.decode("#1a66e3"));
 
         String[] cols = { "STT", "Mã HD", "Tên bàn", "Ngày checkIn", "Ngày checkOut", "Giảm giá", "Thành tiền" };
         modelTable = new DefaultTableModel(cols, 0) {
@@ -52,38 +52,57 @@ public class pnRevenue extends JPanel implements ActionListener {
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scpTable.getViewport().setBackground(Color.WHITE);
 
-        JPanel pnTableRevenue = new JPanel();
-        pnTableRevenue.setBackground(Color.WHITE);
-        pnTableRevenue.setLayout(new BorderLayout(0, 0));
-        pnTableRevenue.add(scpTable, BorderLayout.CENTER);
+        JPanel pnTable = new JPanel();
+        pnTable.setBackground(Color.WHITE);
+        pnTable.setLayout(new BorderLayout(0, 0));
+        pnTable.add(scpTable, BorderLayout.CENTER);
 
-        pnBtn.add(lbTuNgay);
-        pnBtn.add(dpTuNgay);
-        pnBtn.add(lbDenNgay);
-        pnBtn.add(dpDenNgay);
-        pnBtn.add(btnThongKe);
-        this.add(pnTableRevenue, BorderLayout.CENTER);
+        JPanel pnStatistic = new JPanel();
+        pnStatistic.setBorder(
+                new TitledBorder(null, "Thông tin lập thống kê ", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        pnStatistic.setBackground(Color.WHITE);
+        pnStatistic.setLayout(null);
+        pnStatistic.setBounds(0, 41, 1270, 59);
+        pnStatistic.add(lbTuNgay);
+        pnStatistic.add(dpTuNgay);
+        pnStatistic.add(lbDenNgay);
+        pnStatistic.add(dpDenNgay);
+        pnStatistic.add(btnStatistic);
+        pnTop.add(pnStatistic);
+
+        this.add(pnTable, BorderLayout.CENTER);
 
         int h = 20;
-        lbTuNgay.setBounds(10, 51, 70, h);
-        dpTuNgay.setBounds(75, 51, 150, h);
-        lbDenNgay.setBounds(240, 51, 70, h);
-        dpDenNgay.setBounds(315, 51, 150, h);
-        btnThongKe.setBounds(480, 51, 100, h);
+        lbTuNgay.setBounds(10, 21, 70, h);
+        dpTuNgay.setBounds(75, 21, 150, h);
+        lbDenNgay.setBounds(240, 21, 70, h);
+        dpDenNgay.setBounds(315, 21, 150, h);
+        btnStatistic.setBounds(480, 21, 100, 26);
+
+        btnExit = new JButton("Thoát");
+        btnExit.setBackground(Color.decode("#d0e1fd"));
+        btnExit.setForeground(Color.decode("#1a66e3"));
+        btnExit.setBounds(590, 20, 100, 26);
+        pnStatistic.add(btnExit);
+
+        btnLogOut = new JButton("Đăng xuất");
+        btnLogOut.setBackground(Color.decode("#d0e1fd"));
+        btnLogOut.setForeground(Color.decode("#1a66e3"));
+        btnLogOut.setBounds(700, 20, 100, 26);
+        pnStatistic.add(btnLogOut);
 
         JPanel pnTitle = new JPanel();
         pnTitle.setBackground(Color.WHITE);
         pnTitle.setBounds(0, 0, 1270, 40);
         pnTitle.setBackground(Color.decode("#d0e1fd"));
-        pnBtn.add(pnTitle);
+        pnTop.add(pnTitle);
 
         JLabel lbTitle = new JLabel("Quản lý Doanh Thu");
         lbTitle.setFont(new Font("Tahoma", Font.BOLD, 24));
         lbTitle.setForeground(Color.decode("#1a66e3"));
         pnTitle.add(lbTitle);
-        pnTableRevenue.setBounds(10, 25, 1250, 600);
+        pnTable.setBounds(10, 25, 1250, 600);
 
-        btnThongKe.addActionListener(this);
         reSizeColumnTable();
         Date dateCheckIn = null;
         Date dateCheckOut = null;
@@ -94,12 +113,20 @@ public class pnRevenue extends JPanel implements ActionListener {
             e1.printStackTrace();
         }
         loadListBillByDate(dateCheckIn, dateCheckOut);
+
+        btnStatistic.addActionListener(this);
+        btnLogOut.addActionListener(this);
+        btnExit.addActionListener(this);
+
+        btnStatistic.addMouseListener(this);
+        btnLogOut.addMouseListener(this);
+        btnExit.addMouseListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
-        if (o.equals(btnThongKe)) {
+        if (o.equals(btnStatistic)) {
             Date dateCheckIn = null;
             Date dateCheckOut = null;
             try {
@@ -109,6 +136,51 @@ public class pnRevenue extends JPanel implements ActionListener {
                 e1.printStackTrace();
             }
             loadListBillByDate(dateCheckIn, dateCheckOut);
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        Object o = e.getSource();
+        if (o.equals(btnStatistic)) {
+            btnStatistic.setBackground(Color.decode("#a3c5fb"));
+            btnStatistic.setForeground(Color.WHITE);
+        } else if (o.equals(btnLogOut)) {
+            btnLogOut.setBackground(Color.decode("#a3c5fb"));
+            btnLogOut.setForeground(Color.WHITE);
+        } else if (o.equals(btnExit)) {
+            btnExit.setBackground(Color.decode("#a3c5fb"));
+            btnExit.setForeground(Color.WHITE);
+        }
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        Object o = e.getSource();
+        if (o.equals(btnStatistic)) {
+            btnStatistic.setBackground(Color.decode("#d0e1fd"));
+            btnStatistic.setForeground(Color.decode("#1a66e3"));
+        } else if (o.equals(btnLogOut)) {
+            btnLogOut.setBackground(Color.decode("#d0e1fd"));
+            btnLogOut.setForeground(Color.decode("#1a66e3"));
+        } else if (o.equals(btnExit)) {
+            btnExit.setBackground(Color.decode("#d0e1fd"));
+            btnExit.setForeground(Color.decode("#1a66e3"));
         }
     }
 
@@ -139,6 +211,16 @@ public class pnRevenue extends JPanel implements ActionListener {
             return "Chưa cập nhật";
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         return sdf.format(date);
+    }
+
+    @Override
+    public JButton getBtnLogOut() {
+        return btnLogOut;
+    }
+
+    @Override
+    public JButton getBtnExit() {
+        return btnExit;
     }
 
     private void reSizeColumnTable() {

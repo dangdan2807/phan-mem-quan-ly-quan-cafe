@@ -3,6 +3,7 @@ package UI;
 import javax.swing.*;
 
 import DAO.AccountDAO;
+import UI.PanelCustom.customUI;
 import entity.Account;
 
 import java.awt.Color;
@@ -60,11 +61,9 @@ public class fAccountProfile extends JDialog implements ActionListener, KeyListe
         txtReNewPassWord = new JPasswordField();
 
         btnUpdate = new JButton("Cập nhật");
-        btnUpdate.setBackground(Color.decode("#d0e1fd"));
-        btnUpdate.setForeground(Color.decode("#1a66e3"));
+        customUI.getInstance().setCustomBtn(btnUpdate);
         btnClose = new JButton("Thoát");
-        btnClose.setBackground(Color.decode("#d0e1fd"));
-        btnClose.setForeground(Color.decode("#1a66e3"));
+        customUI.getInstance().setCustomBtn(btnClose);
 
         pnMain.add(lbUserName);
         pnMain.add(txtUsername);
@@ -159,11 +158,9 @@ public class fAccountProfile extends JDialog implements ActionListener, KeyListe
     public void mouseEntered(MouseEvent e) {
         Object o = e.getSource();
         if (o.equals(btnUpdate)) {
-            btnUpdate.setBackground(Color.decode("#a3c5fb"));
-            btnUpdate.setForeground(Color.WHITE);
+            customUI.getInstance().setCustomBtnHover(btnUpdate);
         } else if (o.equals(btnClose)) {
-            btnClose.setBackground(Color.decode("#a3c5fb"));
-            btnClose.setForeground(Color.WHITE);
+            customUI.getInstance().setCustomBtnHover(btnClose);
         }
     }
 
@@ -171,11 +168,9 @@ public class fAccountProfile extends JDialog implements ActionListener, KeyListe
     public void mouseExited(MouseEvent e) {
         Object o = e.getSource();
         if (o.equals(btnUpdate)) {
-            btnUpdate.setBackground(Color.decode("#d0e1fd"));
-            btnUpdate.setForeground(Color.decode("#1a66e3"));
+            customUI.getInstance().setCustomBtn(btnUpdate);
         } else if (o.equals(btnClose)) {
-            btnClose.setBackground(Color.decode("#d0e1fd"));
-            btnClose.setForeground(Color.decode("#1a66e3"));
+            customUI.getInstance().setCustomBtn(btnClose);
         }
     }
 

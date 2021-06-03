@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import DAO.*;
+import UI.PanelCustom.customUI;
 import entity.*;
 import entity.Menu;
 
@@ -82,8 +83,7 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
         pnTitle.setBackground(Color.decode("#d0e1fd"));
 
         JLabel lbTitle = new JLabel("Quản Lý Bán Hàng");
-        lbTitle.setFont(new Font("Dialog", Font.BOLD, 24));
-        lbTitle.setForeground(Color.decode("#1a66e3"));
+        customUI.getInstance().setCustomLbTitle(lbTitle);
         pnTitle.add(lbTitle);
 
         JPanel pnNameEmp = new JPanel();
@@ -113,20 +113,17 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
 
         btnSwitchTable = new JButton("Chuyển - gộp bàn", transferIcon);
         btnSwitchTable.setBounds(144, 33, 164, 27);
-        btnSwitchTable.setBackground(Color.decode("#d0e1fd"));
-        btnSwitchTable.setForeground(Color.decode("#1a66e3"));
+        customUI.getInstance().setCustomBtn(btnSwitchTable);
         pnControlTable.add(btnSwitchTable);
 
         btnRefresh = new JButton("Làm mới", refreshIcon);
         btnRefresh.setBounds(12, 0, 120, 27);
-        btnRefresh.setBackground(Color.decode("#d0e1fd"));
-        btnRefresh.setForeground(Color.decode("#1a66e3"));
+        customUI.getInstance().setCustomBtn(btnRefresh);
         pnControlTable.add(btnRefresh);
 
         btnExit = new JButton("Thoát", logOutIcon);
         btnExit.setBounds(144, 0, 164, 26);
-        btnExit.setBackground(Color.decode("#d0e1fd"));
-        btnExit.setForeground(Color.decode("#1a66e3"));
+        customUI.getInstance().setCustomBtn(btnExit);
         pnControlTable.add(btnExit);
 
         cboTableName = new JComboBox<String>();
@@ -219,8 +216,7 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
 
         btnPayment = new JButton("Thanh toán", paymentIcon);
         btnPayment.setBounds(296, 116, 165, 26);
-        btnPayment.setBackground(Color.decode("#d0e1fd"));
-        btnPayment.setForeground(Color.decode("#1a66e3"));
+        customUI.getInstance().setCustomBtn(btnPayment);
         pnBillInfo.add(btnPayment);
 
         JLabel lblTongTien = new JLabel("Tổng tiền: ");
@@ -297,8 +293,7 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
 
         btnSearch = new JButton("Tìm", searchIcon);
         btnSearch.setBounds(292, 7, 131, 26);
-        btnSearch.setBackground(Color.decode("#d0e1fd"));
-        btnSearch.setForeground(Color.decode("#1a66e3"));
+        customUI.getInstance().setCustomBtn(btnSearch);
         pnControlProduct.add(btnSearch);
 
         JLabel lnLoaiSp = new JLabel("Loại sản phẩm: ");
@@ -320,14 +315,12 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
         pnControlProduct.add(spinCount);
 
         btnAdd = new JButton("Thêm", addIcon);
-        btnAdd.setBackground(Color.decode("#d0e1fd"));
-        btnAdd.setForeground(Color.decode("#1a66e3"));
+        customUI.getInstance().setCustomBtn(btnAdd);
         btnAdd.setBounds(292, 40, 131, 26);
         pnControlProduct.add(btnAdd);
 
         btnDelete = new JButton("Hủy", trashIcon);
-        btnDelete.setBackground(Color.decode("#d0e1fd"));
-        btnDelete.setForeground(Color.decode("#1a66e3"));
+        customUI.getInstance().setCustomBtn(btnDelete);
         btnDelete.setBounds(292, 76, 131, 26);
         pnControlProduct.add(btnDelete);
 
@@ -516,26 +509,19 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
     public void mouseEntered(MouseEvent e) {
         Object o = e.getSource();
         if (o.equals(btnSwitchTable)) {
-            btnSwitchTable.setBackground(Color.decode("#a3c5fb"));
-            btnSwitchTable.setForeground(Color.WHITE);
+            customUI.getInstance().setCustomBtnHover(btnSwitchTable);
         } else if (o.equals(btnRefresh)) {
-            btnRefresh.setBackground(Color.decode("#a3c5fb"));
-            btnRefresh.setForeground(Color.WHITE);
+            customUI.getInstance().setCustomBtnHover(btnRefresh);
         } else if (o.equals(btnSearch)) {
-            btnSearch.setBackground(Color.decode("#a3c5fb"));
-            btnSearch.setForeground(Color.WHITE);
+            customUI.getInstance().setCustomBtnHover(btnSearch);
         } else if (o.equals(btnPayment)) {
-            btnPayment.setBackground(Color.decode("#a3c5fb"));
-            btnPayment.setForeground(Color.WHITE);
+            customUI.getInstance().setCustomBtnHover(btnPayment);
         } else if (o.equals(btnAdd)) {
-            btnAdd.setBackground(Color.decode("#a3c5fb"));
-            btnAdd.setForeground(Color.WHITE);
+            customUI.getInstance().setCustomBtnHover(btnAdd);
         } else if (o.equals(btnDelete)) {
-            btnDelete.setBackground(Color.decode("#a3c5fb"));
-            btnDelete.setForeground(Color.WHITE);
+            customUI.getInstance().setCustomBtnHover(btnDelete);
         } else if (o.equals(btnExit)) {
-            btnExit.setBackground(Color.decode("#a3c5fb"));
-            btnExit.setForeground(Color.WHITE);
+            customUI.getInstance().setCustomBtnHover(btnExit);
         }
     }
 
@@ -543,26 +529,19 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
     public void mouseExited(MouseEvent e) {
         Object o = e.getSource();
         if (o.equals(btnSwitchTable)) {
-            btnSwitchTable.setBackground(Color.decode("#d0e1fd"));
-            btnSwitchTable.setForeground(Color.decode("#1a66e3"));
+            customUI.getInstance().setCustomBtn(btnSwitchTable);
         } else if (o.equals(btnRefresh)) {
-            btnRefresh.setBackground(Color.decode("#d0e1fd"));
-            btnRefresh.setForeground(Color.decode("#1a66e3"));
+            customUI.getInstance().setCustomBtn(btnRefresh);
         } else if (o.equals(btnSearch)) {
-            btnSearch.setBackground(Color.decode("#d0e1fd"));
-            btnSearch.setForeground(Color.decode("#1a66e3"));
+            customUI.getInstance().setCustomBtn(btnSearch);
         } else if (o.equals(btnPayment)) {
-            btnPayment.setBackground(Color.decode("#d0e1fd"));
-            btnPayment.setForeground(Color.decode("#1a66e3"));
-        } else if (o.equals(btnExit)) {
-            btnExit.setBackground(Color.decode("#d0e1fd"));
-            btnExit.setForeground(Color.decode("#1a66e3"));
+            customUI.getInstance().setCustomBtn(btnPayment);
         } else if (o.equals(btnAdd)) {
-            btnAdd.setBackground(Color.decode("#d0e1fd"));
-            btnAdd.setForeground(Color.decode("#1a66e3"));
+            customUI.getInstance().setCustomBtn(btnAdd);
         } else if (o.equals(btnDelete)) {
-            btnDelete.setBackground(Color.decode("#d0e1fd"));
-            btnDelete.setForeground(Color.decode("#1a66e3"));
+            customUI.getInstance().setCustomBtn(btnDelete);
+        } else if (o.equals(btnExit)) {
+            customUI.getInstance().setCustomBtn(btnExit);
         }
     }
 
