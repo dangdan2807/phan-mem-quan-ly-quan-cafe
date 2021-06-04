@@ -23,7 +23,7 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
     private DefaultTableModel modelTableBill, modelTableProduct;
     private JTable tableBill, tableProduct;
     private JLabel lbShowTime, lbEmpName;
-    private JButton btnSwitchTable, btnRefresh, btnExit, btnSearch, btnPayment, btnAdd, btnDelete;
+    private JButton btnSwitchTable, btnRefresh, btnBack, btnSearch, btnPayment, btnAdd, btnDelete;
     private JTextField txtBillID, txtTableName, txtTotalPrice, txtProductName, txtPayment;
     private JComboBox<String> cboCategory, cboTableName;
     private JSpinner spinCount, spinDiscount;
@@ -31,7 +31,6 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
     private JMenuItem itemThongTinTK, itemDangXuat;
 
     private ImageIcon transferIcon = new ImageIcon("img/transfer_16.png");
-    private ImageIcon logOutIcon = new ImageIcon("img/logout_16.png");
     private ImageIcon refreshIcon = new ImageIcon("img/refresh_16.png");
     private ImageIcon paymentIcon = new ImageIcon("img/payment_16.png");
     private ImageIcon searchIcon = new ImageIcon("img/search_16.png");
@@ -39,6 +38,7 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
     private ImageIcon coffeeDisableIcon = new ImageIcon("img/coffee_32_disable.png");
     private ImageIcon addIcon = new ImageIcon("img/blueAdd_16.png");
     private ImageIcon trashIcon = new ImageIcon("img/trash_16.png");
+    private ImageIcon backIcon = new ImageIcon("img/back_16.png");
 
     private int viTri = -1;
     private Account loginAccount = null;
@@ -52,7 +52,7 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
         this.loginAccount = account;
         createMenuBar();
         createFromQLKS();
-        // setCloseAction(this);
+        setCloseAction(this);
     }
 
     public void createMenuBar() {
@@ -121,10 +121,10 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
         customUI.getInstance().setCustomBtn(btnRefresh);
         pnControlTable.add(btnRefresh);
 
-        btnExit = new JButton("Thoát", logOutIcon);
-        btnExit.setBounds(144, 0, 164, 26);
-        customUI.getInstance().setCustomBtn(btnExit);
-        pnControlTable.add(btnExit);
+        btnBack = new JButton("Thoát", backIcon);
+        btnBack.setBounds(144, 0, 164, 26);
+        customUI.getInstance().setCustomBtn(btnBack);
+        pnControlTable.add(btnBack);
 
         cboTableName = new JComboBox<String>();
         cboTableName.setBackground(Color.WHITE);
@@ -349,7 +349,7 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
         btnRefresh.addActionListener(this);
         btnSearch.addActionListener(this);
         btnPayment.addActionListener(this);
-        btnExit.addActionListener(this);
+        btnBack.addActionListener(this);
         btnAdd.addActionListener(this);
         btnDelete.addActionListener(this);
 
@@ -359,7 +359,7 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
         btnRefresh.addMouseListener(this);
         btnSearch.addMouseListener(this);
         btnPayment.addMouseListener(this);
-        btnExit.addMouseListener(this);
+        btnBack.addMouseListener(this);
         btnAdd.addMouseListener(this);
         btnDelete.addMouseListener(this);
         tableProduct.addMouseListener(this);
@@ -383,7 +383,7 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
-        if (o.equals(btnExit)) {
+        if (o.equals(btnBack)) {
             fPageNavigation f = new fPageNavigation(loginAccount);
             this.setVisible(false);
             f.setVisible(true);
@@ -520,8 +520,8 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
             customUI.getInstance().setCustomBtnHover(btnAdd);
         } else if (o.equals(btnDelete)) {
             customUI.getInstance().setCustomBtnHover(btnDelete);
-        } else if (o.equals(btnExit)) {
-            customUI.getInstance().setCustomBtnHover(btnExit);
+        } else if (o.equals(btnBack)) {
+            customUI.getInstance().setCustomBtnHover(btnBack);
         }
     }
 
@@ -540,8 +540,8 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
             customUI.getInstance().setCustomBtn(btnAdd);
         } else if (o.equals(btnDelete)) {
             customUI.getInstance().setCustomBtn(btnDelete);
-        } else if (o.equals(btnExit)) {
-            customUI.getInstance().setCustomBtn(btnExit);
+        } else if (o.equals(btnBack)) {
+            customUI.getInstance().setCustomBtn(btnBack);
         }
     }
 

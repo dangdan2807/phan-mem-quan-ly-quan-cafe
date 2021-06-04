@@ -13,11 +13,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import javax.swing.border.TitledBorder;
 
-public class pnRevenue extends JPanel implements interBtn, ActionListener, MouseListener {
+public class pnRevenue extends JPanel implements interfaceBtn, ActionListener, MouseListener {
     private kDatePicker dpTuNgay, dpDenNgay;
-    private JButton btnStatistic, btnExit, btnLogOut;
+    private JButton btnStatistic, btnBack, btnLogOut;
     private JTable table;
     private DefaultTableModel modelTable;
+    private ImageIcon logOutIcon = new ImageIcon("img/logout_16.png");
+    private ImageIcon analyticsIcon = new ImageIcon("img/analytics_16.png");
+    private ImageIcon backIcon = new ImageIcon("img/back_16.png");
 
     public pnRevenue() {
         setLayout(null);
@@ -35,9 +38,8 @@ public class pnRevenue extends JPanel implements interBtn, ActionListener, Mouse
 
         dpTuNgay = new kDatePicker();
         dpDenNgay = new kDatePicker();
-        btnStatistic = new JButton("Thống kê");
-        btnStatistic.setBackground(Color.decode("#d0e1fd"));
-        btnStatistic.setForeground(Color.decode("#1a66e3"));
+        btnStatistic = new JButton("Thống kê", analyticsIcon);
+        customUI.getInstance().setCustomBtn(btnStatistic);
 
         String[] cols = { "STT", "Mã HD", "Tên bàn", "Ngày checkIn", "Ngày checkOut", "Giảm giá", "Thành tiền" };
         modelTable = new DefaultTableModel(cols, 0) {
@@ -77,18 +79,16 @@ public class pnRevenue extends JPanel implements interBtn, ActionListener, Mouse
         dpTuNgay.setBounds(75, 21, 150, h);
         lbDenNgay.setBounds(240, 21, 70, h);
         dpDenNgay.setBounds(315, 21, 150, h);
-        btnStatistic.setBounds(480, 21, 100, 26);
+        btnStatistic.setBounds(477, 18, 120, 26);
 
-        btnExit = new JButton("Thoát");
-        btnExit.setBackground(Color.decode("#d0e1fd"));
-        btnExit.setForeground(Color.decode("#1a66e3"));
-        btnExit.setBounds(590, 20, 100, 26);
-        pnStatistic.add(btnExit);
+        btnBack = new JButton("Thoát", backIcon);
+        customUI.getInstance().setCustomBtn(btnBack);
+        btnBack.setBounds(609, 18, 120, 26);
+        pnStatistic.add(btnBack);
 
-        btnLogOut = new JButton("Đăng xuất");
-        btnLogOut.setBackground(Color.decode("#d0e1fd"));
-        btnLogOut.setForeground(Color.decode("#1a66e3"));
-        btnLogOut.setBounds(700, 20, 100, 26);
+        btnLogOut = new JButton("Đăng xuất", logOutIcon);
+        customUI.getInstance().setCustomBtn(btnLogOut);
+        btnLogOut.setBounds(741, 18, 120, 26);
         pnStatistic.add(btnLogOut);
 
         JPanel pnTitle = new JPanel();
@@ -98,8 +98,7 @@ public class pnRevenue extends JPanel implements interBtn, ActionListener, Mouse
         pnTop.add(pnTitle);
 
         JLabel lbTitle = new JLabel("Quản lý Doanh Thu");
-        lbTitle.setFont(new Font("Tahoma", Font.BOLD, 24));
-        lbTitle.setForeground(Color.decode("#1a66e3"));
+        customUI.getInstance().setCustomLbTitle(lbTitle);
         pnTitle.add(lbTitle);
         pnTable.setBounds(10, 25, 1250, 600);
 
@@ -116,11 +115,11 @@ public class pnRevenue extends JPanel implements interBtn, ActionListener, Mouse
 
         btnStatistic.addActionListener(this);
         btnLogOut.addActionListener(this);
-        btnExit.addActionListener(this);
+        btnBack.addActionListener(this);
 
         btnStatistic.addMouseListener(this);
         btnLogOut.addMouseListener(this);
-        btnExit.addMouseListener(this);
+        btnBack.addMouseListener(this);
     }
 
     @Override
@@ -158,14 +157,11 @@ public class pnRevenue extends JPanel implements interBtn, ActionListener, Mouse
     public void mouseEntered(MouseEvent e) {
         Object o = e.getSource();
         if (o.equals(btnStatistic)) {
-            btnStatistic.setBackground(Color.decode("#a3c5fb"));
-            btnStatistic.setForeground(Color.WHITE);
+            customUI.getInstance().setCustomBtnHover(btnStatistic);
         } else if (o.equals(btnLogOut)) {
-            btnLogOut.setBackground(Color.decode("#a3c5fb"));
-            btnLogOut.setForeground(Color.WHITE);
-        } else if (o.equals(btnExit)) {
-            btnExit.setBackground(Color.decode("#a3c5fb"));
-            btnExit.setForeground(Color.WHITE);
+            customUI.getInstance().setCustomBtnHover(btnLogOut);
+        } else if (o.equals(btnBack)) {
+            customUI.getInstance().setCustomBtnHover(btnBack);
         }
     }
 
@@ -173,14 +169,11 @@ public class pnRevenue extends JPanel implements interBtn, ActionListener, Mouse
     public void mouseExited(MouseEvent e) {
         Object o = e.getSource();
         if (o.equals(btnStatistic)) {
-            btnStatistic.setBackground(Color.decode("#d0e1fd"));
-            btnStatistic.setForeground(Color.decode("#1a66e3"));
+            customUI.getInstance().setCustomBtn(btnStatistic);
         } else if (o.equals(btnLogOut)) {
-            btnLogOut.setBackground(Color.decode("#d0e1fd"));
-            btnLogOut.setForeground(Color.decode("#1a66e3"));
-        } else if (o.equals(btnExit)) {
-            btnExit.setBackground(Color.decode("#d0e1fd"));
-            btnExit.setForeground(Color.decode("#1a66e3"));
+            customUI.getInstance().setCustomBtn(btnLogOut);
+        } else if (o.equals(btnBack)) {
+            customUI.getInstance().setCustomBtn(btnBack);
         }
     }
 
@@ -219,8 +212,8 @@ public class pnRevenue extends JPanel implements interBtn, ActionListener, Mouse
     }
 
     @Override
-    public JButton getBtnExit() {
-        return btnExit;
+    public JButton getBtnBack() {
+        return btnBack;
     }
 
     private void reSizeColumnTable() {

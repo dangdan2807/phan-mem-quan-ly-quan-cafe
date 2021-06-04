@@ -2,7 +2,7 @@ package UI.PanelCustom;
 
 import javax.swing.*;
 
-public interface interBtn {
+public interface interfaceBtn {
     JButton getBtnLogOut();
-    JButton getBtnExit();
+    JButton getBtnBack();
 }

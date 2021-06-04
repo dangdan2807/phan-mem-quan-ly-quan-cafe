@@ -45,12 +45,12 @@ public class fAdmin extends JFrame implements ActionListener {
         // tpTabMain.addTab("Loại sản phẩm", null, pnCategory, "Quản lý loại sản phẩm");
         // tpTabMain.addTab("Bàn", null, pnTable, "Quản lý bàn");
         // tpTabMain.addTab("Tài Khoản", userIcon, pnAccount, "Quản lý tài khoản");
-        getContentPane().add(tpTabMain);
+        this.add(tpTabMain);
 
         pnRevenue.getBtnLogOut().addActionListener(this);
-        pnRevenue.getBtnExit().addActionListener(this);
+        pnRevenue.getBtnBack().addActionListener(this);
         pnProduct.getBtnLogOut().addActionListener(this);
-        pnProduct.getBtnExit().addActionListener(this);
+        pnProduct.getBtnBack().addActionListener(this);
     }
 
     public static void main(String[] args) {
@@ -63,7 +63,7 @@ public class fAdmin extends JFrame implements ActionListener {
         Object o = e.getSource();
         if (o.equals(pnRevenue.getBtnLogOut()) || o.equals(pnProduct.getBtnLogOut())) {
             EventLogOut();
-        } else if (o.equals(pnRevenue.getBtnExit()) || o.equals(pnProduct.getBtnExit())) {
+        } else if (o.equals(pnRevenue.getBtnBack()) || o.equals(pnProduct.getBtnBack())) {
             EventExit();
         }
     }
