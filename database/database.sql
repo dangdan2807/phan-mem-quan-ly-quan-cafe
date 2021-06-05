@@ -182,8 +182,10 @@ VALUES
     (N'Trân châu đen', 6, 7000),
 
     (N'Trà sữa matcha', 7, 22000),
-    (N'Trà sữa việt quốc', 7, 22000)
+    (N'Trà sữa việt quốc', 7, 24000)
 GO
+
+-- UPDATE dbo.Product SET name = N'Trà sữa matcha 1' , idCategory = 7, price = 24000 WHERE id = 47
 
 -- Store procedure
 CREATE PROC USP_Login
@@ -496,5 +498,52 @@ BEGIN
                 WHERE username = @username
         END
     END
+END
+GO
+
+CREATE PROC USP_getListProduct
+AS
+BEGIN
+    SELECT p.id, p.name, p.price, pc.name AS CategoryName
+    FROM dbo.Product p, dbo.ProductCategory pc
+    WHERE p.idCategory = pc.id
+END
+GO
+
+CREATE PROC USP_getListProductByCategoryNameAndProductName
+    @ProductName NVARCHAR(100),
+    @CategoryName NVARCHAR(100)
+AS
+BEGIN
+    SELECT p.id, p.name, p.price, pc.name AS CategoryName
+    FROM dbo.Product p, dbo.ProductCategory pc
+    WHERE p.idCategory = pc.id
+        AND p.name = @ProductName
+        AND pc.name = @CategoryName
+END
+GO
+
+CREATE PROC USP_getListProductCustomByCategoryAndProductName
+    @ProductName NVARCHAR(100),
+    @CategoryName NVARCHAR(100)
+AS
+BEGIN
+    DECLARE @PName NVARCHAR(100) = N'%' + @ProductName + N'%';
+    SELECT p.id, p.name, p.price, pc.name AS CategoryName
+    FROM dbo.Product p, dbo.ProductCategory pc
+    WHERE p.idCategory = pc.id
+        AND pc.name = @CategoryName
+        AND p.name like @PName
+END
+GO
+
+CREATE PROC USP_getListProductCustomByCategoryName
+    @CategoryName NVARCHAR(100)
+AS
+BEGIN
+    SELECT p.id, p.name, p.price, pc.name AS CategoryName
+    FROM dbo.Product p, dbo.ProductCategory pc
+    WHERE p.idCategory = pc.id
+        AND pc.name = @CategoryName
 END
 GO

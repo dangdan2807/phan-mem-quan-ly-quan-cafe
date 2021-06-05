@@ -6,6 +6,7 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import DAO.AccountDAO;
+import UI.PanelCustom.customUI;
 import entity.Account;
 
 public class fLogin extends JFrame implements ActionListener, KeyListener, FocusListener, MouseListener {
@@ -71,8 +72,7 @@ public class fLogin extends JFrame implements ActionListener, KeyListener, Focus
         btnLogin = new JButton("Đăng nhập");
         btnLogin.setFont(new Font("Dialog", Font.BOLD, 14));
         btnLogin.setBorder(new LineBorder(Color.decode("#1a66e3")));
-        btnLogin.setBackground(Color.decode("#d0e1fd"));
-        btnLogin.setForeground(Color.decode("#1a66e3"));
+        customUI.getInstance().setCustomBtn(btnLogin);
         btnLogin.setBounds(469, 325, 285, 30);
         pnMain.add(btnLogin);
 
@@ -80,9 +80,8 @@ public class fLogin extends JFrame implements ActionListener, KeyListener, Focus
 
         JLabel lbWelcome = new JLabel("Sign In!");
         lbWelcome.setHorizontalAlignment(SwingConstants.CENTER);
-        lbWelcome.setFont(new Font("Dialog", Font.BOLD, 18));
         lbWelcome.setBounds(469, 93, 285, 35);
-        lbWelcome.setForeground(Color.decode("#1a66e3"));
+        customUI.getInstance().setCustomLbTitle(lbWelcome);
         pnMain.add(lbWelcome);
 
         lbShowMessage = new JLabel("");
@@ -188,8 +187,7 @@ public class fLogin extends JFrame implements ActionListener, KeyListener, Focus
     public void mouseEntered(MouseEvent e) {
         Object o = e.getSource();
         if (o.equals(btnLogin)) {
-            btnLogin.setBackground(Color.BLUE);
-            btnLogin.setForeground(Color.WHITE);
+            customUI.getInstance().setCustomBtnHover(btnLogin);
         }
     }
 
@@ -197,8 +195,7 @@ public class fLogin extends JFrame implements ActionListener, KeyListener, Focus
     public void mouseExited(MouseEvent e) {
         Object o = e.getSource();
         if (o.equals(btnLogin)) {
-            btnLogin.setBackground(Color.decode("#d0e1fd"));
-            btnLogin.setForeground(Color.decode("#1a66e3"));
+            customUI.getInstance().setCustomBtn(btnLogin);
         }
     }
 

@@ -15,7 +15,7 @@ public class kDatePicker extends JPanel implements ActionListener {
     private int widthDefault = 150;
     private int heightDefault = 20;
     DialogDatePicker f = new DialogDatePicker();
-    ImageIcon calenderIcon = new ImageIcon("data/images/calender_16.png");
+    ImageIcon calenderIcon = new ImageIcon("img/calender_16.png");
 
     public kDatePicker() {
         setLayout(null);

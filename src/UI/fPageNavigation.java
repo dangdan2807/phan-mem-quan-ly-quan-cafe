@@ -3,6 +3,8 @@ package UI;
 import javax.swing.*;
 import javax.swing.border.*;
 
+import DAO.AccountDAO;
+import UI.PanelCustom.customUI;
 import entity.Account;
 
 import java.awt.*;
@@ -47,11 +49,10 @@ public class fPageNavigation extends JFrame implements ActionListener, MouseList
         pnMain.add(pnLeft, BorderLayout.WEST);
 
         btnQLHeThong = new JButton("QUẢN TRỊ HỆ THỐNG");
-        btnQLHeThong.setForeground(Color.BLUE);
         btnQLHeThong.setFont(new Font("Dialog", Font.BOLD, 20));
         btnQLHeThong.setPreferredSize(new Dimension(280, 250));
         btnQLHeThong.setBorder(new LineBorder(Color.BLUE, 2));
-        btnQLHeThong.setBackground(Color.decode("#d0e1fd"));
+        customUI.getInstance().setCustomBtn(btnQLHeThong);
         pnLeft.add(btnQLHeThong);
 
         JPanel pnRight = new JPanel();
@@ -60,11 +61,11 @@ public class fPageNavigation extends JFrame implements ActionListener, MouseList
         pnMain.add(pnRight, BorderLayout.EAST);
 
         btnQLBanHang = new JButton("QUẢN LÝ BÁN HÀNG");
-        btnQLBanHang.setForeground(new Color(255, 153, 0));
         btnQLBanHang.setFont(new Font("Dialog", Font.BOLD, 20));
         btnQLBanHang.setBorder(new LineBorder(new Color(255, 140, 0), 2));
         btnQLBanHang.setPreferredSize(new Dimension(280, 250));
-        btnQLBanHang.setBackground(Color.decode("#d0e1fd"));
+        customUI.getInstance().setCustomBtn(btnQLBanHang);
+        btnQLBanHang.setForeground(new Color(255, 153, 0));
         pnRight.add(btnQLBanHang);
 
         JPanel pnBottom = new JPanel();
@@ -77,8 +78,7 @@ public class fPageNavigation extends JFrame implements ActionListener, MouseList
         pnBottom.add(horizontalGlue);
 
         btnLogOut = new JButton("Đăng xuất");
-        btnLogOut.setBackground(Color.decode("#d0e1fd"));
-        btnLogOut.setForeground(Color.BLUE);
+        customUI.getInstance().setCustomBtn(btnLogOut);
         pnBottom.add(btnLogOut);
 
         Component horizontalStrut = Box.createHorizontalStrut(9);
@@ -95,7 +95,8 @@ public class fPageNavigation extends JFrame implements ActionListener, MouseList
     }
 
     public static void main(String[] args) {
-        new fPageNavigation(null).setVisible(true);
+        Account loginAccount = AccountDAO.getInstance().getAccountByUsername("admin");
+        new fPageNavigation(loginAccount).setVisible(true);
     }
 
     @Override
@@ -110,7 +111,7 @@ public class fPageNavigation extends JFrame implements ActionListener, MouseList
             this.setVisible(false);
             f.setVisible(true);
         } else if (o.equals(btnQLHeThong)) {
-            fAdmin f = new fAdmin();
+            fAdmin f = new fAdmin(loginAccount);
             this.setVisible(false);
             f.setVisible(true);
         }
@@ -135,15 +136,12 @@ public class fPageNavigation extends JFrame implements ActionListener, MouseList
     public void mouseEntered(MouseEvent e) {
         Object o = e.getSource();
         if (o.equals(btnLogOut)) {
-            btnLogOut.setBackground(Color.decode("#73cdf5"));
-            btnLogOut.setForeground(Color.WHITE);
+            customUI.getInstance().setCustomBtnHover(btnLogOut);
         } else if (o.equals(btnQLBanHang)) {
-            btnQLBanHang.setBackground(Color.decode("#73cdf5"));
-            btnQLBanHang.setForeground(Color.WHITE);
+            customUI.getInstance().setCustomBtnHover(btnQLBanHang);
         } else if (o.equals(btnQLHeThong)) {
             if (loginAccount.getType() == MANAGER_ACCOUNT) {
-                btnQLHeThong.setBackground(Color.decode("#73cdf5"));
-                btnQLHeThong.setForeground(Color.WHITE);
+                customUI.getInstance().setCustomBtnHover(btnQLHeThong);
             }
         }
     }
@@ -152,15 +150,13 @@ public class fPageNavigation extends JFrame implements ActionListener, MouseList
     public void mouseExited(MouseEvent e) {
         Object o = e.getSource();
         if (o.equals(btnLogOut)) {
-            btnLogOut.setBackground(Color.decode("#d0e1fd"));
-            btnLogOut.setForeground(Color.BLUE);
+            customUI.getInstance().setCustomBtn(btnLogOut);
         } else if (o.equals(btnQLBanHang)) {
-            btnQLBanHang.setBackground(Color.decode("#d0e1fd"));
+            customUI.getInstance().setCustomBtn(btnQLBanHang);
             btnQLBanHang.setForeground(new Color(255, 153, 0));
         } else if (o.equals(btnQLHeThong)) {
             if (loginAccount.getType() == MANAGER_ACCOUNT) {
-                btnQLHeThong.setBackground(Color.decode("#d0e1fd"));
-                btnQLHeThong.setForeground(Color.BLUE);
+                customUI.getInstance().setCustomBtn(btnQLHeThong);
             }
         }
     }

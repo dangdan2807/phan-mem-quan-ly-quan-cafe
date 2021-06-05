@@ -27,4 +27,32 @@ public class CategoryDAO {
         }
         return dataList;
     }
+
+    public int getCategoryIDByCategoryName(String categoryName) {
+        String query = "SELECT t.id FROM dbo.ProductCategory t WHERE t.name = ?";
+        Object[] parameter = new Object[] { categoryName };
+        ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
+        int data = -1;
+        try {
+            rs.next();
+            data = rs.getInt("id");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
+    public String getCategoryNameByID(int categoryID) {
+        String query = "SELECT t.name FROM dbo.ProductCategory t WHERE t.id = ?";
+        Object[] parameter = new Object[] { categoryID };
+        ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
+        String data = "";
+        try {
+            rs.next();
+            data = rs.getString("name");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
 }
