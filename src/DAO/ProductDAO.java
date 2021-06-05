@@ -43,11 +43,10 @@ public class ProductDAO {
         return data;
     }
 
-    public int getProductIDByProductName(String productName) {
+    public int getLastProductID() {
         int data = -1;
-        String query = "SELECT id FROM dbo.Product WHERE name = ?";
-        Object[] parameter = new Object[] { productName };
-        ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
+        String query = "SELECT * FROM dbo.KhachHang";
+        ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, null);
         try {
             rs.next();
             data = rs.getInt("id");

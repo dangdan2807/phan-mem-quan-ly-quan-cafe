@@ -15,13 +15,13 @@ import java.util.ArrayList;
 
 import javax.swing.border.*;
 
-public class pnProduct extends JPanel implements interfaceBtn, ActionListener, MouseListener, ItemListener {
+public class pnProduct extends JPanel
+        implements interfaceBtn, ActionListener, MouseListener, ItemListener, KeyListener {
     private JTable table;
     private DefaultTableModel modelTable;
-    private JTextField txtProductID, txtProductName, txtPrice;
+    private JTextField txtProductID, txtProductName, txtPrice, txtKeyWord;
     private JComboBox<String> cboCategory, cboSearchCategory;
-    private JButton btnAdd, btnDelete, btnUpdate, btnRefresh, btnLogOut, btnBack, btnSearch, btnViewAll;
-    private JTextField txtKeyWord;
+    private JButton btnAdd, btnDelete, btnUpdate, btnRefresh, btnLogOut, btnBack, btnSearch;
     private ImageIcon addIcon = new ImageIcon("img/blueAdd_16.png");
     private ImageIcon trashIcon = new ImageIcon("img/trash_16.png");
     private ImageIcon refreshIcon = new ImageIcon("img/refresh_16.png");
@@ -84,6 +84,7 @@ public class pnProduct extends JPanel implements interfaceBtn, ActionListener, M
         pnInfo.add(lbPrice);
 
         txtPrice = new JTextField();
+        txtPrice.setHorizontalAlignment(SwingConstants.RIGHT);
         txtPrice.setText("0");
         txtPrice.setBounds(400, 46, 170, 20);
         pnInfo.add(txtPrice);
@@ -138,26 +139,22 @@ public class pnProduct extends JPanel implements interfaceBtn, ActionListener, M
         pnSearch.add(lbSearchCategory);
 
         cboSearchCategory = new JComboBox<String>();
-        cboSearchCategory.setBounds(111, 10, 150, 20);
+        cboSearchCategory.setBounds(111, 10, 170, 20);
         pnSearch.add(cboSearchCategory);
 
         JLabel lbKeyWord = new JLabel("Từ khóa: ");
-        lbKeyWord.setBounds(279, 12, 70, 16);
+        lbKeyWord.setBounds(299, 12, 70, 16);
         pnSearch.add(lbKeyWord);
 
         txtKeyWord = new JTextField();
-        txtKeyWord.setBounds(345, 10, 150, 20);
+        txtKeyWord.setBounds(360, 10, 170, 20);
         pnSearch.add(txtKeyWord);
         txtKeyWord.setColumns(10);
 
         btnSearch = new JButton("Tìm kiếm", searchIcon);
-        btnSearch.setBounds(507, 7, 120, 26);
+        btnSearch.setBounds(542, 7, 120, 26);
         customUI.getInstance().setCustomBtn(btnSearch);
         pnSearch.add(btnSearch);
-
-        btnViewAll = new JButton("Xem tất cả");
-        btnViewAll.setBounds(639, 7, 120, 26);
-        pnSearch.add(btnViewAll);
 
         String[] cols = { "STT", "Mã sản phẩm", "Tên sản phẩm ", "Loại sản phẩm", "Giá" };
         modelTable = new DefaultTableModel(cols, 0) {
@@ -179,7 +176,7 @@ public class pnProduct extends JPanel implements interfaceBtn, ActionListener, M
         pnTable.setBounds(10, 25, 1250, 600);
 
         this.add(pnTable, BorderLayout.CENTER);
-        loadCategoryList();
+        loadCategoryListIntoCbo();
         reSizeColumnTable();
         loadProductList();
 
@@ -188,10 +185,12 @@ public class pnProduct extends JPanel implements interfaceBtn, ActionListener, M
         btnUpdate.addActionListener(this);
         btnRefresh.addActionListener(this);
         btnSearch.addActionListener(this);
-        btnViewAll.addActionListener(this);
 
         cboSearchCategory.addItemListener(this);
+
         table.addMouseListener(this);
+
+        txtKeyWord.addKeyListener(this);
     }
 
     public static void main(String[] args) {
@@ -208,15 +207,20 @@ public class pnProduct extends JPanel implements interfaceBtn, ActionListener, M
                 DecimalFormat df = new DecimalFormat("#,###.##");
                 if (result == true) {
                     String stt = df.format(index++);
-                    int id = ProductDAO.getInstance().getProductIDByProductName(product.getName());
-                    String productID = df.format(id);
+                    int productID = ProductDAO.getInstance().getLastProductID();
                     String price = df.format(product.getPrice());
                     String categoryName = CategoryDAO.getInstance().getCategoryNameByID(product.getCategoryID());
                     String categoryNameCbo = cboSearchCategory.getSelectedItem().toString();
-                    if (categoryNameCbo.equals(categoryName) == true) {
+                    if (categoryNameCbo.equals(categoryName) == true || categoryNameCbo.equals("Tất cả")) {
                         modelTable.addRow(new Object[] { stt, productID, product.getName(), categoryName, price });
                         modelTable.fireTableDataChanged();
+                    } else {
+                        cboSearchCategory.setSelectedItem(categoryName);
+                        loadProductListByCategoryName(categoryName);
                     }
+                    int lastIndex = table.getRowCount() - 1;
+                    table.getSelectionModel().setSelectionInterval(lastIndex, lastIndex);
+                    table.scrollRectToVisible(table.getCellRect(lastIndex, lastIndex, true));
                     JOptionPane.showMessageDialog(this, "Thêm sản phẩm thành công");
                 } else {
                     JOptionPane.showMessageDialog(this, "Thêm sản phẩm thất bại");
@@ -224,40 +228,44 @@ public class pnProduct extends JPanel implements interfaceBtn, ActionListener, M
             }
         } else if (o.equals(btnUpdate)) {
             if (validData()) {
-                Product product = getDataInFrom();
-                int productID = product.getId();
-                boolean result = ProductDAO.getInstance().updateProduct(product);
-                DecimalFormat df = new DecimalFormat("#,###.##");
-                if (result == true) {
-                    String price = df.format(product.getPrice());
-                    String categoryName = CategoryDAO.getInstance().getCategoryNameByID(product.getCategoryID());
-                    for (int i = 0; i < table.getRowCount(); i++) {
-                        int idProduct = Integer.parseInt((String) modelTable.getValueAt(i, 1));
-                        if (idProduct == productID) {
-                            System.out.println(i);
-                            modelTable.setValueAt(product.getName(), i, 2);
-                            modelTable.setValueAt(categoryName, i, 3);
-                            modelTable.setValueAt(price, i, 4);
-                            modelTable.fireTableDataChanged();
-                            break;
-                        }
+                int row = table.getSelectedRow();
+                if (row == -1) {
+                    Product product = getDataInFrom();
+                    boolean result = ProductDAO.getInstance().updateProduct(product);
+                    DecimalFormat df = new DecimalFormat("#,###.##");
+                    if (result == true) {
+                        String price = df.format(product.getPrice());
+                        String categoryName = CategoryDAO.getInstance().getCategoryNameByID(product.getCategoryID());
+                        modelTable.setValueAt(product.getName(), row, 2);
+                        modelTable.setValueAt(categoryName, row, 3);
+                        modelTable.setValueAt(price, row, 4);
+                        JOptionPane.showMessageDialog(this, "cập nhật sản phẩm thành công");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "cập nhật sản phẩm thất bại");
                     }
-                    JOptionPane.showMessageDialog(this, "cập nhật sản phẩm thành công");
                 } else {
-                    JOptionPane.showMessageDialog(this, "cập nhật sản phẩm thất bại");
+                    JOptionPane.showMessageDialog(this, "Chọn 1 sản phẩm cần cập nhật");
                 }
             }
         } else if (o.equals(btnDelete)) {
-            if (!txtProductID.getText().trim().equals("")) {
-                int ProductID = Integer.parseInt(txtProductID.getText().trim());
-                boolean result = ProductDAO.getInstance().deleteProduct(ProductID);
-                if (result == true) {
-                    JOptionPane.showMessageDialog(this, "Xóa sản phẩm thành công");
+            String productName = txtProductName.getText().trim();
+            String message = String.format("Bạn có muốn xóa sản phẩm: %s", productName);
+            int select = JOptionPane.showConfirmDialog(this, message, "Xác nhận xóa", JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+            if (select == JOptionPane.YES_OPTION) {
+                int row = table.getSelectedRow();
+                if (row == -1) {
+                    int ProductID = Integer.parseInt(txtProductID.getText().trim());
+                    boolean result = ProductDAO.getInstance().deleteProduct(ProductID);
+                    modelTable.removeRow(row);
+                    if (result == true) {
+                        JOptionPane.showMessageDialog(this, "Xóa sản phẩm thành công");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Xóa sản phẩm thất bại");
+                    }
                 } else {
-                    JOptionPane.showMessageDialog(this, "Xóa sản phẩm thất bại");
+                    JOptionPane.showMessageDialog(this, "Chọn 1 sản phẩm cần xóa");
                 }
-            } else {
-                JOptionPane.showMessageDialog(this, "Chọn 1 sản phẩm cần xóa");
             }
         } else if (o.equals(btnRefresh)) {
             txtProductID.setText("");
@@ -266,15 +274,11 @@ public class pnProduct extends JPanel implements interfaceBtn, ActionListener, M
             txtPrice.setText("0");
         } else if (o.equals(btnSearch)) {
             String categoryName = cboSearchCategory.getSelectedItem().toString();
-            System.out.println(categoryName);
             String productName = txtKeyWord.getText().trim();
             if (productName.equals("")) {
                 loadProductListByCategoryName(categoryName);
             } else
                 loadProductListByCategoryNameAndProductName(productName, categoryName);
-        } else if (o.equals(btnViewAll)) {
-            cboSearchCategory.setSelectedIndex(0);
-            loadProductList();
         }
     }
 
@@ -283,7 +287,11 @@ public class pnProduct extends JPanel implements interfaceBtn, ActionListener, M
         Object o = e.getSource();
         if (o.equals(cboSearchCategory)) {
             String categoryName = cboSearchCategory.getSelectedItem().toString();
-            loadProductListByCategoryName(categoryName);
+            if (categoryName.equals("Tất cả")) {
+                loadProductList();
+            } else {
+                loadProductListByCategoryName(categoryName);
+            }
         }
     }
 
@@ -292,10 +300,10 @@ public class pnProduct extends JPanel implements interfaceBtn, ActionListener, M
         Object o = e.getSource();
         if (o.equals(table)) {
             int row = table.getSelectedRow();
-            txtProductID.setText(String.valueOf(table.getValueAt(row, 1)));
-            txtProductName.setText(String.valueOf(modelTable.getValueAt(row, 2)));
-            txtPrice.setText(String.valueOf(modelTable.getValueAt(row, 4)));
-            cboCategory.setSelectedItem(String.valueOf(modelTable.getValueAt(row, 3)));
+            txtProductID.setText(table.getValueAt(row, 1).toString());
+            txtProductName.setText(modelTable.getValueAt(row, 2).toString());
+            txtPrice.setText(modelTable.getValueAt(row, 4).toString());
+            cboCategory.setSelectedItem(modelTable.getValueAt(row, 3).toString());
         }
     }
 
@@ -350,6 +358,26 @@ public class pnProduct extends JPanel implements interfaceBtn, ActionListener, M
     }
 
     @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        Object o = e.getSource();
+        Object key = e.getKeyCode();
+        if (o.equals(txtKeyWord)) {
+            if (key.equals(KeyEvent.VK_ENTER))
+                btnSearch.doClick();
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+    }
+
+    @Override
     public JButton getBtnLogOut() {
         return btnLogOut;
     }
@@ -391,8 +419,9 @@ public class pnProduct extends JPanel implements interfaceBtn, ActionListener, M
         return product;
     }
 
-    private void loadCategoryList() {
+    private void loadCategoryListIntoCbo() {
         ArrayList<Category> categoryList = CategoryDAO.getInstance().getListCategory();
+        cboSearchCategory.addItem("Tất cả");
         for (Category item : categoryList) {
             cboCategory.addItem(item.getName());
             cboSearchCategory.addItem(item.getName());
@@ -401,21 +430,31 @@ public class pnProduct extends JPanel implements interfaceBtn, ActionListener, M
 
     private void loadProductList() {
         ResultSet productList = ProductDAO.getInstance().getListProductCustom();
-        readerDataIntoTable(productList);
+        loadDataIntoTable(productList);
     }
 
     private void loadProductListByCategoryName(String categoryName) {
-        ResultSet productList = ProductDAO.getInstance().getListProductCustomByCategoryName(categoryName);
-        readerDataIntoTable(productList);
+        ResultSet productList = null;
+        if (categoryName.equalsIgnoreCase("Tất cả")) {
+            productList = ProductDAO.getInstance().getListProductCustom();
+        } else {
+            productList = ProductDAO.getInstance().getListProductCustomByCategoryName(categoryName);
+        }
+        loadDataIntoTable(productList);
     }
 
     private void loadProductListByCategoryNameAndProductName(String productName, String categoryName) {
-        ResultSet productList = ProductDAO.getInstance().getListProductCustomByCategoryAndProductName(productName,
-                categoryName);
-        readerDataIntoTable(productList);
+        ResultSet productList = null;
+        if (categoryName.equalsIgnoreCase("Tất cả")) {
+            productList = ProductDAO.getInstance().getListProductCustom();
+        } else {
+            productList = ProductDAO.getInstance().getListProductCustomByCategoryAndProductName(productName,
+                    categoryName);
+        }
+        loadDataIntoTable(productList);
     }
 
-    private void readerDataIntoTable(ResultSet rs) {
+    private void loadDataIntoTable(ResultSet rs) {
         DecimalFormat df = new DecimalFormat("#,###.##");
         modelTable.getDataVector().removeAllElements();
         modelTable.fireTableDataChanged();
@@ -433,11 +472,12 @@ public class pnProduct extends JPanel implements interfaceBtn, ActionListener, M
     }
 
     private void reSizeColumnTable() {
-        table.getColumnModel().getColumn(0).setPreferredWidth(20);
-        table.getColumnModel().getColumn(1).setPreferredWidth(50);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.getColumnModel().getColumn(0).setPreferredWidth(50);
+        table.getColumnModel().getColumn(1).setPreferredWidth(90);
         table.getColumnModel().getColumn(2).setPreferredWidth(250);
         table.getColumnModel().getColumn(3).setPreferredWidth(250);
-        table.getColumnModel().getColumn(4).setPreferredWidth(100);
+        table.getColumnModel().getColumn(4).setPreferredWidth(120);
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();

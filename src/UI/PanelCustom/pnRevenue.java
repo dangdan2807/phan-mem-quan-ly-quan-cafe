@@ -185,14 +185,14 @@ public class pnRevenue extends JPanel implements interfaceBtn, ActionListener, M
         int i = 1;
         try {
             while (rs.next()) {
-                String billID = String.valueOf(rs.getInt("id"));
+                int billID = rs.getInt("id");
                 String name = rs.getString("name");
                 String totalPrice = df.format(rs.getDouble("totalPrice"));
                 String checkIn = formatDate(rs.getDate("dateCheckIn"));
                 String checkOut = formatDate(rs.getDate("dateCheckOut"));
                 int discount = rs.getInt("discount");
                 String stt = df.format(i++);
-                modelTable.addRow(new Object[] { stt, billID, name, checkIn, checkOut, discount, totalPrice });
+                modelTable.addRow(new Object[] { stt, billID, name, checkIn, checkOut, discount + "%", totalPrice });
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -217,13 +217,14 @@ public class pnRevenue extends JPanel implements interfaceBtn, ActionListener, M
     }
 
     private void reSizeColumnTable() {
-        table.getColumnModel().getColumn(0).setPreferredWidth(20);
-        table.getColumnModel().getColumn(1).setPreferredWidth(50);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.getColumnModel().getColumn(0).setPreferredWidth(50);
+        table.getColumnModel().getColumn(1).setPreferredWidth(70);
         table.getColumnModel().getColumn(2).setPreferredWidth(250);
         table.getColumnModel().getColumn(3).setPreferredWidth(100);
         table.getColumnModel().getColumn(4).setPreferredWidth(100);
-        table.getColumnModel().getColumn(5).setPreferredWidth(100);
-        table.getColumnModel().getColumn(6).setPreferredWidth(100);
+        table.getColumnModel().getColumn(5).setPreferredWidth(120);
+        table.getColumnModel().getColumn(6).setPreferredWidth(120);
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
