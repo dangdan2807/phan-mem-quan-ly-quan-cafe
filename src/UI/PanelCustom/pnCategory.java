@@ -203,23 +203,22 @@ public class pnCategory extends JFrame
                     JOptionPane.showMessageDialog(this, "Thêm loại sản phẩm thất bại");
                 }
             }
-        // } else if (o.equals(btnUpdate)) {
-        //     if (validData()) {
-        //         int row = table.getSelectedRow();
-        //         if (row == -1) {
-        //             Category category = getDataInFrom();
-        //             boolean result = ProductDAO.getInstance().updateProduct(category);
-        //             DecimalFormat df = new DecimalFormat("#,###.##");
-        //             if (result == true) {
-        //                 modelTable.setValueAt(category.getName(), row, 2);
-        //                 JOptionPane.showMessageDialog(this, "cập nhật loại sản phẩm thành công");
-        //             } else {
-        //                 JOptionPane.showMessageDialog(this, "cập nhật loại sản phẩm thất bại");
-        //             }
-        //         } else {
-        //             JOptionPane.showMessageDialog(this, "Chọn 1 loại sản phẩm cần cập nhật");
-        //         }
-        //     }
+        } else if (o.equals(btnUpdate)) {
+            if (validData()) {
+                int row = table.getSelectedRow();
+                if (row == -1) {
+                    Category category = getDataInFrom();
+                    boolean result = CategoryDAO.getInstance().updateProduct(category);
+                    if (result == true) {
+                        modelTable.setValueAt(category.getName(), row, 2);
+                        JOptionPane.showMessageDialog(this, "cập nhật loại sản phẩm thành công");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "cập nhật loại sản phẩm thất bại");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Chọn 1 loại sản phẩm cần cập nhật");
+                }
+            }
             // } else if (o.equals(btnDelete)) {
             // String productName = txtProductName.getText().trim();
             // String productIDStr = txtProductID.getText().trim();

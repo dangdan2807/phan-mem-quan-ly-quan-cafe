@@ -90,4 +90,11 @@ public class CategoryDAO {
         int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
         return result > 0;
     }
+
+    public boolean updateProduct(Category category) {
+        String query = "Update dbo.ProductCategory set name = ? where id = ?";
+        Object[] parameter = new Object[] { category.getName(), category.getId() };
+        int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
+        return result > 0;
+    }
 }
