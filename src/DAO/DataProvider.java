@@ -20,7 +20,7 @@ public class DataProvider {
         try {
             db.connect();
             con = ConnectDB.getConnection();
-            stmt = con.prepareStatement(query);
+            stmt = con.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             if (parameter != null) {
                 String[] listParams = query.split(" ");
                 int i = 1;

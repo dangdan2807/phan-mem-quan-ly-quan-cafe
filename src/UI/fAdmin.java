@@ -28,9 +28,10 @@ public class fAdmin extends JFrame implements ActionListener {
         setSize(1280, 700);
         setResizable(false);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         this.loginAccount = account;
         createTabControl();
+        setCloseAction(this);
     }
 
     public void createTabControl() {
@@ -78,5 +79,18 @@ public class fAdmin extends JFrame implements ActionListener {
         fPageNavigation f = new fPageNavigation(loginAccount);
         setVisible(false);
         f.setVisible(true);
+    }
+
+    // mô tả: Bắt sự kiện khi click btn close(x), sẽ show 1 form xác nhận đăng xuất
+    // hay thoát chương trình
+    public void setCloseAction(JFrame jframe) {
+        jframe.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                fPageNavigation f = new fPageNavigation(loginAccount);
+                jframe.setVisible(false);
+                f.setVisible(true);
+            }
+        });
     }
 }
