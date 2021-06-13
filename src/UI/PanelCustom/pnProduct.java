@@ -21,7 +21,7 @@ public class pnProduct extends JPanel
     private DefaultTableModel modelTable;
     private JTextField txtProductID, txtProductName, txtPrice, txtKeyWord;
     private JComboBox<String> cboCategory, cboSearchCategory;
-    private JButton btnAdd, btnDelete, btnUpdate, btnRefresh, btnLogOut, btnBack, btnSearch;
+    private JButton btnAdd, btnDelete, btnUpdate, btnRefresh, btnLogOut, btnBack, btnSearch, btnViewAll;
     private ImageIcon addIcon = new ImageIcon("img/blueAdd_16.png");
     private ImageIcon trashIcon = new ImageIcon("img/trash_16.png");
     private ImageIcon refreshIcon = new ImageIcon("img/refresh_16.png");
@@ -155,6 +155,11 @@ public class pnProduct extends JPanel
         btnSearch.setBounds(542, 7, 120, 26);
         customUI.getInstance().setCustomBtn(btnSearch);
         pnSearch.add(btnSearch);
+        
+        btnViewAll = new JButton("Xem tất cả", null);
+        btnViewAll.setBounds(672, 9, 120, 26);
+        customUI.getInstance().setCustomBtn(btnViewAll);
+        pnSearch.add(btnViewAll);
 
         String[] cols = { "STT", "Mã sản phẩm", "Tên sản phẩm ", "Loại sản phẩm", "Giá" };
         modelTable = new DefaultTableModel(cols, 0) {
@@ -185,6 +190,14 @@ public class pnProduct extends JPanel
         btnUpdate.addActionListener(this);
         btnRefresh.addActionListener(this);
         btnSearch.addActionListener(this);
+        btnViewAll.addActionListener(this);
+
+        btnAdd.addMouseListener(this);
+        btnDelete.addMouseListener(this);
+        btnUpdate.addMouseListener(this);
+        btnRefresh.addMouseListener(this);
+        btnSearch.addMouseListener(this);
+        btnViewAll.addMouseListener(this);
 
         cboSearchCategory.addItemListener(this);
 
@@ -277,6 +290,9 @@ public class pnProduct extends JPanel
                 loadProductListByCategoryName(categoryName);
             } else
                 loadProductListByCategoryNameAndProductName(productName, categoryName);
+        } else if (o.equals(btnViewAll)) {
+            loadProductList();
+            cboSearchCategory.setSelectedIndex(0);
         }
     }
 
@@ -332,6 +348,8 @@ public class pnProduct extends JPanel
             customUI.getInstance().setCustomBtnHover(btnLogOut);
         } else if (o.equals(btnSearch)) {
             customUI.getInstance().setCustomBtnHover(btnSearch);
+        } else if (o.equals(btnViewAll)) {
+            customUI.getInstance().setCustomBtnHover(btnViewAll);
         }
     }
 
@@ -352,6 +370,8 @@ public class pnProduct extends JPanel
             customUI.getInstance().setCustomBtn(btnLogOut);
         } else if (o.equals(btnSearch)) {
             customUI.getInstance().setCustomBtnHover(btnSearch);
+        } else if (o.equals(btnViewAll)) {
+            customUI.getInstance().setCustomBtnHover(btnViewAll);
         }
     }
 
@@ -453,8 +473,7 @@ public class pnProduct extends JPanel
         if (categoryName.equalsIgnoreCase("Tất cả")) {
             productList = ProductDAO.getInstance().searchProductByProductName(productName);
         } else {
-            productList = ProductDAO.getInstance().searchProductByCategoryNameAndProductName(productName,
-                    categoryName);
+            productList = ProductDAO.getInstance().searchProductByCategoryNameAndProductName(productName, categoryName);
         }
         loadDataIntoTable(productList);
     }
