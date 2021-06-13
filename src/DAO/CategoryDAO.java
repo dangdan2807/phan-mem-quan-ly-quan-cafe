@@ -28,8 +28,23 @@ public class CategoryDAO {
         return dataList;
     }
 
+    public ArrayList<Category> getListCategoryByName(String categoryName) {
+        ArrayList<Category> dataList = new ArrayList<Category>();
+        String query = "SELECT * FROM dbo.ProductCategory WHERE name = ?";
+        Object[] parameter = new Object[] { categoryName };
+        ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
+        try {
+            while (rs.next()) {
+                dataList.add(new Category(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dataList;
+    }
+
     public int getCategoryIDByCategoryName(String categoryName) {
-        String query = "SELECT t.id FROM dbo.ProductCategory t WHERE t.name = ?";
+        String query = "SELECT t.id FROM dbo.ProductCategory t WHERE dbo.fuConvertToUnsign(t.name) like dbo.fuConvertToUnsign( ? )";
         Object[] parameter = new Object[] { categoryName };
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
         int data = -1;
@@ -54,5 +69,25 @@ public class CategoryDAO {
             e.printStackTrace();
         }
         return data;
+    }
+
+    public int getLastCategoryID() {
+        int data = -1;
+        String query = "SELECT * FROM dbo.ProductCategory";
+        ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, null);
+        try {
+            rs.last();
+            data = rs.getInt("id");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
+    public boolean insertCategory(Category category) {
+        String query = "INSERT INTO dbo.ProductCategory (name) VALUES ( ? )";
+        Object[] parameter = new Object[] { category.getName() };
+        int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
+        return result > 0;
     }
 }

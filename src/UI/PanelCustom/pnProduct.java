@@ -369,9 +369,9 @@ public class pnProduct extends JPanel
         } else if (o.equals(btnLogOut)) {
             customUI.getInstance().setCustomBtn(btnLogOut);
         } else if (o.equals(btnSearch)) {
-            customUI.getInstance().setCustomBtnHover(btnSearch);
+            customUI.getInstance().setCustomBtn(btnSearch);
         } else if (o.equals(btnViewAll)) {
-            customUI.getInstance().setCustomBtnHover(btnViewAll);
+            customUI.getInstance().setCustomBtn(btnViewAll);
         }
     }
 
