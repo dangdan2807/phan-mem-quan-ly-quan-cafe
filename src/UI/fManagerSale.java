@@ -415,6 +415,7 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
                 }
                 showBill(tableID);
                 loadTable(tableID);
+                txtBillID.setText(String.valueOf(billID));
                 btnPayment.setEnabled(true);
             }
         } else if (o.equals(btnSearch)) {
@@ -443,7 +444,7 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
                     BillDAO.getInstance().checkOut(billID, discount, totalPrice);
                     showBill(tableID);
                     loadTable(tableID);
-                    txtBillID.setText(String.valueOf(billID));
+                    txtBillID.setText("");
                     // btnPayment.setEnabled(false);
                 }
             }
@@ -466,6 +467,8 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
                 TableDAO.getInstance().switchTable(tableID1, tableID2);
                 loadTable(tableID1);
                 loadTable(tableID2);
+                showBill(tableID1);
+                showBill(tableID2);
             }
         } else if (o.equals(itemThongTinTK)) {
             fAccountProfile f = new fAccountProfile(this, loginAccount);
@@ -572,7 +575,7 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
         jframe.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                fLogin f = new fLogin();
+                fPageNavigation f = new fPageNavigation(loginAccount);
                 jframe.setVisible(false);
                 f.setVisible(true);
             }
@@ -582,22 +585,32 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
     private void loadTable(int tableID) {
         Table table = TableDAO.getInstance().getTableByTableID(tableID);
         String status = table.getStatus();
-        String nameBtn = "<html><p style='text-align: center;'>" + table.getName()
-                + "</p></br><p style='text-align: center;'>" + status + "</p></html>";
+        String tableName = table.getName();
+        String nameBtn = "<html><p style='text-align: center;'> " + tableName
+                + " </p></br><p style='text-align: center;'> " + status + " </p></html>";
         // warning - tương lai sẽ lỗi nếu xóa và thêm bàn (vì id tự tăng)
-        btnTableList[tableID - 1].setText(nameBtn);
-        btnTableList[tableID - 1].setVerticalTextPosition(SwingConstants.BOTTOM);
-        btnTableList[tableID - 1].setHorizontalTextPosition(SwingConstants.CENTER);
-        btnTableList[tableID - 1].setPreferredSize(new Dimension(TableDAO.TABLE_WIDTH, TableDAO.TABLE_HEIGHT));
+        int index = 0;
+        for (int i = 0; i < btnTableList.length; i++) {
+            if (btnTableList[i].getText().contains(tableName))
+                index = i;
+            else if (btnTableList[i].getText().equals("")) {
+                index = i;
+                break;
+            }
+        }
+        btnTableList[index].setText(nameBtn);
+        btnTableList[index].setVerticalTextPosition(SwingConstants.BOTTOM);
+        btnTableList[index].setHorizontalTextPosition(SwingConstants.CENTER);
+        btnTableList[index].setPreferredSize(new Dimension(TableDAO.TABLE_WIDTH, TableDAO.TABLE_HEIGHT));
         switch (status) {
             case "Trống":
-                btnTableList[tableID - 1].setBackground(Color.CYAN);
-                btnTableList[tableID - 1].setIcon(coffeeActionIcon);
+                btnTableList[index].setBackground(Color.CYAN);
                 btnPayment.setEnabled(false);
+                btnTableList[index].setIcon(coffeeActionIcon);
                 break;
             default:
-                btnTableList[tableID - 1].setBackground(Color.decode("#E0FFFF"));
-                btnTableList[tableID - 1].setIcon(coffeeDisableIcon);
+                btnTableList[index].setBackground(Color.decode("#E0FFFF"));
+                btnTableList[index].setIcon(coffeeDisableIcon);
                 break;
         }
         pnShowTable.revalidate();
@@ -735,7 +748,7 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
     private void changeAccount(Account account) {
         lbEmpName.setText(account.getDisplayName());
     }
-    
+
     public void setEmpName(String empName) {
         lbEmpName.setText(empName);
     }

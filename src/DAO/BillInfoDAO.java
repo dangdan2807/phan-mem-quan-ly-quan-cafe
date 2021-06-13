@@ -30,9 +30,17 @@ public class BillInfoDAO {
         return dataList;
     }
 
-    public void insertBillInfo(int billID, int productID, int count) {
+    public boolean insertBillInfo(int billID, int productID, int count) {
         Object[] parameter = new Object[] { billID, productID, count };
         String query = "{CALL USP_insertBillInfo ( ? , ? , ? )}";
-        DataProvider.getInstance().ExecuteNonQuery(query, parameter);
+        int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
+        return result > 0;
+    }
+
+    public boolean deleteBillInfoByProductID(int productID) {
+        Object[] parameter = new Object[] { productID };
+        String query = "DELETE FROM dbo.BillInfo WHERE idProduct = ?";
+        int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
+        return result > 0;
     }
 }

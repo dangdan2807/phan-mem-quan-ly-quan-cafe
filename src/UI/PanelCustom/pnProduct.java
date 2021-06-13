@@ -249,29 +249,31 @@ public class pnProduct extends JPanel
             }
         } else if (o.equals(btnDelete)) {
             String productName = txtProductName.getText().trim();
-            String message = String.format("Bạn có muốn xóa sản phẩm: %s", productName);
-            int select = JOptionPane.showConfirmDialog(this, message, "Xác nhận xóa", JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE);
-            if (select == JOptionPane.YES_OPTION) {
-                int row = table.getSelectedRow();
-                if (row == -1) {
-                    int ProductID = Integer.parseInt(txtProductID.getText().trim());
-                    boolean result = ProductDAO.getInstance().deleteProduct(ProductID);
-                    modelTable.removeRow(row);
-                    if (result == true) {
+            String productIDStr = txtProductID.getText().trim();
+            int row = table.getSelectedRow();
+            if (row != -1 && !productIDStr.equals("")) {
+                String message = String.format(
+                        "Bạn có muốn xóa sản phẩm: %s \nXóa sản phẩm sẽ dẫn đến xóa tất cả trong các hóa đơn đã thanh toán trước đây",
+                        productName);
+                int select = JOptionPane.showConfirmDialog(this, message, "Xác nhận xóa", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                if (select == JOptionPane.YES_OPTION) {
+                    int productID = Integer.parseInt(productIDStr);
+                    BillInfoDAO.getInstance().deleteBillInfoByProductID(productID);
+                    boolean resultProduct = ProductDAO.getInstance().deleteProduct(productID);
+                    if (resultProduct == true) {
+                        modelTable.removeRow(row);
+                        refreshInput();
                         JOptionPane.showMessageDialog(this, "Xóa sản phẩm thành công");
                     } else {
                         JOptionPane.showMessageDialog(this, "Xóa sản phẩm thất bại");
                     }
-                } else {
-                    JOptionPane.showMessageDialog(this, "Chọn 1 sản phẩm cần xóa");
                 }
+            } else {
+                JOptionPane.showMessageDialog(this, "Chọn 1 sản phẩm cần xóa");
             }
         } else if (o.equals(btnRefresh)) {
-            txtProductID.setText("");
-            txtProductName.setText("");
-            cboCategory.setSelectedIndex(0);
-            txtPrice.setText("0");
+            refreshInput();
         } else if (o.equals(btnSearch)) {
             String categoryName = cboSearchCategory.getSelectedItem().toString();
             String productName = txtKeyWord.getText().trim();
@@ -405,6 +407,13 @@ public class pnProduct extends JPanel
             return false;
         }
         return true;
+    }
+
+    private void refreshInput() {
+        txtProductID.setText("");
+        txtProductName.setText("");
+        cboCategory.setSelectedIndex(0);
+        txtPrice.setText("0");
     }
 
     private Product getDataInFrom() {

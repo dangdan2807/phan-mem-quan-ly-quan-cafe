@@ -43,7 +43,7 @@ public class fLogin extends JFrame implements ActionListener, KeyListener, Focus
         thumb.setBounds(0, 0, 430, 465);
         thumb.setIcon(background);
         pnMain.add(thumb);
-
+        
         JLabel lbUsername, lbPassword;
         lbUsername = new JLabel("Tên đăng nhập: ");
         lbUsername.setFont(new Font("Dialog", Font.BOLD, 14));

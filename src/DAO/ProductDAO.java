@@ -45,10 +45,10 @@ public class ProductDAO {
 
     public int getLastProductID() {
         int data = -1;
-        String query = "SELECT * FROM dbo.KhachHang";
+        String query = "SELECT * FROM dbo.Product";
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, null);
         try {
-            rs.next();
+            rs.last();
             data = rs.getInt("id");
         } catch (SQLException e) {
             e.printStackTrace();
