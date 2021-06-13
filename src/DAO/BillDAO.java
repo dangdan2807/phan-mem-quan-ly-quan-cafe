@@ -41,10 +41,10 @@ public class BillDAO {
 
     public ResultSet getBillListByDate(Date dateCheckIn, Date dateCheckOut) {
         String query = "{CALL USP_getListBillByDate( ? , ? )}";
-        Object[] parameter = new Object[] {dateCheckIn, dateCheckOut};
+        Object[] parameter = new Object[] { dateCheckIn, dateCheckOut };
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
         return rs;
-    } 
+    }
 
     public void insertBill(int tableID) {
         Object[] parameter = new Object[] { tableID };
@@ -68,4 +68,12 @@ public class BillDAO {
         Object[] param = new Object[] { discount, totalPrice, billID };
         DataProvider.getInstance().ExecuteNonQuery(query, param);
     }
+
+    public int getListBillUnpaidByTableID(int tableID) {
+        String query = "SELECT count(b.id) as countBillInfo FROM dbo.TableFood tf , dbo.Bill b , dbo.BillInfo bi WHERE tf.id= ? AND bi.id = b.id and b.idTable = ? AND b.[status] = 0";
+        Object[] parameter = new Object[] { tableID, tableID };
+        int result = (int) DataProvider.getInstance().ExecuteScalar(query, parameter);
+        return result;
+    }
+
 }

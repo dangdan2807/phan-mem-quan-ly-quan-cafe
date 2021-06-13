@@ -2,7 +2,6 @@ package UI.PanelCustom;
 
 import javax.swing.*;
 import javax.swing.table.*;
-import javax.swing.event.*;
 
 import DAO.*;
 import entity.*;
@@ -254,41 +253,33 @@ public class pnTable extends JFrame implements interfaceBtn, ActionListener, Mou
                 }
             }
         } else if (o.equals(btnDelete)) {
-            // int row = table.getSelectedRow();
-            // String categoryIDStr = txtTableID.getText().trim();
-            // if (row != -1 && !categoryIDStr.equals("")) {
-            // int categoryID = Integer.parseInt(categoryIDStr);
-            // String categoryName =
-            // CategoryDAO.getInstance().getCategoryNameByID(categoryID);
-            // int productCount = CategoryDAO.getInstance().getProductCount(categoryID);
-            // if (productCount > 0) {
-            // String message = String.format(
-            // "Để xóa sản phẩm loại sản phẩm: %s \nBạn cần xóa hết tất cả các sản phẩm
-            // thuộc loại sản phẩm này\nHoặc chuyển chúng sang loại khác",
-            // categoryName);
-            // JOptionPane.showConfirmDialog(this, message, "Thông báo",
-            // JOptionPane.OK_OPTION,
-            // JOptionPane.INFORMATION_MESSAGE);
-            // } else {
-            // String message = String.format("Bạn muốn xóa loại sản phẩm %s\n",
-            // categoryName);
-            // int select = JOptionPane.showConfirmDialog(this, message, "Thông báo",
-            // JOptionPane.YES_NO_OPTION,
-            // JOptionPane.QUESTION_MESSAGE);
-            // if (select == JOptionPane.YES_OPTION) {
-            // boolean result = CategoryDAO.getInstance().deleteProduct(categoryID);
-            // if (result == true) {
-            // modelTable.removeRow(row);
-            // refreshInput();
-            // JOptionPane.showMessageDialog(this, "Xóa sản phẩm thành công");
-            // } else {
-            // JOptionPane.showMessageDialog(this, "Xóa sản phẩm thất bại");
-            // }
-            // }
-            // }
-            // } else {
-            // JOptionPane.showMessageDialog(this, "Chọn 1 sản phẩm cần xóa");
-            // }
+            int row = table.getSelectedRow();
+            String tableIDStr = txtTableID.getText().trim();
+            if (row != -1 && !tableIDStr.equals("")) {
+                int tableID = Integer.parseInt(tableIDStr);
+                String tableName = (TableDAO.getInstance().getTableByTableID(tableID)).getName();
+                int billInfoUnpaidCount = BillDAO.getInstance().getListBillUnpaidByTableID(tableID);
+                if (billInfoUnpaidCount > 0) {
+                    String message = String.format("Để xóa sản phẩm: %s \nBạn cần xóa thanh toán hóa đơn", tableName);
+                    JOptionPane.showMessageDialog(this, message, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    String message = String.format("Bạn muốn xóa loại sản phẩm %s\n", tableName);
+                    int select = JOptionPane.showConfirmDialog(this, message, "Thông báo", JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE);
+                    if (select == JOptionPane.YES_OPTION) {
+                        boolean result = TableDAO.getInstance().deleteTable(tableID);
+                        if (result == true) {
+                            modelTable.removeRow(row);
+                            refreshInput();
+                            JOptionPane.showMessageDialog(this, "Xóa bàn thành công");
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Xóa bàn thất bại");
+                        }
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Chọn 1 bàn cần xóa");
+            }
         } else if (o.equals(btnRefresh)) {
             refreshInput();
         } else if (o.equals(btnSearch)) {

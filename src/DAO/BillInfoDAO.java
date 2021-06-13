@@ -43,4 +43,6 @@ public class BillInfoDAO {
         int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
         return result > 0;
     }
+
+    
 }
