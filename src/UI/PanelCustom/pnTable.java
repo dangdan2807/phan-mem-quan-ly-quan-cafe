@@ -216,24 +216,24 @@ public class pnTable extends JFrame implements interfaceBtn, ActionListener, Mou
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
         if (o.equals(btnAdd)) {
-            // if (validData()) {
-            // Category category = getDataInFrom();
-            // boolean result = CategoryDAO.getInstance().insertCategory(category);
-            // DecimalFormat df = new DecimalFormat("#,###.##");
-            // if (result == true) {
-            // String stt = df.format(index++);
-            // int categoryID = CategoryDAO.getInstance().getLastCategoryID();
-            // modelTable.addRow(new Object[] { stt, categoryID, category.getName() });
-            // modelTable.fireTableDataChanged();
-            // txtTableID.setText(String.valueOf(categoryID));
-            // int lastIndex = table.getRowCount() - 1;
-            // table.getSelectionModel().setSelectionInterval(lastIndex, lastIndex);
-            // table.scrollRectToVisible(table.getCellRect(lastIndex, lastIndex, true));
-            // JOptionPane.showMessageDialog(this, "Thêm loại sản phẩm thành công");
-            // } else {
-            // JOptionPane.showMessageDialog(this, "Thêm loại sản phẩm thất bại");
-            // }
-            // }
+            if (validData()) {
+                Table tableData = getDataInFrom();
+                boolean result = TableDAO.getInstance().insertCategory(tableData);
+                DecimalFormat df = new DecimalFormat("#,###.##");
+                if (result == true) {
+                    String stt = df.format(index++);
+                    int categoryID = CategoryDAO.getInstance().getLastCategoryID();
+                    modelTable.addRow(new Object[] { stt, categoryID, tableData.getName() });
+                    modelTable.fireTableDataChanged();
+                    txtTableID.setText(String.valueOf(categoryID));
+                    int lastIndex = table.getRowCount() - 1;
+                    table.getSelectionModel().setSelectionInterval(lastIndex, lastIndex);
+                    table.scrollRectToVisible(table.getCellRect(lastIndex, lastIndex, true));
+                    JOptionPane.showMessageDialog(this, "Thêm bàn thành công");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Thêm bàn thất bại");
+                }
+            }
         } else if (o.equals(btnUpdate)) {
             // if (validData()) {
             // int row = table.getSelectedRow();
@@ -300,7 +300,7 @@ public class pnTable extends JFrame implements interfaceBtn, ActionListener, Mou
                 if (status.equals("Tất cả"))
                     searchTableListByName(tableName);
                 else
-                searchTableListByNameAndStatus(tableName, status);
+                    searchTableListByNameAndStatus(tableName, status);
             }
         } else if (o.equals(btnViewAll)) {
             loadTableList();
@@ -420,8 +420,8 @@ public class pnTable extends JFrame implements interfaceBtn, ActionListener, Mou
     }
 
     private boolean validData() {
-        String productName = txtTableName.getText().trim();
-        if (!(productName.length() > 0)) {
+        String table = txtTableName.getText().trim();
+        if (!(table.length() > 0)) {
             JOptionPane.showMessageDialog(this, "Tên loại sản phẩm không được để trống");
             return false;
         }
@@ -434,12 +434,18 @@ public class pnTable extends JFrame implements interfaceBtn, ActionListener, Mou
         radEmpty.setSelected(true);
     }
 
-    private Category getDataInFrom() {
-        String categoryName = txtTableName.getText().trim();
-        int categoryID = 0;
+    private Table getDataInFrom() {
+        String tableName = txtTableName.getText().trim();
+        int tableID = 0;
         if (!txtTableID.getText().trim().equals(""))
-            categoryID = Integer.parseInt(txtTableID.getText().trim());
-        return (new Category(categoryID, categoryName));
+            tableID = Integer.parseInt(txtTableID.getText().trim());
+        String status = "";
+        if (radEmpty.isSelected())
+            status = radEmpty.getText();
+        else
+            status = radNotEmpty.getText();
+
+        return (new Table(tableID, tableName, status));
     }
 
     private void loadTableList() {

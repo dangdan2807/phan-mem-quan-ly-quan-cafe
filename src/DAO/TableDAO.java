@@ -110,4 +110,25 @@ public class TableDAO {
         }
         return dataList;
     }
+
+    public boolean insertCategory(Table table) {
+        String query = "INSERT INTO dbo.TableFood (name, status) VALUES ( ? < ? )";
+        Object[] parameter = new Object[] { table.getName(), table.getStatus() };
+        int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
+        return result > 0;
+    }
+
+    public boolean updateProduct(Table table) {
+        String query = "Update dbo.TableFood set name = ? , status = ? where id = ?";
+        Object[] parameter = new Object[] { table.getName(), table.getStatus(), table.getId() };
+        int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
+        return result > 0;
+    }
+
+    public boolean deleteProduct(int id) {
+        String query = "delete from dbo.TableFood Where id = ?";
+        Object[] parameter = new Object[] { id };
+        int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
+        return result > 0;
+    }
 }
