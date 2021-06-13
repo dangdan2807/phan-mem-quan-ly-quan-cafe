@@ -45,7 +45,7 @@ public class CategoryDAO {
 
     public int getCategoryIDByCategoryName(String categoryName) {
         String query = "SELECT t.id FROM dbo.ProductCategory t WHERE dbo.fuConvertToUnsign(t.name) like dbo.fuConvertToUnsign( ? )";
-        Object[] parameter = new Object[] { categoryName };
+        Object[] parameter = new Object[] { "%" + categoryName + "%" };
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
         int data = -1;
         try {

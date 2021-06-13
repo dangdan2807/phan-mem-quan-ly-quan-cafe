@@ -65,4 +65,49 @@ public class TableDAO {
         Object[] parameter = new Object[] { tableID1, tableID2 };
         DataProvider.getInstance().ExecuteNonQuery(query, parameter);
     }
+
+    public ArrayList<Table> getTableListByTableName(String tableName) {
+        String query = "select * FROM dbo.TableFood t WHERE dbo.fuConvertToUnsign(t.name) like dbo.fuConvertToUnsign( ? )";
+        Object[] parameter = new Object[] { "%" + tableName + "%" };
+        ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
+        ArrayList<Table> dataList = new ArrayList<Table>();
+        try {
+            while (rs.next()) {
+                dataList.add(new Table(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dataList;
+    }
+
+    public ArrayList<Table> getTableListByTableNameAndStatus(String tableName, String status) {
+        String query = "select * FROM dbo.TableFood t WHERE dbo.fuConvertToUnsign(t.name) like dbo.fuConvertToUnsign( ? ) and status = ?";
+        Object[] parameter = new Object[] { "%" + tableName + "%", status };
+        ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
+        ArrayList<Table> dataList = new ArrayList<Table>();
+        try {
+            while (rs.next()) {
+                dataList.add(new Table(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dataList;
+    }
+
+    public ArrayList<Table> getTableListByStatus(String status) {
+        String query = "select * FROM dbo.TableFood t WHERE status = ?";
+        Object[] parameter = new Object[] { status };
+        ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
+        ArrayList<Table> dataList = new ArrayList<Table>();
+        try {
+            while (rs.next()) {
+                dataList.add(new Table(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dataList;
+    }
 }
