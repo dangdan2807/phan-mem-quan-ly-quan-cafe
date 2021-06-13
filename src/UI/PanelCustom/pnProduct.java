@@ -447,7 +447,7 @@ public class pnProduct extends JPanel
         if (categoryName.equalsIgnoreCase("Tất cả")) {
             productList = ProductDAO.getInstance().getListProductCustom();
         } else {
-            productList = ProductDAO.getInstance().getListProductCustomByCategoryName(categoryName);
+            productList = ProductDAO.getInstance().searchProductByCategoryName(categoryName);
         }
         loadDataIntoTable(productList);
     }
@@ -455,9 +455,9 @@ public class pnProduct extends JPanel
     private void loadProductListByCategoryNameAndProductName(String productName, String categoryName) {
         ResultSet productList = null;
         if (categoryName.equalsIgnoreCase("Tất cả")) {
-            productList = ProductDAO.getInstance().getListProductCustom();
+            productList = ProductDAO.getInstance().searchProductByProductName(productName);
         } else {
-            productList = ProductDAO.getInstance().getListProductCustomByCategoryAndProductName(productName,
+            productList = ProductDAO.getInstance().searchProductByCategoryNameAndProductName(productName,
                     categoryName);
         }
         loadDataIntoTable(productList);

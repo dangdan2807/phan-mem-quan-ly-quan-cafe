@@ -188,6 +188,38 @@ GO
 -- UPDATE dbo.Product SET name = N'Trà sữa matcha 1' , idCategory = 7, price = 24000 WHERE id = 47
 
 -- Store procedure
+
+-- chuyển đổi kí tự có dấu thành không dấu và ngược lại
+CREATE FUNCTION [dbo].[fuConvertToUnsign] ( @strInput NVARCHAR(4000) ) 
+RETURNS NVARCHAR(4000) 
+AS 
+BEGIN
+    IF @strInput IS NULL RETURN @strInput
+    IF @strInput = '' RETURN @strInput
+    DECLARE @RT NVARCHAR(4000)
+    DECLARE @SIGN_CHARS NCHAR(136)
+    DECLARE @UNSIGN_CHARS NCHAR (136)
+    SET @SIGN_CHARS = N'ăâđêôơưàảãạáằẳẵặắầẩẫậấèẻẽẹéềểễệế ìỉĩịíòỏõọóồổỗộốờởỡợớùủũụúừửữựứỳỷỹỵý ĂÂĐÊÔƠƯÀẢÃẠÁẰẲẴẶẮẦẨẪẬẤÈẺẼẸÉỀỂỄỆẾÌỈĨỊÍ ÒỎÕỌÓỒỔỖỘỐỜỞỠỢỚÙỦŨỤÚỪỬỮỰỨỲỶỸỴÝ' +NCHAR(272)+ NCHAR(208)
+    SET @UNSIGN_CHARS = N'aadeoouaaaaaaaaaaaaaaaeeeeeeeeee iiiiiooooooooooooooouuuuuuuuuuyyyyy AADEOOUAAAAAAAAAAAAAAAEEEEEEEEEEIIIII OOOOOOOOOOOOOOOUUUUUUUUUUYYYYYDD'
+    DECLARE @COUNTER INT
+    DECLARE @COUNTER1 INT
+    SET @COUNTER = 1
+    WHILE (@COUNTER <=LEN(@strInput)) BEGIN
+        SET @COUNTER1 = 1
+        WHILE (@COUNTER1 <=LEN(@SIGN_CHARS)+1) BEGIN
+            IF UNICODE(SUBSTRING(@SIGN_CHARS, @COUNTER1,1)) = UNICODE(SUBSTRING(@strInput,@COUNTER ,1) ) BEGIN
+                IF @COUNTER=1 SET @strInput = SUBSTRING(@UNSIGN_CHARS, @COUNTER1,1) + SUBSTRING(@strInput, @COUNTER+1,LEN(@strInput)-1) ELSE SET @strInput = SUBSTRING(@strInput, 1, @COUNTER-1) +SUBSTRING(@UNSIGN_CHARS, @COUNTER1,1) + SUBSTRING(@strInput, @COUNTER+1,LEN(@strInput)- @COUNTER)
+                BREAK
+            END
+            SET @COUNTER1 = @COUNTER1 +1
+        END
+        SET @COUNTER = @COUNTER +1
+    END
+    SET @strInput = replace(@strInput,' ','-')
+    RETURN @strInput
+END
+GO
+
 CREATE PROC USP_Login
     @username NVARCHAR(100),
     @password NVARCHAR(1000)
@@ -510,20 +542,7 @@ BEGIN
 END
 GO
 
-CREATE PROC USP_getListProductByCategoryNameAndProductName
-    @ProductName NVARCHAR(100),
-    @CategoryName NVARCHAR(100)
-AS
-BEGIN
-    SELECT p.id, p.name, p.price, pc.name AS CategoryName
-    FROM dbo.Product p, dbo.ProductCategory pc
-    WHERE p.idCategory = pc.id
-        AND p.name = @ProductName
-        AND pc.name = @CategoryName
-END
-GO
-
-CREATE PROC USP_getListProductCustomByCategoryAndProductName
+CREATE PROC USP_searchProductByCategoryNameAndProductName
     @ProductName NVARCHAR(100),
     @CategoryName NVARCHAR(100)
 AS
@@ -533,11 +552,11 @@ BEGIN
     FROM dbo.Product p, dbo.ProductCategory pc
     WHERE p.idCategory = pc.id
         AND pc.name = @CategoryName
-        AND p.name like @PName
+        AND dbo.fuConvertToUnsign(p.name) like dbo.fuConvertToUnsign(@PName)
 END
 GO
 
-CREATE PROC USP_getListProductCustomByCategoryName
+CREATE PROC USP_searchProductByCategoryName
     @CategoryName NVARCHAR(100)
 AS
 BEGIN
@@ -545,6 +564,18 @@ BEGIN
     FROM dbo.Product p, dbo.ProductCategory pc
     WHERE p.idCategory = pc.id
         AND pc.name = @CategoryName
+END
+GO
+
+CREATE PROC USP_searchProductByProductName
+    @ProductName NVARCHAR(100)
+AS
+BEGIN
+    DECLARE @Pname NVARCHAR(100) = N'%' + @ProductName + '%'
+    SELECT p.id, p.name, p.price, pc.name AS CategoryName
+    FROM dbo.Product p, dbo.ProductCategory pc
+    WHERE p.idCategory = pc.id
+        AND dbo.fuConvertToUnsign(p.name) like dbo.fuConvertToUnsign(@PName)
 END
 GO
 

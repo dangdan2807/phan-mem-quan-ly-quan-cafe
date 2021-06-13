@@ -77,16 +77,23 @@ public class ProductDAO {
         return rs;
     }
 
-    public ResultSet getListProductCustomByCategoryAndProductName(String productName, String categoryName) {
-        String query = "{CALL USP_getListProductCustomByCategoryAndProductName ( ? , ? )}";
+    public ResultSet searchProductByCategoryNameAndProductName(String productName, String categoryName) {
+        String query = "{CALL USP_searchProductByCategoryNameAndProductName ( ? , ? )}";
         Object[] parameter = new Object[] { productName, categoryName };
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
         return rs;
     }
 
-    public ResultSet getListProductCustomByCategoryName(String categoryName) {
-        String query = "{CALL USP_getListProductCustomByCategoryName ( ? )}";
+    public ResultSet searchProductByCategoryName(String categoryName) {
+        String query = "{CALL USP_searchProductByCategoryName ( ? )}";
         Object[] parameter = new Object[] { categoryName };
+        ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
+        return rs;
+    }
+
+    public ResultSet searchProductByProductName(String productName) {
+        String query = "{CALL USP_searchProductByProductName ( ? )}";
+        Object[] parameter = new Object[] { productName };
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
         return rs;
     }
