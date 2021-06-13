@@ -29,9 +29,6 @@ public class pnCategory extends JPanel implements interfaceBtn, ActionListener, 
 
     public pnCategory() {
         setSize(1270, 630);
-        // setResizable(false);
-        // setLocationRelativeTo(null);
-        // setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(null);
         setLayout(new BorderLayout(0, 0));
 
@@ -52,16 +49,16 @@ public class pnCategory extends JPanel implements interfaceBtn, ActionListener, 
 
         JPanel pnInfo = new JPanel();
         pnInfo.setBorder(
-                new TitledBorder(null, "Thông tin sản phẩm ", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+                new TitledBorder(null, "Thông tin loại sản phẩm ", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         pnInfo.setBackground(Color.WHITE);
         pnInfo.setLayout(null);
         pnInfo.setBounds(0, 41, 1270, 120);
         pnTop.add(pnInfo);
 
-        JLabel lbProductID = new JLabel("Mã loại sản phẩm: ");
-        lbProductID.setBounds(10, 22, 120, 14);
-        lbProductID.setBackground(Color.decode("#f9f9f9"));
-        pnInfo.add(lbProductID);
+        JLabel lbCategoryID = new JLabel("Mã loại sản phẩm: ");
+        lbCategoryID.setBounds(10, 22, 120, 14);
+        lbCategoryID.setBackground(Color.decode("#f9f9f9"));
+        pnInfo.add(lbCategoryID);
 
         txtCategoryID = new JTextField();
         txtCategoryID.setEditable(false);
@@ -69,9 +66,9 @@ public class pnCategory extends JPanel implements interfaceBtn, ActionListener, 
         pnInfo.add(txtCategoryID);
         txtCategoryID.setColumns(10);
 
-        JLabel lbProductName = new JLabel("Tên loại sản phẩm: ");
-        lbProductName.setBounds(10, 48, 120, 16);
-        pnInfo.add(lbProductName);
+        JLabel lbCategoryName = new JLabel("Tên loại sản phẩm: ");
+        lbCategoryName.setBounds(10, 48, 120, 16);
+        pnInfo.add(lbCategoryName);
 
         txtCategoryName = new JTextField();
         txtCategoryName.setBounds(142, 46, 150, 20);
@@ -175,10 +172,6 @@ public class pnCategory extends JPanel implements interfaceBtn, ActionListener, 
         txtKeyWord.addKeyListener(this);
     }
 
-    public static void main(String[] args) {
-        new pnCategory().setVisible(true);
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
@@ -206,7 +199,7 @@ public class pnCategory extends JPanel implements interfaceBtn, ActionListener, 
                 int row = table.getSelectedRow();
                 if (row != -1) {
                     Category category = getDataInFrom();
-                    boolean result = CategoryDAO.getInstance().updateProduct(category);
+                    boolean result = CategoryDAO.getInstance().updateCategory(category);
                     if (result == true) {
                         modelTable.setValueAt(category.getName(), row, 2);
                         JOptionPane.showMessageDialog(this, "cập nhật loại sản phẩm thành công");
@@ -237,7 +230,7 @@ public class pnCategory extends JPanel implements interfaceBtn, ActionListener, 
                             JOptionPane.QUESTION_MESSAGE);
 
                     if (select == JOptionPane.YES_OPTION) {
-                        boolean result = CategoryDAO.getInstance().deleteProduct(categoryID);
+                        boolean result = CategoryDAO.getInstance().deleteCategory(categoryID);
                         if (result == true) {
                             modelTable.removeRow(row);
                             refreshInput();
