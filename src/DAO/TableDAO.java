@@ -111,21 +111,34 @@ public class TableDAO {
         return dataList;
     }
 
-    public boolean insertCategory(Table table) {
-        String query = "INSERT INTO dbo.TableFood (name, status) VALUES ( ? < ? )";
+    public int getLastCategoryID() {
+        int data = -1;
+        String query = "SELECT * FROM dbo.TableFood";
+        ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, null);
+        try {
+            rs.last();
+            data = rs.getInt("id");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
+    public boolean insertTable(Table table) {
+        String query = "INSERT INTO dbo.TableFood (name, status) VALUES ( ? , ? )";
         Object[] parameter = new Object[] { table.getName(), table.getStatus() };
         int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
         return result > 0;
     }
 
-    public boolean updateProduct(Table table) {
+    public boolean updateTable(Table table) {
         String query = "Update dbo.TableFood set name = ? , status = ? where id = ?";
         Object[] parameter = new Object[] { table.getName(), table.getStatus(), table.getId() };
         int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
         return result > 0;
     }
 
-    public boolean deleteProduct(int id) {
+    public boolean deleteTable(int id) {
         String query = "delete from dbo.TableFood Where id = ?";
         Object[] parameter = new Object[] { id };
         int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);

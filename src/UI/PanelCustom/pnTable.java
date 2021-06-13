@@ -117,6 +117,7 @@ public class pnTable extends JFrame implements interfaceBtn, ActionListener, Mou
         radEmpty = new JRadioButton("Trống");
         radEmpty.setBounds(310, 17, 124, 24);
         radEmpty.setBackground(Color.WHITE);
+        radEmpty.setSelected(true);
         pnInfo.add(radEmpty);
 
         radNotEmpty = new JRadioButton("Có người");
@@ -218,14 +219,14 @@ public class pnTable extends JFrame implements interfaceBtn, ActionListener, Mou
         if (o.equals(btnAdd)) {
             if (validData()) {
                 Table tableData = getDataInFrom();
-                boolean result = TableDAO.getInstance().insertCategory(tableData);
+                boolean result = TableDAO.getInstance().insertTable(tableData);
                 DecimalFormat df = new DecimalFormat("#,###.##");
                 if (result == true) {
                     String stt = df.format(index++);
-                    int categoryID = CategoryDAO.getInstance().getLastCategoryID();
-                    modelTable.addRow(new Object[] { stt, categoryID, tableData.getName() });
+                    int tableID = TableDAO.getInstance().getLastCategoryID();
+                    modelTable.addRow(new Object[] { stt, tableID, tableData.getName(), tableData.getStatus() });
                     modelTable.fireTableDataChanged();
-                    txtTableID.setText(String.valueOf(categoryID));
+                    txtTableID.setText(String.valueOf(tableID));
                     int lastIndex = table.getRowCount() - 1;
                     table.getSelectionModel().setSelectionInterval(lastIndex, lastIndex);
                     table.scrollRectToVisible(table.getCellRect(lastIndex, lastIndex, true));
@@ -235,21 +236,23 @@ public class pnTable extends JFrame implements interfaceBtn, ActionListener, Mou
                 }
             }
         } else if (o.equals(btnUpdate)) {
-            // if (validData()) {
-            // int row = table.getSelectedRow();
-            // if (row != -1) {
-            // Category category = getDataInFrom();
-            // boolean result = CategoryDAO.getInstance().updateProduct(category);
-            // if (result == true) {
-            // modelTable.setValueAt(category.getName(), row, 2);
-            // JOptionPane.showMessageDialog(this, "cập nhật loại sản phẩm thành công");
-            // } else {
-            // JOptionPane.showMessageDialog(this, "cập nhật loại sản phẩm thất bại");
-            // }
-            // } else {
-            // JOptionPane.showMessageDialog(this, "Chọn 1 loại sản phẩm cần cập nhật");
-            // }
-            // }
+            if (validData()) {
+                int row = table.getSelectedRow();
+                if (row != -1) {
+                    Table tableData = getDataInFrom();
+                    boolean result = TableDAO.getInstance().updateTable(tableData);
+                    if (result == true) {
+                        modelTable.setValueAt(tableData.getName(), row, 2);
+                        modelTable.setValueAt(tableData.getStatus(), row, 3);
+
+                        JOptionPane.showMessageDialog(this, "cập nhật table thành công");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "cập nhật table thất bại");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Chọn 1 table cần cập nhật");
+                }
+            }
         } else if (o.equals(btnDelete)) {
             // int row = table.getSelectedRow();
             // String categoryIDStr = txtTableID.getText().trim();
@@ -327,7 +330,7 @@ public class pnTable extends JFrame implements interfaceBtn, ActionListener, Mou
             int row = table.getSelectedRow();
             txtTableID.setText(modelTable.getValueAt(row, 1).toString());
             txtTableName.setText(modelTable.getValueAt(row, 2).toString());
-            String status = modelTable.getValueAt(row, 3).toString();
+            String status = String.valueOf(modelTable.getValueAt(row, 3));
             if (status.equals("Trống"))
                 radEmpty.setSelected(true);
             else
@@ -476,7 +479,6 @@ public class pnTable extends JFrame implements interfaceBtn, ActionListener, Mou
         for (Table item : tableList) {
             String stt = df.format(index++);
             modelTable.addRow(new Object[] { stt, item.getId(), item.getName(), item.getStatus() });
-
         }
     }
 

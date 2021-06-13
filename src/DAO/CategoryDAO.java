@@ -99,14 +99,14 @@ public class CategoryDAO {
         return result > 0;
     }
 
-    public boolean updateProduct(Category category) {
+    public boolean updateCategory(Category category) {
         String query = "Update dbo.ProductCategory set name = ? where id = ?";
         Object[] parameter = new Object[] { category.getName(), category.getId() };
         int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
         return result > 0;
     }
 
-    public boolean deleteProduct(int id) {
+    public boolean deleteCategory(int id) {
         String query = "delete from dbo.ProductCategory Where id = ?";
         Object[] parameter = new Object[] { id };
         int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);

@@ -199,7 +199,7 @@ public class pnCategory extends JPanel implements interfaceBtn, ActionListener, 
                 int row = table.getSelectedRow();
                 if (row != -1) {
                     Category category = getDataInFrom();
-                    boolean result = CategoryDAO.getInstance().updateProduct(category);
+                    boolean result = CategoryDAO.getInstance().updateCategory(category);
                     if (result == true) {
                         modelTable.setValueAt(category.getName(), row, 2);
                         JOptionPane.showMessageDialog(this, "cập nhật loại sản phẩm thành công");
@@ -230,7 +230,7 @@ public class pnCategory extends JPanel implements interfaceBtn, ActionListener, 
                             JOptionPane.QUESTION_MESSAGE);
 
                     if (select == JOptionPane.YES_OPTION) {
-                        boolean result = CategoryDAO.getInstance().deleteProduct(categoryID);
+                        boolean result = CategoryDAO.getInstance().deleteCategory(categoryID);
                         if (result == true) {
                             modelTable.removeRow(row);
                             refreshInput();
