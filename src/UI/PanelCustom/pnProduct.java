@@ -21,7 +21,7 @@ public class pnProduct extends JPanel
     private DefaultTableModel modelTable;
     private JTextField txtProductID, txtProductName, txtPrice, txtKeyWord;
     private JComboBox<String> cboCategory, cboSearchCategory;
-    private JButton btnAdd, btnDelete, btnUpdate, btnRefresh, btnLogOut, btnBack, btnSearch;
+    private JButton btnAdd, btnDelete, btnUpdate, btnRefresh, btnLogOut, btnBack, btnSearch, btnViewAll;
     private ImageIcon addIcon = new ImageIcon("img/blueAdd_16.png");
     private ImageIcon trashIcon = new ImageIcon("img/trash_16.png");
     private ImageIcon refreshIcon = new ImageIcon("img/refresh_16.png");
@@ -155,6 +155,11 @@ public class pnProduct extends JPanel
         btnSearch.setBounds(542, 7, 120, 26);
         customUI.getInstance().setCustomBtn(btnSearch);
         pnSearch.add(btnSearch);
+        
+        btnViewAll = new JButton("Xem tất cả", null);
+        btnViewAll.setBounds(672, 9, 120, 26);
+        customUI.getInstance().setCustomBtn(btnViewAll);
+        pnSearch.add(btnViewAll);
 
         String[] cols = { "STT", "Mã sản phẩm", "Tên sản phẩm ", "Loại sản phẩm", "Giá" };
         modelTable = new DefaultTableModel(cols, 0) {
@@ -176,25 +181,27 @@ public class pnProduct extends JPanel
         pnTable.setBounds(10, 25, 1250, 600);
 
         this.add(pnTable, BorderLayout.CENTER);
-        loadCategoryListIntoCbo();
-        reSizeColumnTable();
-        loadProductList();
+        allLoaded();
 
         btnAdd.addActionListener(this);
         btnDelete.addActionListener(this);
         btnUpdate.addActionListener(this);
         btnRefresh.addActionListener(this);
         btnSearch.addActionListener(this);
+        btnViewAll.addActionListener(this);
+
+        btnAdd.addMouseListener(this);
+        btnDelete.addMouseListener(this);
+        btnUpdate.addMouseListener(this);
+        btnRefresh.addMouseListener(this);
+        btnSearch.addMouseListener(this);
+        btnViewAll.addMouseListener(this);
 
         cboSearchCategory.addItemListener(this);
 
         table.addMouseListener(this);
 
         txtKeyWord.addKeyListener(this);
-    }
-
-    public static void main(String[] args) {
-        new pnProduct().setVisible(true);
     }
 
     @Override
@@ -218,6 +225,7 @@ public class pnProduct extends JPanel
                         cboSearchCategory.setSelectedItem(categoryName);
                         loadProductListByCategoryName(categoryName);
                     }
+                    txtProductID.setText(String.valueOf(productID));
                     int lastIndex = table.getRowCount() - 1;
                     table.getSelectionModel().setSelectionInterval(lastIndex, lastIndex);
                     table.scrollRectToVisible(table.getCellRect(lastIndex, lastIndex, true));
@@ -229,7 +237,7 @@ public class pnProduct extends JPanel
         } else if (o.equals(btnUpdate)) {
             if (validData()) {
                 int row = table.getSelectedRow();
-                if (row == -1) {
+                if (row != -1) {
                     Product product = getDataInFrom();
                     boolean result = ProductDAO.getInstance().updateProduct(product);
                     DecimalFormat df = new DecimalFormat("#,###.##");
@@ -281,6 +289,9 @@ public class pnProduct extends JPanel
                 loadProductListByCategoryName(categoryName);
             } else
                 loadProductListByCategoryNameAndProductName(productName, categoryName);
+        } else if (o.equals(btnViewAll)) {
+            loadProductList();
+            cboSearchCategory.setSelectedIndex(0);
         }
     }
 
@@ -288,7 +299,7 @@ public class pnProduct extends JPanel
     public void itemStateChanged(ItemEvent e) {
         Object o = e.getSource();
         if (o.equals(cboSearchCategory)) {
-            String categoryName = cboSearchCategory.getSelectedItem().toString();
+            String categoryName = String.valueOf(cboSearchCategory.getSelectedItem());
             if (categoryName.equals("Tất cả")) {
                 loadProductList();
             } else {
@@ -336,6 +347,8 @@ public class pnProduct extends JPanel
             customUI.getInstance().setCustomBtnHover(btnLogOut);
         } else if (o.equals(btnSearch)) {
             customUI.getInstance().setCustomBtnHover(btnSearch);
+        } else if (o.equals(btnViewAll)) {
+            customUI.getInstance().setCustomBtnHover(btnViewAll);
         }
     }
 
@@ -355,7 +368,9 @@ public class pnProduct extends JPanel
         } else if (o.equals(btnLogOut)) {
             customUI.getInstance().setCustomBtn(btnLogOut);
         } else if (o.equals(btnSearch)) {
-            customUI.getInstance().setCustomBtnHover(btnSearch);
+            customUI.getInstance().setCustomBtn(btnSearch);
+        } else if (o.equals(btnViewAll)) {
+            customUI.getInstance().setCustomBtn(btnViewAll);
         }
     }
 
@@ -387,6 +402,12 @@ public class pnProduct extends JPanel
     @Override
     public JButton getBtnBack() {
         return btnBack;
+    }
+
+    public void allLoaded() {
+        loadCategoryListIntoCbo();
+        reSizeColumnTable();
+        loadProductList();
     }
 
     private boolean validData() {
@@ -430,6 +451,8 @@ public class pnProduct extends JPanel
 
     private void loadCategoryListIntoCbo() {
         ArrayList<Category> categoryList = CategoryDAO.getInstance().getListCategory();
+        cboCategory.removeAllItems();
+        cboSearchCategory.removeAllItems();
         cboSearchCategory.addItem("Tất cả");
         for (Category item : categoryList) {
             cboCategory.addItem(item.getName());
@@ -457,8 +480,7 @@ public class pnProduct extends JPanel
         if (categoryName.equalsIgnoreCase("Tất cả")) {
             productList = ProductDAO.getInstance().searchProductByProductName(productName);
         } else {
-            productList = ProductDAO.getInstance().searchProductByCategoryNameAndProductName(productName,
-                    categoryName);
+            productList = ProductDAO.getInstance().searchProductByCategoryNameAndProductName(productName, categoryName);
         }
         loadDataIntoTable(productList);
     }

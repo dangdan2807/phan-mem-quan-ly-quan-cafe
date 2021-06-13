@@ -1,115 +1,277 @@
 package UI.PanelCustom;
 
 import javax.swing.*;
-import javax.swing.border.*;
 import javax.swing.table.*;
-import java.awt.event.*;
-import java.awt.BorderLayout;
 
-public class pnCategory extends JPanel implements ActionListener, MouseListener {
-    int widthPn = 770, heightPn = 500;
-    private JPanel pnMain;
-    private DefaultTableModel modelTable;
+import DAO.*;
+import entity.*;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+
+import javax.swing.border.*;
+
+public class pnCategory extends JPanel implements interfaceBtn, ActionListener, MouseListener, KeyListener {
     private JTable table;
-    private JButton btnThem, btnXoa, btnXoaTrang, btnSua, btnXem;
-    private JTextField txtMa, txtTen;
+    private DefaultTableModel modelTable;
+    private JTextField txtCategoryID, txtCategoryName, txtKeyWord;
+    private JButton btnAdd, btnDelete, btnUpdate, btnRefresh, btnLogOut, btnBack, btnSearch, btnViewAll;
+    private ImageIcon addIcon = new ImageIcon("img/blueAdd_16.png");
+    private ImageIcon trashIcon = new ImageIcon("img/trash_16.png");
+    private ImageIcon refreshIcon = new ImageIcon("img/refresh_16.png");
+    private ImageIcon searchIcon = new ImageIcon("img/search_16.png");
+    private ImageIcon logOutIcon = new ImageIcon("img/logout_16.png");
+    private ImageIcon backIcon = new ImageIcon("img/back_16.png");
+    private ImageIcon updateIcon = new ImageIcon("img/update_16.png");
+    int index = 1;
 
     public pnCategory() {
-        setSize(760, 440);
+        setSize(1270, 630);
+        // setResizable(false);
+        // setLocationRelativeTo(null);
+        // setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLayout(null);
         setLayout(new BorderLayout(0, 0));
 
-        pnMain = new JPanel();
-        pnMain.setLayout(null);
-        this.add(pnMain);
+        JPanel pnTop = new JPanel();
+        pnTop.setBackground(Color.WHITE);
+        pnTop.setPreferredSize(new Dimension(10, 200));
+        pnTop.setLayout(null);
+        this.add(pnTop, BorderLayout.NORTH);
 
-        JPanel pnBtn = new JPanel();
-        pnBtn.setLayout(null);
-        pnBtn.setBounds(0, 0, 467, 36);
-        pnMain.add(pnBtn);
+        JPanel pnTitle = new JPanel();
+        pnTitle.setBounds(0, 0, 1270, 40);
+        pnTitle.setBackground(Color.decode("#d0e1fd"));
+        pnTop.add(pnTitle);
 
-        btnThem = new JButton("Thêm");
-        btnThem.setBounds(0, 0, 75, 36);
-        pnBtn.add(btnThem);
+        JLabel lbTitle = new JLabel("Quản Lý Loại Sản Phẩm");
+        customUI.getInstance().setCustomLbTitle(lbTitle);
+        pnTitle.add(lbTitle);
 
-        btnXoa = new JButton("Xóa");
-        btnXoa.setBounds(87, 0, 75, 36);
-        pnBtn.add(btnXoa);
+        JPanel pnInfo = new JPanel();
+        pnInfo.setBorder(
+                new TitledBorder(null, "Thông tin sản phẩm ", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        pnInfo.setBackground(Color.WHITE);
+        pnInfo.setLayout(null);
+        pnInfo.setBounds(0, 41, 1270, 120);
+        pnTop.add(pnInfo);
 
-        btnXoaTrang = new JButton("Xóa Trắng");
-        btnXoaTrang.setBounds(174, 0, 117, 36);
-        pnBtn.add(btnXoaTrang);
+        JLabel lbProductID = new JLabel("Mã loại sản phẩm: ");
+        lbProductID.setBounds(10, 22, 120, 14);
+        lbProductID.setBackground(Color.decode("#f9f9f9"));
+        pnInfo.add(lbProductID);
 
-        btnSua = new JButton("Sửa");
-        btnSua.setBounds(303, 0, 75, 36);
-        pnBtn.add(btnSua);
+        txtCategoryID = new JTextField();
+        txtCategoryID.setEditable(false);
+        txtCategoryID.setBounds(142, 19, 150, 20);
+        pnInfo.add(txtCategoryID);
+        txtCategoryID.setColumns(10);
 
-        btnXem = new JButton("Xem");
-        btnXem.setBounds(390, 0, 75, 36);
-        pnBtn.add(btnXem);
+        JLabel lbProductName = new JLabel("Tên loại sản phẩm: ");
+        lbProductName.setBounds(10, 48, 120, 16);
+        pnInfo.add(lbProductName);
 
-        JPanel pnListView = new JPanel();
-        pnListView.setBounds(0, 37, 467, 392);
-        pnMain.add(pnListView);
-        pnListView.setLayout(new BorderLayout(0, 0));
+        txtCategoryName = new JTextField();
+        txtCategoryName.setBounds(142, 46, 150, 20);
+        pnInfo.add(txtCategoryName);
+        txtCategoryName.setColumns(10);
 
-        JScrollPane scp = new JScrollPane();
-        pnListView.add(scp);
+        btnAdd = new JButton("Thêm", addIcon);
+        btnAdd.setBounds(10, 77, 101, 26);
+        customUI.getInstance().setCustomBtn(btnAdd);
+        pnInfo.add(btnAdd);
 
-        String[] cols = { "Mã danh mục", "Tên danh mục" };
+        btnDelete = new JButton("Xóa", trashIcon);
+        btnDelete.setBounds(123, 77, 101, 26);
+        customUI.getInstance().setCustomBtn(btnDelete);
+        pnInfo.add(btnDelete);
+
+        btnUpdate = new JButton("Sửa", updateIcon);
+        btnUpdate.setBounds(236, 77, 101, 26);
+        customUI.getInstance().setCustomBtn(btnUpdate);
+        pnInfo.add(btnUpdate);
+
+        btnRefresh = new JButton("Làm mới", refreshIcon);
+        btnRefresh.setBounds(349, 77, 110, 26);
+        customUI.getInstance().setCustomBtn(btnRefresh);
+        pnInfo.add(btnRefresh);
+
+        btnLogOut = new JButton("Đăng xuất", logOutIcon);
+        btnLogOut.setBounds(584, 77, 120, 26);
+        customUI.getInstance().setCustomBtn(btnLogOut);
+        pnInfo.add(btnLogOut);
+
+        btnBack = new JButton("Thoát", backIcon);
+        btnBack.setBounds(471, 78, 101, 26);
+        customUI.getInstance().setCustomBtn(btnBack);
+        pnInfo.add(btnBack);
+
+        JPanel pnSearch = new JPanel();
+        pnSearch.setBackground(Color.WHITE);
+        pnSearch.setBounds(0, 161, 1270, 39);
+        pnSearch.setLayout(null);
+        pnTop.add(pnSearch);
+
+        JLabel lbKeyWord = new JLabel("Từ khóa: ");
+        lbKeyWord.setBounds(10, 12, 70, 16);
+        pnSearch.add(lbKeyWord);
+
+        txtKeyWord = new JTextField();
+        txtKeyWord.setBounds(75, 10, 170, 20);
+        pnSearch.add(txtKeyWord);
+        txtKeyWord.setColumns(10);
+
+        btnSearch = new JButton("Tìm kiếm", searchIcon);
+        btnSearch.setBounds(257, 7, 120, 26);
+        customUI.getInstance().setCustomBtn(btnSearch);
+        pnSearch.add(btnSearch);
+
+        btnViewAll = new JButton("Xem tất cả", null);
+        btnViewAll.setBounds(389, 7, 120, 26);
+        customUI.getInstance().setCustomBtn(btnViewAll);
+        pnSearch.add(btnViewAll);
+
+        String[] cols = { "STT", "Mã loại sản phẩm", "Tên loại sản phẩm " };
         modelTable = new DefaultTableModel(cols, 0) {
-            // khóa không cho người dùng nhập trên table
             @Override
             public boolean isCellEditable(int i, int i1) {
                 return false;
             }
         };
         table = new JTable(modelTable);
-        scp.setViewportView(table);
 
-        this.add(pnMain);
+        JScrollPane scpTable = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scpTable.getViewport().setBackground(Color.WHITE);
 
-        JPanel pnInfo = new JPanel();
-        pnInfo.setBorder(new TitledBorder(null, "Thông tin danh mục "));
-        pnInfo.setLayout(null);
-        pnInfo.setBounds(467, 37, 282, 392);
-        pnMain.add(pnInfo);
+        JPanel pnTable = new JPanel();
+        pnTable.setBackground(Color.WHITE);
+        pnTable.setLayout(new BorderLayout(0, 0));
+        pnTable.add(scpTable, BorderLayout.CENTER);
+        pnTable.setBounds(10, 25, 1250, 600);
 
-        JLabel lbMa = new JLabel("Mã loại: ");
-        lbMa.setBounds(10, 17, 88, 20);
-        pnInfo.add(lbMa);
+        this.add(pnTable, BorderLayout.CENTER);
+        reSizeColumnTable();
+        loadCategoryList();
 
-        txtMa = new JTextField();
-        txtMa.setEditable(false);
-        txtMa.setBounds(97, 17, 175, 20);
-        pnInfo.add(txtMa);
-        txtMa.setColumns(10);
+        btnAdd.addActionListener(this);
+        btnDelete.addActionListener(this);
+        btnUpdate.addActionListener(this);
+        btnRefresh.addActionListener(this);
+        btnSearch.addActionListener(this);
+        btnViewAll.addActionListener(this);
 
-        JLabel lbTen = new JLabel("Tên loại: ");
-        lbTen.setBounds(10, 48, 88, 20);
-        pnInfo.add(lbTen);
-
-        txtTen = new JTextField();
-        txtTen.setBounds(97, 48, 175, 20);
-        pnInfo.add(txtTen);
-        txtTen.setColumns(10);
-
-        btnThem.addActionListener(this);
-        btnXoa.addActionListener(this);
-        btnXoaTrang.addActionListener(this);
-        btnSua.addActionListener(this);
-        btnXem.addActionListener(this);
+        btnAdd.addMouseListener(this);
+        btnDelete.addMouseListener(this);
+        btnUpdate.addMouseListener(this);
+        btnRefresh.addMouseListener(this);
+        btnSearch.addMouseListener(this);
+        btnViewAll.addMouseListener(this);
 
         table.addMouseListener(this);
+
+        txtKeyWord.addKeyListener(this);
+    }
+
+    public static void main(String[] args) {
+        new pnCategory().setVisible(true);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        Object o = e.getSource();
+        if (o.equals(btnAdd)) {
+            if (validData()) {
+                Category category = getDataInFrom();
+                boolean result = CategoryDAO.getInstance().insertCategory(category);
+                DecimalFormat df = new DecimalFormat("#,###.##");
+                if (result == true) {
+                    String stt = df.format(index++);
+                    int categoryID = CategoryDAO.getInstance().getLastCategoryID();
+                    modelTable.addRow(new Object[] { stt, categoryID, category.getName() });
+                    modelTable.fireTableDataChanged();
+                    txtCategoryID.setText(String.valueOf(categoryID));
+                    int lastIndex = table.getRowCount() - 1;
+                    table.getSelectionModel().setSelectionInterval(lastIndex, lastIndex);
+                    table.scrollRectToVisible(table.getCellRect(lastIndex, lastIndex, true));
+                    JOptionPane.showMessageDialog(this, "Thêm loại sản phẩm thành công");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Thêm loại sản phẩm thất bại");
+                }
+            }
+        } else if (o.equals(btnUpdate)) {
+            if (validData()) {
+                int row = table.getSelectedRow();
+                if (row != -1) {
+                    Category category = getDataInFrom();
+                    boolean result = CategoryDAO.getInstance().updateProduct(category);
+                    if (result == true) {
+                        modelTable.setValueAt(category.getName(), row, 2);
+                        JOptionPane.showMessageDialog(this, "cập nhật loại sản phẩm thành công");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "cập nhật loại sản phẩm thất bại");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Chọn 1 loại sản phẩm cần cập nhật");
+                }
+            }
+        } else if (o.equals(btnDelete)) {
+            int row = table.getSelectedRow();
+            String categoryIDStr = txtCategoryID.getText().trim();
+            if (row != -1 && !categoryIDStr.equals("")) {
+                int categoryID = Integer.parseInt(categoryIDStr);
+                String categoryName = CategoryDAO.getInstance().getCategoryNameByID(categoryID);
+                int productCount = CategoryDAO.getInstance().getProductCount(categoryID);
+                if (productCount > 0) {
+                    String message = String.format(
+                            "Để xóa sản phẩm loại sản phẩm: %s \nBạn cần xóa hết tất cả các sản phẩm thuộc loại sản phẩm này\nHoặc chuyển chúng sang loại khác",
+                            categoryName);
+                    JOptionPane.showConfirmDialog(this, message, "Thông báo", JOptionPane.OK_OPTION,
+                            JOptionPane.INFORMATION_MESSAGE);
 
+                } else {
+                    String message = String.format("Bạn muốn xóa loại sản phẩm %s\n", categoryName);
+                    int select = JOptionPane.showConfirmDialog(this, message, "Thông báo", JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE);
+
+                    if (select == JOptionPane.YES_OPTION) {
+                        boolean result = CategoryDAO.getInstance().deleteProduct(categoryID);
+                        if (result == true) {
+                            modelTable.removeRow(row);
+                            refreshInput();
+                            JOptionPane.showMessageDialog(this, "Xóa sản phẩm thành công");
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Xóa sản phẩm thất bại");
+                        }
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Chọn 1 sản phẩm cần xóa");
+            }
+        } else if (o.equals(btnRefresh)) {
+            refreshInput();
+        } else if (o.equals(btnSearch)) {
+            String categoryName = txtKeyWord.getText().trim();
+            if (categoryName.equals("")) {
+                JOptionPane.showMessageDialog(this, "Nhập tên loại sản phẩm cần tìm");
+            } else {
+                searchCategoryListByName(categoryName);
+            }
+        } else if (o.equals(btnViewAll)) {
+            loadCategoryList();
+        }
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
+        Object o = e.getSource();
+        if (o.equals(table)) {
+            int row = table.getSelectedRow();
+            txtCategoryID.setText(table.getValueAt(row, 1).toString());
+            txtCategoryName.setText(modelTable.getValueAt(row, 2).toString());
+        }
     }
 
     @Override
@@ -124,11 +286,132 @@ public class pnCategory extends JPanel implements ActionListener, MouseListener 
 
     @Override
     public void mouseEntered(MouseEvent e) {
-
+        Object o = e.getSource();
+        if (o.equals(btnAdd)) {
+            customUI.getInstance().setCustomBtnHover(btnAdd);
+        } else if (o.equals(btnDelete)) {
+            customUI.getInstance().setCustomBtnHover(btnDelete);
+        } else if (o.equals(btnUpdate)) {
+            customUI.getInstance().setCustomBtnHover(btnUpdate);
+        } else if (o.equals(btnRefresh)) {
+            customUI.getInstance().setCustomBtnHover(btnRefresh);
+        } else if (o.equals(btnBack)) {
+            customUI.getInstance().setCustomBtnHover(btnBack);
+        } else if (o.equals(btnLogOut)) {
+            customUI.getInstance().setCustomBtnHover(btnLogOut);
+        } else if (o.equals(btnSearch)) {
+            customUI.getInstance().setCustomBtnHover(btnSearch);
+        } else if (o.equals(btnViewAll)) {
+            customUI.getInstance().setCustomBtnHover(btnViewAll);
+        }
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
+        Object o = e.getSource();
+        if (o.equals(btnAdd)) {
+            customUI.getInstance().setCustomBtn(btnAdd);
+        } else if (o.equals(btnDelete)) {
+            customUI.getInstance().setCustomBtn(btnDelete);
+        } else if (o.equals(btnUpdate)) {
+            customUI.getInstance().setCustomBtn(btnUpdate);
+        } else if (o.equals(btnRefresh)) {
+            customUI.getInstance().setCustomBtn(btnRefresh);
+        } else if (o.equals(btnBack)) {
+            customUI.getInstance().setCustomBtn(btnBack);
+        } else if (o.equals(btnLogOut)) {
+            customUI.getInstance().setCustomBtn(btnLogOut);
+        } else if (o.equals(btnSearch)) {
+            customUI.getInstance().setCustomBtn(btnSearch);
+        } else if (o.equals(btnViewAll)) {
+            customUI.getInstance().setCustomBtn(btnViewAll);
+        }
+    }
 
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        Object o = e.getSource();
+        Object key = e.getKeyCode();
+        if (o.equals(txtKeyWord)) {
+            if (key.equals(KeyEvent.VK_ENTER))
+                btnSearch.doClick();
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+    }
+
+    @Override
+    public JButton getBtnLogOut() {
+        return btnLogOut;
+    }
+
+    @Override
+    public JButton getBtnBack() {
+        return btnBack;
+    }
+
+    private boolean validData() {
+        String productName = txtCategoryName.getText().trim();
+        if (!(productName.length() > 0)) {
+            JOptionPane.showMessageDialog(this, "Tên loại sản phẩm không được để trống");
+            return false;
+        }
+        return true;
+    }
+
+    private void refreshInput() {
+        txtCategoryID.setText("");
+        txtCategoryName.setText("");
+    }
+
+    private Category getDataInFrom() {
+        String categoryName = txtCategoryName.getText().trim();
+        int categoryID = 0;
+        if (!txtCategoryID.getText().trim().equals(""))
+            categoryID = Integer.parseInt(txtCategoryID.getText().trim());
+        return (new Category(categoryID, categoryName));
+    }
+
+    private void loadCategoryList() {
+        ArrayList<Category> categoryList = CategoryDAO.getInstance().getListCategory();
+        loadDataIntoTable(categoryList);
+    }
+
+    private void searchCategoryListByName(String categoryName) {
+        ArrayList<Category> dataList = CategoryDAO.getInstance().getListCategoryByName(categoryName);
+        loadDataIntoTable(dataList);
+    }
+
+    private void loadDataIntoTable(ArrayList<Category> categoryList) {
+        DecimalFormat df = new DecimalFormat("#,###.##");
+        modelTable.getDataVector().removeAllElements();
+        modelTable.fireTableDataChanged();
+        index = 1;
+        for (Category item : categoryList) {
+            String stt = df.format(index++);
+            modelTable.addRow(new Object[] { stt, item.getId(), item.getName() });
+
+        }
+    }
+
+    private void reSizeColumnTable() {
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.getColumnModel().getColumn(0).setPreferredWidth(50);
+        table.getColumnModel().getColumn(1).setPreferredWidth(120);
+        table.getColumnModel().getColumn(2).setPreferredWidth(300);
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+
+        table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
     }
 }
