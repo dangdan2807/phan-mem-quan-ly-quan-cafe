@@ -84,6 +84,14 @@ public class CategoryDAO {
         return data;
     }
 
+    public int getProductCount(int categoryID) {
+        int count = 0;
+        String query = "SELECT count(*) as ProductCount FROM dbo.Product p where p.idCategory = ?";
+        Object[] parameter = new Object[] { categoryID };
+        count = (int) DataProvider.getInstance().ExecuteScalar(query, parameter);
+        return count;
+    }
+
     public boolean insertCategory(Category category) {
         String query = "INSERT INTO dbo.ProductCategory (name) VALUES ( ? )";
         Object[] parameter = new Object[] { category.getName() };
@@ -94,6 +102,13 @@ public class CategoryDAO {
     public boolean updateProduct(Category category) {
         String query = "Update dbo.ProductCategory set name = ? where id = ?";
         Object[] parameter = new Object[] { category.getName(), category.getId() };
+        int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
+        return result > 0;
+    }
+
+    public boolean deleteProduct(int id) {
+        String query = "delete from dbo.ProductCategory Where id = ?";
+        Object[] parameter = new Object[] { id };
         int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
         return result > 0;
     }

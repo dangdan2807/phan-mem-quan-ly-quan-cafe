@@ -219,33 +219,39 @@ public class pnCategory extends JFrame
                     JOptionPane.showMessageDialog(this, "Chọn 1 loại sản phẩm cần cập nhật");
                 }
             }
-            // } else if (o.equals(btnDelete)) {
-            // String productName = txtProductName.getText().trim();
-            // String productIDStr = txtProductID.getText().trim();
-            // int row = table.getSelectedRow();
-            // if (row != -1 && !productIDStr.equals("")) {
-            // String message = String.format(
-            // "Bạn có muốn xóa sản phẩm: %s \nXóa sản phẩm sẽ dẫn đến xóa tất cả trong các
-            // hóa đơn đã thanh toán trước đây",
-            // productName);
-            // int select = JOptionPane.showConfirmDialog(this, message, "Xác nhận xóa",
-            // JOptionPane.YES_NO_OPTION,
-            // JOptionPane.QUESTION_MESSAGE);
-            // if (select == JOptionPane.YES_OPTION) {
-            // int productID = Integer.parseInt(productIDStr);
-            // BillInfoDAO.getInstance().deleteBillInfoByProductID(productID);
-            // boolean resultProduct = ProductDAO.getInstance().deleteProduct(productID);
-            // if (resultProduct == true) {
-            // modelTable.removeRow(row);
-            // refreshInput();
-            // JOptionPane.showMessageDialog(this, "Xóa sản phẩm thành công");
-            // } else {
-            // JOptionPane.showMessageDialog(this, "Xóa sản phẩm thất bại");
-            // }
-            // }
-            // } else {
-            // JOptionPane.showMessageDialog(this, "Chọn 1 sản phẩm cần xóa");
-            // }
+        } else if (o.equals(btnDelete)) {
+            int row = table.getSelectedRow();
+            String categoryIDStr = txtCategoryID.getText().trim();
+            if (row != -1 && !categoryIDStr.equals("")) {
+                int categoryID = Integer.parseInt(categoryIDStr);
+                String categoryName = CategoryDAO.getInstance().getCategoryNameByID(categoryID);
+                int productCount = CategoryDAO.getInstance().getProductCount(categoryID);
+                if (productCount > 0) {
+                    String message = String.format(
+                            "Để xóa sản phẩm loại sản phẩm: %s \nBạn cần xóa hết tất cả các sản phẩm thuộc loại sản phẩm này\nHoặc chuyển chúng sang loại khác",
+                            categoryName);
+                    JOptionPane.showConfirmDialog(this, message, "Thông báo", JOptionPane.OK_OPTION,
+                            JOptionPane.INFORMATION_MESSAGE);
+
+                } else {
+                    String message = String.format("Bạn muốn xóa loại sản phẩm %s\n", categoryName);
+                    int select = JOptionPane.showConfirmDialog(this, message, "Thông báo", JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE);
+
+                    if (select == JOptionPane.YES_OPTION) {
+                        boolean result = CategoryDAO.getInstance().deleteProduct(categoryID);
+                        if (result == true) {
+                            modelTable.removeRow(row);
+                            refreshInput();
+                            JOptionPane.showMessageDialog(this, "Xóa sản phẩm thành công");
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Xóa sản phẩm thất bại");
+                        }
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Chọn 1 sản phẩm cần xóa");
+            }
         } else if (o.equals(btnRefresh)) {
             refreshInput();
         } else if (o.equals(btnSearch)) {
