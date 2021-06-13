@@ -181,9 +181,7 @@ public class pnProduct extends JPanel
         pnTable.setBounds(10, 25, 1250, 600);
 
         this.add(pnTable, BorderLayout.CENTER);
-        loadCategoryListIntoCbo();
-        reSizeColumnTable();
-        loadProductList();
+        allLoaded();
 
         btnAdd.addActionListener(this);
         btnDelete.addActionListener(this);
@@ -227,6 +225,7 @@ public class pnProduct extends JPanel
                         cboSearchCategory.setSelectedItem(categoryName);
                         loadProductListByCategoryName(categoryName);
                     }
+                    txtProductID.setText(String.valueOf(productID));
                     int lastIndex = table.getRowCount() - 1;
                     table.getSelectionModel().setSelectionInterval(lastIndex, lastIndex);
                     table.scrollRectToVisible(table.getCellRect(lastIndex, lastIndex, true));
@@ -238,7 +237,7 @@ public class pnProduct extends JPanel
         } else if (o.equals(btnUpdate)) {
             if (validData()) {
                 int row = table.getSelectedRow();
-                if (row == -1) {
+                if (row != -1) {
                     Product product = getDataInFrom();
                     boolean result = ProductDAO.getInstance().updateProduct(product);
                     DecimalFormat df = new DecimalFormat("#,###.##");
@@ -300,7 +299,7 @@ public class pnProduct extends JPanel
     public void itemStateChanged(ItemEvent e) {
         Object o = e.getSource();
         if (o.equals(cboSearchCategory)) {
-            String categoryName = cboSearchCategory.getSelectedItem().toString();
+            String categoryName = String.valueOf(cboSearchCategory.getSelectedItem());
             if (categoryName.equals("Tất cả")) {
                 loadProductList();
             } else {
@@ -405,6 +404,12 @@ public class pnProduct extends JPanel
         return btnBack;
     }
 
+    public void allLoaded() {
+        loadCategoryListIntoCbo();
+        reSizeColumnTable();
+        loadProductList();
+    }
+
     private boolean validData() {
         String productName = txtProductName.getText().trim();
         String price = txtPrice.getText().trim().replace(",", "");
@@ -446,6 +451,8 @@ public class pnProduct extends JPanel
 
     private void loadCategoryListIntoCbo() {
         ArrayList<Category> categoryList = CategoryDAO.getInstance().getListCategory();
+        cboCategory.removeAllItems();
+        cboSearchCategory.removeAllItems();
         cboSearchCategory.addItem("Tất cả");
         for (Category item : categoryList) {
             cboCategory.addItem(item.getName());

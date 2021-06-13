@@ -8,15 +8,12 @@ import entity.*;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.border.*;
 
-public class pnCategory extends JFrame
-        implements interfaceBtn, ActionListener, MouseListener, ItemListener, KeyListener {
+public class pnCategory extends JPanel implements interfaceBtn, ActionListener, MouseListener, KeyListener {
     private JTable table;
     private DefaultTableModel modelTable;
     private JTextField txtCategoryID, txtCategoryName, txtKeyWord;
@@ -32,17 +29,17 @@ public class pnCategory extends JFrame
 
     public pnCategory() {
         setSize(1270, 630);
-        setResizable(false);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        getContentPane().setLayout(null);
-        getContentPane().setLayout(new BorderLayout(0, 0));
+        // setResizable(false);
+        // setLocationRelativeTo(null);
+        // setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLayout(null);
+        setLayout(new BorderLayout(0, 0));
 
         JPanel pnTop = new JPanel();
         pnTop.setBackground(Color.WHITE);
         pnTop.setPreferredSize(new Dimension(10, 200));
         pnTop.setLayout(null);
-        getContentPane().add(pnTop, BorderLayout.NORTH);
+        this.add(pnTop, BorderLayout.NORTH);
 
         JPanel pnTitle = new JPanel();
         pnTitle.setBounds(0, 0, 1270, 40);
@@ -155,7 +152,7 @@ public class pnCategory extends JFrame
         pnTable.add(scpTable, BorderLayout.CENTER);
         pnTable.setBounds(10, 25, 1250, 600);
 
-        getContentPane().add(pnTable, BorderLayout.CENTER);
+        this.add(pnTable, BorderLayout.CENTER);
         reSizeColumnTable();
         loadCategoryList();
 
@@ -195,6 +192,7 @@ public class pnCategory extends JFrame
                     int categoryID = CategoryDAO.getInstance().getLastCategoryID();
                     modelTable.addRow(new Object[] { stt, categoryID, category.getName() });
                     modelTable.fireTableDataChanged();
+                    txtCategoryID.setText(String.valueOf(categoryID));
                     int lastIndex = table.getRowCount() - 1;
                     table.getSelectionModel().setSelectionInterval(lastIndex, lastIndex);
                     table.scrollRectToVisible(table.getCellRect(lastIndex, lastIndex, true));
@@ -206,7 +204,7 @@ public class pnCategory extends JFrame
         } else if (o.equals(btnUpdate)) {
             if (validData()) {
                 int row = table.getSelectedRow();
-                if (row == -1) {
+                if (row != -1) {
                     Category category = getDataInFrom();
                     boolean result = CategoryDAO.getInstance().updateProduct(category);
                     if (result == true) {
@@ -264,11 +262,6 @@ public class pnCategory extends JFrame
         } else if (o.equals(btnViewAll)) {
             loadCategoryList();
         }
-    }
-
-    @Override
-    public void itemStateChanged(ItemEvent e) {
-        Object o = e.getSource();
     }
 
     @Override
@@ -381,7 +374,9 @@ public class pnCategory extends JFrame
 
     private Category getDataInFrom() {
         String categoryName = txtCategoryName.getText().trim();
-        int categoryID = Integer.parseInt(txtCategoryID.getText().trim());
+        int categoryID = 0;
+        if (!txtCategoryID.getText().trim().equals(""))
+            categoryID = Integer.parseInt(txtCategoryID.getText().trim());
         return (new Category(categoryID, categoryName));
     }
 
@@ -394,20 +389,6 @@ public class pnCategory extends JFrame
         ArrayList<Category> dataList = CategoryDAO.getInstance().getListCategoryByName(categoryName);
         loadDataIntoTable(dataList);
     }
-
-    // private void loadProductListByCategoryNameAndProductName(String productName,
-    // String categoryName) {
-    // ResultSet productList = null;
-    // if (categoryName.equalsIgnoreCase("Tất cả")) {
-    // productList =
-    // ProductDAO.getInstance().searchProductByProductName(productName);
-    // } else {
-    // productList =
-    // ProductDAO.getInstance().searchProductByCategoryNameAndProductName(productName,
-    // categoryName);
-    // }
-    // loadDataIntoTable(productList);
-    // }
 
     private void loadDataIntoTable(ArrayList<Category> categoryList) {
         DecimalFormat df = new DecimalFormat("#,###.##");

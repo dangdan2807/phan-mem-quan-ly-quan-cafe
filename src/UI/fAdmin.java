@@ -1,13 +1,15 @@
 package UI;
 
 import javax.swing.*;
+import javax.swing.event.*;
+
 import java.awt.event.*;
 
 import DAO.AccountDAO;
 import UI.PanelCustom.*;
 import entity.Account;
 
-public class fAdmin extends JFrame implements ActionListener {
+public class fAdmin extends JFrame implements ActionListener, ChangeListener {
     private static fAdmin instance;
 
     public static fAdmin getInstance(Account loginAccount) {
@@ -20,8 +22,9 @@ public class fAdmin extends JFrame implements ActionListener {
     // private ImageIcon userIcon = new ImageIcon("img/user_16.png");
     private Account loginAccount = null;
 
-    private pnRevenue pnRevenue;
-    private pnProduct pnProduct;
+    private pnRevenue pRevenue;
+    private pnProduct pProduct;
+    private pnCategory pCategory;
 
     public fAdmin(Account account) {
         setTitle("Quản Lý Hệ Thống");
@@ -36,22 +39,25 @@ public class fAdmin extends JFrame implements ActionListener {
 
     public void createTabControl() {
         tpTabMain = new JTabbedPane();
-        pnRevenue = new pnRevenue();
-        pnProduct = new pnProduct();
-        // pnCategory pnCategory = new pnCategory();
+        pRevenue = new pnRevenue();
+        pProduct = new pnProduct();
+        pCategory = new pnCategory();
         // pnTable pnTable = new pnTable();
         // pnAccount pnAccount = new pnAccount();
-        tpTabMain.addTab("Doanh thu", null, pnRevenue, "Quản lý doanh thu");
-        tpTabMain.addTab("Sản phẩm", null, pnProduct, "Quản lý sản phẩm");
-        // tpTabMain.addTab("Loại sản phẩm", null, pnCategory, "Quản lý loại sản phẩm");
+        tpTabMain.addTab("Doanh thu", null, pRevenue, "Quản lý doanh thu");
+        tpTabMain.addTab("Sản phẩm", null, pProduct, "Quản lý sản phẩm");
+        tpTabMain.addTab("Loại sản phẩm", null, pCategory, "Quản lý loại sản phẩm");
         // tpTabMain.addTab("Bàn", null, pnTable, "Quản lý bàn");
         // tpTabMain.addTab("Tài Khoản", userIcon, pnAccount, "Quản lý tài khoản");
         this.add(tpTabMain);
 
-        pnRevenue.getBtnLogOut().addActionListener(this);
-        pnRevenue.getBtnBack().addActionListener(this);
-        pnProduct.getBtnLogOut().addActionListener(this);
-        pnProduct.getBtnBack().addActionListener(this);
+        tpTabMain.addChangeListener(this);
+        pRevenue.getBtnLogOut().addActionListener(this);
+        pRevenue.getBtnBack().addActionListener(this);
+        pProduct.getBtnLogOut().addActionListener(this);
+        pProduct.getBtnBack().addActionListener(this);
+        pCategory.getBtnLogOut().addActionListener(this);
+        pCategory.getBtnBack().addActionListener(this);
     }
 
     public static void main(String[] args) {
@@ -62,10 +68,20 @@ public class fAdmin extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
-        if (o.equals(pnRevenue.getBtnLogOut()) || o.equals(pnProduct.getBtnLogOut())) {
+        if (o.equals(pRevenue.getBtnLogOut()) || o.equals(pProduct.getBtnLogOut())
+                || o.equals(pCategory.getBtnLogOut())) {
             EventLogOut();
-        } else if (o.equals(pnRevenue.getBtnBack()) || o.equals(pnProduct.getBtnBack())) {
+        } else if (o.equals(pRevenue.getBtnBack()) || o.equals(pProduct.getBtnBack())
+                || o.equals(pCategory.getBtnBack())) {
             EventExit();
+        }
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        Object o = e.getSource();
+        if (o.equals(tpTabMain)) {
+            pProduct.allLoaded();
         }
     }
 
