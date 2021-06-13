@@ -193,10 +193,6 @@ public class pnProduct extends JPanel
         txtKeyWord.addKeyListener(this);
     }
 
-    public static void main(String[] args) {
-        new pnProduct().setVisible(true);
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
