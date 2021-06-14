@@ -255,13 +255,18 @@ public class pnTable extends JPanel implements interfaceBtn, ActionListener, Mou
                 String tableName = (TableDAO.getInstance().getTableByTableID(tableID)).getName();
                 int billInfoUnpaidCount = BillDAO.getInstance().getListBillUnpaidByTableID(tableID);
                 if (billInfoUnpaidCount > 0) {
-                    String message = String.format("Để xóa sản phẩm: %s \nBạn cần xóa thanh toán hóa đơn", tableName);
+                    String message = String.format("Để xóa %s \nBạn cần thanh toán hóa đơn của bàn này", tableName);
                     JOptionPane.showMessageDialog(this, message, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    String message = String.format("Bạn muốn xóa loại sản phẩm %s\n", tableName);
-                    int select = JOptionPane.showConfirmDialog(this, message, "Thông báo", JOptionPane.YES_NO_OPTION,
+                    String message = String.format(
+                            "Bạn muốn xóa %s\n Xóa bàn sẽ xóa tất cả hóa đơn của bàn từ trước đến giờ\nHãy suy nghĩ thật kỹ!!!",
+                            tableName);
+                    int select = JOptionPane.showConfirmDialog(this, message, "Xác nhận xóa", JOptionPane.YES_NO_OPTION,
                             JOptionPane.QUESTION_MESSAGE);
                     if (select == JOptionPane.YES_OPTION) {
+                        int countBill = BillDAO.getInstance().getCountBillByTableID(tableID);
+                        if (countBill > 0)
+                            BillDAO.getInstance().deleteBillByTableID(tableID);
                         boolean result = TableDAO.getInstance().deleteTable(tableID);
                         if (result == true) {
                             modelTable.removeRow(row);

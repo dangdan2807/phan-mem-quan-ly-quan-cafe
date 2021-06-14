@@ -76,4 +76,17 @@ public class BillDAO {
         return result;
     }
 
+    public boolean deleteBillByTableID(int tableID) {
+        String query = "{CALL USP_deleteBillByTableID ( ? )}";
+        Object[] parameter = new Object[] { tableID };
+        int result = (int) DataProvider.getInstance().ExecuteNonQuery(query, parameter);
+        return result > 0;
+    }
+
+    public int getCountBillByTableID(int tableID) {
+        String query = "SELECT COUNT(*) FROM dbo.bill WHERE idTable = ?";
+        Object[] parameter = new Object[] { tableID };
+        int result = (int) DataProvider.getInstance().ExecuteScalar(query, parameter);
+        return result;
+    }
 }

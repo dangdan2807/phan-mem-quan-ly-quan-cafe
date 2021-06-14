@@ -607,3 +607,29 @@ AS
             WHERE id = @idTable
     END
 GO
+
+CREATE PROC USP_deleteBillByTableID
+    @tableID INT
+AS
+BEGIN
+    DECLARE @billCount INT
+    SELECT @billCount = count(*)
+    FROM dbo.Bill b
+    WHERE b.idTable = @tableID
+
+    IF @billCount > 0
+    BEGIN
+        DELETE FROM dbo.BillInfo 
+        WHERE idBill IN (
+            SELECT b.id
+            FROM dbo.Bill b
+            WHERE b.idTable = @tableID
+        )
+    END
+
+    DELETE FROM dbo.Bill
+    WHERE idTable = @tableID
+END
+GO  
+
+EXEC USP_deleteBillByTableID 26

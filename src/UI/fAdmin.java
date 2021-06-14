@@ -60,6 +60,10 @@ public class fAdmin extends JFrame implements ActionListener, ChangeListener {
         pProduct.getBtnBack().addActionListener(this);
         pCategory.getBtnLogOut().addActionListener(this);
         pCategory.getBtnBack().addActionListener(this);
+        pTable.getBtnLogOut().addActionListener(this);
+        pTable.getBtnBack().addActionListener(this);
+        pAccount.getBtnLogOut().addActionListener(this);
+        pAccount.getBtnBack().addActionListener(this);
     }
 
     public static void main(String[] args) {
@@ -70,11 +74,12 @@ public class fAdmin extends JFrame implements ActionListener, ChangeListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
-        if (o.equals(pRevenue.getBtnLogOut()) || o.equals(pProduct.getBtnLogOut())
-                || o.equals(pCategory.getBtnLogOut()) || o.equals(pTable) || o.equals(pAccount)) {
+        if (o.equals(pRevenue.getBtnLogOut()) || o.equals(pProduct.getBtnLogOut()) || o.equals(pAccount.getBtnLogOut())
+                || o.equals(pTable.getBtnLogOut()) || o.equals(pAccount.getBtnLogOut())) {
             EventLogOut();
         } else if (o.equals(pRevenue.getBtnBack()) || o.equals(pProduct.getBtnBack())
-                || o.equals(pCategory.getBtnBack()) || o.equals(pTable) || o.equals(pAccount)) {
+                || o.equals(pCategory.getBtnBack()) || o.equals(pTable.getBtnBack())
+                || o.equals(pAccount.getBtnBack())) {
             EventExit();
         }
     }
