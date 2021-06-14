@@ -32,7 +32,7 @@ GO
 CREATE TABLE Account
 (
     Username NVARCHAR(100) PRIMARY KEY,
-    PassWord NVARCHAR(1000) NOT NULL DEFAULT(N'0'),
+    PassWord NVARCHAR(1000) NOT NULL DEFAULT(N'123456'),
     DisplayName NVARCHAR(100),
     -- idEmployee int NOT NULL,
     -- 1. admin || 0. nhân viên

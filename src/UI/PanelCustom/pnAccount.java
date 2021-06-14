@@ -32,14 +32,17 @@ public class pnAccount extends JFrame
 
     public pnAccount() {
         setSize(1270, 630);
-        getContentPane().setLayout(null);
-        getContentPane().setLayout(new BorderLayout(0, 0));
+        setResizable(false);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setLayout(null);
+        this.setLayout(new BorderLayout(0, 0));
 
         JPanel pnTop = new JPanel();
         pnTop.setBackground(Color.WHITE);
         pnTop.setPreferredSize(new Dimension(10, 200));
         pnTop.setLayout(null);
-        getContentPane().add(pnTop, BorderLayout.NORTH);
+        this.add(pnTop, BorderLayout.NORTH);
 
         JPanel pnTitle = new JPanel();
         pnTitle.setBounds(0, 0, 1270, 40);
@@ -182,9 +185,9 @@ public class pnAccount extends JFrame
         pnTable.add(scpTable, BorderLayout.CENTER);
         pnTable.setBounds(10, 25, 1250, 600);
 
-        getContentPane().add(pnTable, BorderLayout.CENTER);
+        this.add(pnTable, BorderLayout.CENTER);
         reSizeColumnTable();
-        loadTableList();
+        loadAccountList();
 
         btnAdd.addActionListener(this);
         btnDelete.addActionListener(this);
@@ -217,25 +220,26 @@ public class pnAccount extends JFrame
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
         if (o.equals(btnAdd)) {
-            // if (validData()) {
-            // Table tableData = getDataInFrom();
-            // boolean result = TableDAO.getInstance().insertTable(tableData);
-            // DecimalFormat df = new DecimalFormat("#,###.##");
-            // if (result == true) {
-            // String stt = df.format(index++);
-            // int tableID = TableDAO.getInstance().getLastCategoryID();
-            // modelTable.addRow(new Object[] { stt, tableID, tableData.getName(),
-            // tableData.getStatus() });
-            // modelTable.fireTableDataChanged();
-            // txtUsername.setText(String.valueOf(tableID));
-            // int lastIndex = table.getRowCount() - 1;
-            // table.getSelectionModel().setSelectionInterval(lastIndex, lastIndex);
-            // table.scrollRectToVisible(table.getCellRect(lastIndex, lastIndex, true));
-            // JOptionPane.showMessageDialog(this, "Thêm bàn thành công");
-            // } else {
-            // JOptionPane.showMessageDialog(this, "Thêm bàn thất bại");
-            // }
-            // }
+            if (validData()) {
+                Account accountDate = getDataInFrom();
+                boolean result = AccountDAO.getInstance().insertAccount(accountDate);
+                DecimalFormat df = new DecimalFormat("#,###.##");
+                if (result == true) {
+                    String stt = df.format(index++);
+                    String type = "Nhân viên";
+                    if (accountDate.getType() == 1)
+                        type = "Quản lý";
+                    modelTable.addRow(
+                            new Object[] { stt, accountDate.getUsername(), accountDate.getDisplayName(), type });
+                    modelTable.fireTableDataChanged();
+                    int lastIndex = table.getRowCount() - 1;
+                    table.getSelectionModel().setSelectionInterval(lastIndex, lastIndex);
+                    table.scrollRectToVisible(table.getCellRect(lastIndex, lastIndex, true));
+                    JOptionPane.showMessageDialog(this, "Thêm tài khoản thành công");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Thêm tài khoản thất bại");
+                }
+            }
         } else if (o.equals(btnUpdate)) {
             // if (validData()) {
             // int row = table.getSelectedRow();
@@ -304,7 +308,7 @@ public class pnAccount extends JFrame
             // searchTableListByNameAndStatus(tableName, status);
             // }
         } else if (o.equals(btnViewAll)) {
-            // loadTableList();
+            loadAccountList();
         }
     }
 
@@ -314,7 +318,7 @@ public class pnAccount extends JFrame
         if (o.equals(cboSearch)) {
             String tableName = String.valueOf(cboSearch.getSelectedItem());
             if (tableName.equals("Tất cả")) {
-                loadTableList();
+                loadAccountList();
             } else {
                 // searchTableListByStatus(tableName);
             }
@@ -435,6 +439,7 @@ public class pnAccount extends JFrame
         radStaff.setSelected(true);
     }
 
+    // mỏ txtUsername
     private Account getDataInFrom() {
         String username = "";
         if (!txtUsername.getText().trim().equals(""))
@@ -449,8 +454,8 @@ public class pnAccount extends JFrame
         return (new Account(username, password, displayName, type));
     }
 
-    private void loadTableList() {
-        ArrayList<Account> dataList = null;
+    private void loadAccountList() {
+        ArrayList<Account> dataList = AccountDAO.getInstance().getListAccount();
         loadDataIntoTable(dataList);
     }
 
@@ -494,6 +499,5 @@ public class pnAccount extends JFrame
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
 
         table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
-        table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
     }
 }

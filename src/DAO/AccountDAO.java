@@ -15,7 +15,7 @@ public class AccountDAO {
     }
 
     public ArrayList<Account> getListAccount() {
-        String query = "SELECT * FROM dbo.Account";
+        String query = "SELECT username , displayName , type FROM dbo.Account";
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, null);
         ArrayList<Account> dataList = new ArrayList<Account>();
         try {
@@ -56,9 +56,31 @@ public class AccountDAO {
         return account;
     }
 
-    public boolean updateAccount(String username, String displayName, String password, String newPassword) {
+    public boolean insertAccount(Account account) {
+        String query = "INSERT INTO dbo.Account (username , password , displayName , type) VALUES ( ? , ? , ? , ? )";
+        Object[] parameter = new Object[] { account.getUsername(), account.getPassword(), account.getDisplayName(),
+                account.getType() };
+        int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
+        return result > 0;
+    }
+
+    public boolean updateAccountInfo(String username, String displayName, String password, String newPassword) {
         String query = "{CALL UPS_updateAccount ( ? , ? , ? , ? )}";
         Object[] parameter = new Object[] { username, displayName, password, newPassword };
+        int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
+        return result > 0;
+    }
+
+    public boolean updateAccount(Account account) {
+        String query = "update dbo.Account SET displayName = ? , type = ? WHERE username = ?";
+        Object[] parameter = new Object[] { account.getDisplayName(), account.getType(), account.getUsername() };
+        int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
+        return result > 0;
+    }
+
+    public boolean deleteTable(String username) {
+        String query = "delete from dbo.Account Where username = ?";
+        Object[] parameter = new Object[] { username };
         int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
         return result > 0;
     }

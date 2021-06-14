@@ -24,7 +24,7 @@ public class fAdmin extends JFrame implements ActionListener, ChangeListener {
 
     private pnRevenue pRevenue;
     private pnProduct pProduct;
-    private pnAccount pCategory;
+    private pnCategory pCategory;
     private pnTable pTable;
     private pnAccount pAccount;
 
@@ -43,14 +43,14 @@ public class fAdmin extends JFrame implements ActionListener, ChangeListener {
         tpTabMain = new JTabbedPane();
         pRevenue = new pnRevenue();
         pProduct = new pnProduct();
-        pCategory = new pnAccount();
+        pCategory = new pnCategory();
         pTable = new pnTable();
-        pAccount = new pnAccount();
+        // pAccount = new pnAccount();
         tpTabMain.addTab("Doanh thu", null, pRevenue, "Quản lý doanh thu");
         tpTabMain.addTab("Sản phẩm", null, pProduct, "Quản lý sản phẩm");
         tpTabMain.addTab("Loại sản phẩm", null, pCategory, "Quản lý loại sản phẩm");
         tpTabMain.addTab("Bàn", null, pTable, "Quản lý bàn");
-        tpTabMain.addTab("Tài Khoản", userIcon, pAccount, "Quản lý tài khoản");
+        // tpTabMain.addTab("Tài Khoản", userIcon, pAccount, "Quản lý tài khoản");
         this.add(tpTabMain);
 
         tpTabMain.addChangeListener(this);

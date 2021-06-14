@@ -188,7 +188,7 @@ public class fAccountProfile extends JDialog implements ActionListener, KeyListe
         if (!(newPassword.equals(reNewPassWord))) {
             JOptionPane.showMessageDialog(this, "Mật khẩu mới không khớp", "Thông báo", JOptionPane.ERROR_MESSAGE);
         } else {
-            if (AccountDAO.getInstance().updateAccount(username, displayName, password, newPassword)) {
+            if (AccountDAO.getInstance().updateAccountInfo(username, displayName, password, newPassword)) {
                 JOptionPane.showMessageDialog(this, "Cập nhật thành công", "Thông báo",
                         JOptionPane.INFORMATION_MESSAGE);
                 f_ManagerSale.setEmpName(displayName);
