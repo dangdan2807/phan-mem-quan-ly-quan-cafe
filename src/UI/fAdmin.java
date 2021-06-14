@@ -45,12 +45,12 @@ public class fAdmin extends JFrame implements ActionListener, ChangeListener {
         pProduct = new pnProduct();
         pCategory = new pnCategory();
         pTable = new pnTable();
-        // pAccount = new pnAccount();
+        pAccount = new pnAccount();
         tpTabMain.addTab("Doanh thu", null, pRevenue, "Quản lý doanh thu");
         tpTabMain.addTab("Sản phẩm", null, pProduct, "Quản lý sản phẩm");
         tpTabMain.addTab("Loại sản phẩm", null, pCategory, "Quản lý loại sản phẩm");
         tpTabMain.addTab("Bàn", null, pTable, "Quản lý bàn");
-        // tpTabMain.addTab("Tài Khoản", userIcon, pAccount, "Quản lý tài khoản");
+        tpTabMain.addTab("Tài Khoản", userIcon, pAccount, "Quản lý tài khoản");
         this.add(tpTabMain);
 
         tpTabMain.addChangeListener(this);

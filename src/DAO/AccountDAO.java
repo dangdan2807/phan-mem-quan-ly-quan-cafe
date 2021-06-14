@@ -56,6 +56,51 @@ public class AccountDAO {
         return account;
     }
 
+    public ArrayList<Account> searchAccountListByUsername(String username) {
+        String query = "Select * from dbo.Account where dbo.fuConvertToUnsign(username) like dbo.fuConvertToUnsign( ? )";
+        Object[] parameter = new Object[] { "%" + username + "%"};
+        ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
+        ArrayList<Account> dataList = new ArrayList<Account>();
+        try {
+            while (rs.next()) {
+                dataList.add(new Account(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dataList;
+    }
+
+    public ArrayList<Account> searchAccountListByType(int type) {
+        String query = "Select * from dbo.Account where type = ?";
+        Object[] parameter = new Object[] { type };
+        ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
+        ArrayList<Account> dataList = new ArrayList<Account>();
+        try {
+            while (rs.next()) {
+                dataList.add(new Account(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dataList;
+    }
+
+    public ArrayList<Account> searchAccountListByUsernameAndType(String username, int type) {
+        String query = "Select * from dbo.Account where dbo.fuConvertToUnsign(username) like dbo.fuConvertToUnsign(?) and type = ?";
+        Object[] parameter = new Object[] { "%" + username + "%", type };
+        ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
+        ArrayList<Account> dataList = new ArrayList<Account>();
+        try {
+            while (rs.next()) {
+                dataList.add(new Account(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dataList;
+    }
+
     public boolean insertAccount(Account account) {
         String query = "INSERT INTO dbo.Account (username , password , displayName , type) VALUES ( ? , ? , ? , ? )";
         Object[] parameter = new Object[] { account.getUsername(), account.getPassword(), account.getDisplayName(),

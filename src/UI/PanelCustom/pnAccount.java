@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 import javax.swing.border.*;
 
-public class pnAccount extends JFrame
+public class pnAccount extends JPanel
         implements interfaceBtn, ActionListener, MouseListener, KeyListener, ItemListener {
     private JTable table;
     private DefaultTableModel modelTable;
@@ -32,9 +32,6 @@ public class pnAccount extends JFrame
 
     public pnAccount() {
         setSize(1270, 630);
-        setResizable(false);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLayout(null);
         this.setLayout(new BorderLayout(0, 0));
 
@@ -212,10 +209,6 @@ public class pnAccount extends JFrame
         cboSearch.addItemListener(this);
     }
 
-    public static void main(String[] args) {
-        new pnAccount().setVisible(true);
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
@@ -284,19 +277,26 @@ public class pnAccount extends JFrame
         } else if (o.equals(btnRefresh)) {
             refreshInput();
         } else if (o.equals(btnSearch)) {
-            // String tableName = txtKeyWord.getText().trim();
-            // String status = cboSearch.getSelectedItem().toString();
-            // if (tableName.equals("")) {
-            // if (status.equals("Tất cả"))
-            // loadTableList();
-            // else
-            // searchTableListByStatus(status);
-            // } else {
-            // if (status.equals("Tất cả"))
-            // searchTableListByName(tableName);
-            // else
-            // searchTableListByNameAndStatus(tableName, status);
-            // }
+            String username = txtKeyWord.getText().trim();
+            String typeStr = cboSearch.getSelectedItem().toString();
+            int type = 0;
+            if (typeStr.equals("Tất cả"))
+                type = -1;
+            else if (typeStr.equals("Quản lý"))
+                type = 1;
+
+            if (username.equals("")) {
+                if (type == -1) {
+                    loadAccountList();
+                } else {
+                    searchAccountListByType(type);
+                }
+            } else {
+                if (type == -1)
+                    searchAccountListByUsername(username);
+                else
+                    searchAccountListByUsernameAndType(username, type);
+            }
         } else if (o.equals(btnViewAll)) {
             loadAccountList();
         }
@@ -306,11 +306,14 @@ public class pnAccount extends JFrame
     public void itemStateChanged(ItemEvent e) {
         Object o = e.getSource();
         if (o.equals(cboSearch)) {
-            String tableName = String.valueOf(cboSearch.getSelectedItem());
-            if (tableName.equals("Tất cả")) {
+            String typeStr = String.valueOf(cboSearch.getSelectedItem());
+            if (typeStr.equals("Tất cả")) {
                 loadAccountList();
             } else {
-                // searchTableListByStatus(tableName);
+                if (typeStr.equals("Nhân viên"))
+                    searchAccountListByType(0);
+                else
+                    searchAccountListByType(1);
             }
         }
     }
@@ -460,18 +463,18 @@ public class pnAccount extends JFrame
         loadDataIntoTable(dataList);
     }
 
-    private void searchTableListByName(String tableName) {
-        ArrayList<Account> dataList = null;
+    private void searchAccountListByUsername(String username) {
+        ArrayList<Account> dataList = AccountDAO.getInstance().searchAccountListByUsername(username);
         loadDataIntoTable(dataList);
     }
 
-    private void searchTableListByNameAndStatus(String tableName, String status) {
-        ArrayList<Account> dataList = null;
+    private void searchAccountListByUsernameAndType(String username, int type) {
+        ArrayList<Account> dataList = AccountDAO.getInstance().searchAccountListByUsernameAndType(username, type);
         loadDataIntoTable(dataList);
     }
 
-    private void searchTableListByStatus(String status) {
-        ArrayList<Account> dataList = null;
+    private void searchAccountListByType(int type) {
+        ArrayList<Account> dataList = AccountDAO.getInstance().searchAccountListByType(type);
         loadDataIntoTable(dataList);
     }
 
