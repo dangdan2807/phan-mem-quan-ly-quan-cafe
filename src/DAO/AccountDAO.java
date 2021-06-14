@@ -148,7 +148,8 @@ public class AccountDAO {
     }
 
     public boolean resetPassword(String username) {
-        String query = "Update dbo.Account set password = N'123456' where username = ?";
+        // password: 123456
+        String query = "Update dbo.Account set password = N'-3110-365773-7089-85-6686-3287-1415-12062' where username = ?";
         Object[] parameter = new Object[] { username };
         int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
         return result > 0;

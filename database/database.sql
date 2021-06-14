@@ -631,3 +631,5 @@ BEGIN
     WHERE idTable = @tableID
 END
 GO  
+
+select * from dbo.Account

@@ -473,7 +473,7 @@ public class pnAccount extends JPanel
         String username = "";
         if (!txtUsername.getText().trim().equals(""))
             username = txtUsername.getText().trim();
-        String password = "123456";
+        String password = "-3110-365773-7089-85-6686-3287-1415-12062";
         String displayName = "Chưa cập nhật";
         if (!txtDisplayName.getText().trim().equals(""))
             displayName = txtDisplayName.getText().trim();
