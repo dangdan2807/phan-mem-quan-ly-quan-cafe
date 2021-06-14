@@ -373,9 +373,19 @@ public class pnCategory extends JPanel implements interfaceBtn, ActionListener, 
     }
 
     private boolean authentication() {
-        String password = JOptionPane.showInputDialog(this, "Vui lòng nhập mật khẩu để xác thực danh tính", "Xác thực",
-                JOptionPane.YES_NO_OPTION);
-        boolean result = AccountDAO.getInstance().Login(loginAccount.getUsername(), password);
+        String password = "";
+        JPasswordField passwordField = new JPasswordField();
+        Object[] obj = { "Vui lòng nhập mật khẩu để xác thực danh tính:\n\n", passwordField };
+        Object stringArray[] = { "OK", "Cancel" };
+        int select = JOptionPane.showOptionDialog(null, obj, "Xác thực", JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null, stringArray, obj);
+        
+        boolean result = false;
+        if (select == JOptionPane.YES_OPTION) {
+            password = new String(passwordField.getPassword());
+            System.out.println(password);
+            result = AccountDAO.getInstance().Login(loginAccount.getUsername(), password);
+        }
         return result;
     }
 
