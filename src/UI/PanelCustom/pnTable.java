@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 import javax.swing.border.*;
 
-public class pnTable extends JFrame implements interfaceBtn, ActionListener, MouseListener, KeyListener, ItemListener {
+public class pnTable extends JPanel implements interfaceBtn, ActionListener, MouseListener, KeyListener, ItemListener {
     private JTable table;
     private DefaultTableModel modelTable;
     private JTextField txtTableID, txtTableName, txtKeyWord;
@@ -31,17 +31,14 @@ public class pnTable extends JFrame implements interfaceBtn, ActionListener, Mou
 
     public pnTable() {
         setSize(1270, 630);
-        setResizable(false);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        getContentPane().setLayout(null);
-        getContentPane().setLayout(new BorderLayout(0, 0));
+        this.setLayout(null);
+        this.setLayout(new BorderLayout(0, 0));
 
         JPanel pnTop = new JPanel();
         pnTop.setBackground(Color.WHITE);
         pnTop.setPreferredSize(new Dimension(10, 200));
         pnTop.setLayout(null);
-        getContentPane().add(pnTop, BorderLayout.NORTH);
+        this.add(pnTop, BorderLayout.NORTH);
 
         JPanel pnTitle = new JPanel();
         pnTitle.setBounds(0, 0, 1270, 40);
@@ -183,7 +180,7 @@ public class pnTable extends JFrame implements interfaceBtn, ActionListener, Mou
         pnTable.add(scpTable, BorderLayout.CENTER);
         pnTable.setBounds(10, 25, 1250, 600);
 
-        getContentPane().add(pnTable, BorderLayout.CENTER);
+        this.add(pnTable, BorderLayout.CENTER);
         reSizeColumnTable();
         loadTableList();
 
@@ -200,16 +197,14 @@ public class pnTable extends JFrame implements interfaceBtn, ActionListener, Mou
         btnRefresh.addMouseListener(this);
         btnSearch.addMouseListener(this);
         btnViewAll.addMouseListener(this);
+        btnBack.addMouseListener(this);
+        btnLogOut.addMouseListener(this);
 
         table.addMouseListener(this);
 
         txtKeyWord.addKeyListener(this);
 
         cboSearch.addItemListener(this);
-    }
-
-    public static void main(String[] args) {
-        new pnTable().setVisible(true);
     }
 
     @Override

@@ -166,6 +166,8 @@ public class pnCategory extends JPanel implements interfaceBtn, ActionListener, 
         btnRefresh.addMouseListener(this);
         btnSearch.addMouseListener(this);
         btnViewAll.addMouseListener(this);
+        btnBack.addMouseListener(this);
+        btnLogOut.addMouseListener(this);
 
         table.addMouseListener(this);
 

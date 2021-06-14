@@ -607,10 +607,3 @@ AS
             WHERE id = @idTable
     END
 GO
-
-SELECT count(b.id) as countBillInfo
-FROM dbo.TableFood tf, dbo.Bill b, dbo.BillInfo bi
-WHERE tf.id=8
-    AND bi.id = b.id
-    and b.idTable = 8
-    AND b.[status] = 0

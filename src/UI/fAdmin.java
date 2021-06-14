@@ -19,12 +19,14 @@ public class fAdmin extends JFrame implements ActionListener, ChangeListener {
     }
 
     private JTabbedPane tpTabMain;
-    // private ImageIcon userIcon = new ImageIcon("img/user_16.png");
+    private ImageIcon userIcon = new ImageIcon("img/user_16.png");
     private Account loginAccount = null;
 
     private pnRevenue pRevenue;
     private pnProduct pProduct;
-    private pnTable pCategory;
+    private pnAccount pCategory;
+    private pnTable pTable;
+    private pnAccount pAccount;
 
     public fAdmin(Account account) {
         setTitle("Quản Lý Hệ Thống");
@@ -41,14 +43,14 @@ public class fAdmin extends JFrame implements ActionListener, ChangeListener {
         tpTabMain = new JTabbedPane();
         pRevenue = new pnRevenue();
         pProduct = new pnProduct();
-        pCategory = new pnTable();
-        // pnTable pnTable = new pnTable();
-        // pnAccount pnAccount = new pnAccount();
+        pCategory = new pnAccount();
+        pTable = new pnTable();
+        pAccount = new pnAccount();
         tpTabMain.addTab("Doanh thu", null, pRevenue, "Quản lý doanh thu");
         tpTabMain.addTab("Sản phẩm", null, pProduct, "Quản lý sản phẩm");
         tpTabMain.addTab("Loại sản phẩm", null, pCategory, "Quản lý loại sản phẩm");
-        // tpTabMain.addTab("Bàn", null, pnTable, "Quản lý bàn");
-        // tpTabMain.addTab("Tài Khoản", userIcon, pnAccount, "Quản lý tài khoản");
+        tpTabMain.addTab("Bàn", null, pTable, "Quản lý bàn");
+        tpTabMain.addTab("Tài Khoản", userIcon, pAccount, "Quản lý tài khoản");
         this.add(tpTabMain);
 
         tpTabMain.addChangeListener(this);
@@ -69,10 +71,10 @@ public class fAdmin extends JFrame implements ActionListener, ChangeListener {
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
         if (o.equals(pRevenue.getBtnLogOut()) || o.equals(pProduct.getBtnLogOut())
-                || o.equals(pCategory.getBtnLogOut())) {
+                || o.equals(pCategory.getBtnLogOut()) || o.equals(pTable) || o.equals(pAccount)) {
             EventLogOut();
         } else if (o.equals(pRevenue.getBtnBack()) || o.equals(pProduct.getBtnBack())
-                || o.equals(pCategory.getBtnBack())) {
+                || o.equals(pCategory.getBtnBack()) || o.equals(pTable) || o.equals(pAccount)) {
             EventExit();
         }
     }
