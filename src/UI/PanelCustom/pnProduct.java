@@ -30,12 +30,13 @@ public class pnProduct extends JPanel
     private ImageIcon backIcon = new ImageIcon("img/back_16.png");
     private ImageIcon updateIcon = new ImageIcon("img/update_16.png");
     int index = 1;
+    private Account loginAccount = null;
 
-    public pnProduct() {
+    public pnProduct(Account account) {
         setSize(1270, 630);
         this.setLayout(null);
         this.setLayout(new BorderLayout(0, 0));
-
+        this.loginAccount = account;
         JPanel pnTop = new JPanel();
         pnTop.setBackground(Color.WHITE);
         pnTop.setPreferredSize(new Dimension(10, 200));
@@ -155,7 +156,7 @@ public class pnProduct extends JPanel
         btnSearch.setBounds(542, 7, 120, 26);
         customUI.getInstance().setCustomBtn(btnSearch);
         pnSearch.add(btnSearch);
-        
+
         btnViewAll = new JButton("Xem tất cả", null);
         btnViewAll.setBounds(672, 9, 120, 26);
         customUI.getInstance().setCustomBtn(btnViewAll);
@@ -237,50 +238,59 @@ public class pnProduct extends JPanel
                 }
             }
         } else if (o.equals(btnUpdate)) {
-            if (validData()) {
-                int row = table.getSelectedRow();
-                if (row != -1) {
-                    Product product = getDataInFrom();
-                    boolean result = ProductDAO.getInstance().updateProduct(product);
-                    DecimalFormat df = new DecimalFormat("#,###.##");
-                    if (result == true) {
-                        String price = df.format(product.getPrice());
-                        String categoryName = CategoryDAO.getInstance().getCategoryNameByID(product.getCategoryID());
-                        modelTable.setValueAt(product.getName(), row, 2);
-                        modelTable.setValueAt(categoryName, row, 3);
-                        modelTable.setValueAt(price, row, 4);
-                        JOptionPane.showMessageDialog(this, "cập nhật sản phẩm thành công");
+            if (authentication()) {
+                if (validData()) {
+                    int row = table.getSelectedRow();
+                    if (row != -1) {
+                        Product product = getDataInFrom();
+                        boolean result = ProductDAO.getInstance().updateProduct(product);
+                        DecimalFormat df = new DecimalFormat("#,###.##");
+                        if (result == true) {
+                            String price = df.format(product.getPrice());
+                            String categoryName = CategoryDAO.getInstance()
+                                    .getCategoryNameByID(product.getCategoryID());
+                            modelTable.setValueAt(product.getName(), row, 2);
+                            modelTable.setValueAt(categoryName, row, 3);
+                            modelTable.setValueAt(price, row, 4);
+                            JOptionPane.showMessageDialog(this, "cập nhật sản phẩm thành công");
+                        } else {
+                            JOptionPane.showMessageDialog(this, "cập nhật sản phẩm thất bại");
+                        }
                     } else {
-                        JOptionPane.showMessageDialog(this, "cập nhật sản phẩm thất bại");
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(this, "Chọn 1 sản phẩm cần cập nhật");
-                }
-            }
-        } else if (o.equals(btnDelete)) {
-            String productName = txtProductName.getText().trim();
-            String productIDStr = txtProductID.getText().trim();
-            int row = table.getSelectedRow();
-            if (row != -1 && !productIDStr.equals("")) {
-                String message = String.format(
-                        "Bạn có muốn xóa sản phẩm: %s \nXóa sản phẩm sẽ dẫn đến xóa tất cả trong các hóa đơn đã thanh toán trước đây",
-                        productName);
-                int select = JOptionPane.showConfirmDialog(this, message, "Xác nhận xóa", JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE);
-                if (select == JOptionPane.YES_OPTION) {
-                    int productID = Integer.parseInt(productIDStr);
-                    BillInfoDAO.getInstance().deleteBillInfoByProductID(productID);
-                    boolean resultProduct = ProductDAO.getInstance().deleteProduct(productID);
-                    if (resultProduct == true) {
-                        modelTable.removeRow(row);
-                        refreshInput();
-                        JOptionPane.showMessageDialog(this, "Xóa sản phẩm thành công");
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Xóa sản phẩm thất bại");
+                        JOptionPane.showMessageDialog(this, "Chọn 1 sản phẩm cần cập nhật");
                     }
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Chọn 1 sản phẩm cần xóa");
+                JOptionPane.showMessageDialog(this, "Mật khẩu không chính xác");
+            }
+        } else if (o.equals(btnDelete)) {
+            if (authentication()) {
+                String productName = txtProductName.getText().trim();
+                String productIDStr = txtProductID.getText().trim();
+                int row = table.getSelectedRow();
+                if (row != -1 && !productIDStr.equals("")) {
+                    String message = String.format(
+                            "Bạn có muốn xóa sản phẩm: %s \nXóa sản phẩm sẽ dẫn đến xóa tất cả trong các hóa đơn đã thanh toán trước đây",
+                            productName);
+                    int select = JOptionPane.showConfirmDialog(this, message, "Xác nhận xóa", JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE);
+                    if (select == JOptionPane.YES_OPTION) {
+                        int productID = Integer.parseInt(productIDStr);
+                        BillInfoDAO.getInstance().deleteBillInfoByProductID(productID);
+                        boolean resultProduct = ProductDAO.getInstance().deleteProduct(productID);
+                        if (resultProduct == true) {
+                            modelTable.removeRow(row);
+                            refreshInput();
+                            JOptionPane.showMessageDialog(this, "Xóa sản phẩm thành công");
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Xóa sản phẩm thất bại");
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Chọn 1 sản phẩm cần xóa");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Mật khẩu không chính xác");
             }
         } else if (o.equals(btnRefresh)) {
             refreshInput();
@@ -410,6 +420,13 @@ public class pnProduct extends JPanel
         loadCategoryListIntoCbo();
         reSizeColumnTable();
         loadProductList();
+    }
+
+    private boolean authentication() {
+        String password = JOptionPane.showInputDialog(this, "Vui lòng nhập mật khẩu để xác thực danh tính", "Xác thực",
+                JOptionPane.QUESTION_MESSAGE);
+        boolean result = AccountDAO.getInstance().Login(loginAccount.getUsername(), password);
+        return result;
     }
 
     private boolean validData() {

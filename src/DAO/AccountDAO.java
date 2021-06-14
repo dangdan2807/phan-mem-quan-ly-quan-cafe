@@ -58,7 +58,7 @@ public class AccountDAO {
         }
         return count > 0;
     }
-
+    
     public Account getAccountByUsername(String username) {
         String query = "Select * from dbo.Account where username = ?";
         Object[] parameter = new Object[] { username };

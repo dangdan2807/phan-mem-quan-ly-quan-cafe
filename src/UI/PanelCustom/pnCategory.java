@@ -26,11 +26,13 @@ public class pnCategory extends JPanel implements interfaceBtn, ActionListener, 
     private ImageIcon backIcon = new ImageIcon("img/back_16.png");
     private ImageIcon updateIcon = new ImageIcon("img/update_16.png");
     int index = 1;
+    private Account loginAccount = null;
 
-    public pnCategory() {
+    public pnCategory(Account account) {
         setSize(1270, 630);
         setLayout(null);
         setLayout(new BorderLayout(0, 0));
+        this.loginAccount = account;
 
         JPanel pnTop = new JPanel();
         pnTop.setBackground(Color.WHITE);
@@ -197,53 +199,61 @@ public class pnCategory extends JPanel implements interfaceBtn, ActionListener, 
                 }
             }
         } else if (o.equals(btnUpdate)) {
-            if (validData()) {
-                int row = table.getSelectedRow();
-                if (row != -1) {
-                    Category category = getDataInFrom();
-                    boolean result = CategoryDAO.getInstance().updateCategory(category);
-                    if (result == true) {
-                        modelTable.setValueAt(category.getName(), row, 2);
-                        JOptionPane.showMessageDialog(this, "cập nhật loại sản phẩm thành công");
-                    } else {
-                        JOptionPane.showMessageDialog(this, "cập nhật loại sản phẩm thất bại");
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(this, "Chọn 1 loại sản phẩm cần cập nhật");
-                }
-            }
-        } else if (o.equals(btnDelete)) {
-            int row = table.getSelectedRow();
-            String categoryIDStr = txtCategoryID.getText().trim();
-            if (row != -1 && !categoryIDStr.equals("")) {
-                int categoryID = Integer.parseInt(categoryIDStr);
-                String categoryName = CategoryDAO.getInstance().getCategoryNameByID(categoryID);
-                int productCount = CategoryDAO.getInstance().getProductCount(categoryID);
-                if (productCount > 0) {
-                    String message = String.format(
-                            "Để xóa sản phẩm loại sản phẩm: %s \nBạn cần xóa hết tất cả các sản phẩm thuộc loại sản phẩm này\nHoặc chuyển chúng sang loại khác",
-                            categoryName);
-                    JOptionPane.showConfirmDialog(this, message, "Thông báo", JOptionPane.OK_OPTION,
-                            JOptionPane.INFORMATION_MESSAGE);
-
-                } else {
-                    String message = String.format("Bạn muốn xóa loại sản phẩm %s\n", categoryName);
-                    int select = JOptionPane.showConfirmDialog(this, message, "Thông báo", JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE);
-
-                    if (select == JOptionPane.YES_OPTION) {
-                        boolean result = CategoryDAO.getInstance().deleteCategory(categoryID);
+            if (authentication()) {
+                if (validData()) {
+                    int row = table.getSelectedRow();
+                    if (row != -1) {
+                        Category category = getDataInFrom();
+                        boolean result = CategoryDAO.getInstance().updateCategory(category);
                         if (result == true) {
-                            modelTable.removeRow(row);
-                            refreshInput();
-                            JOptionPane.showMessageDialog(this, "Xóa sản phẩm thành công");
+                            modelTable.setValueAt(category.getName(), row, 2);
+                            JOptionPane.showMessageDialog(this, "cập nhật loại sản phẩm thành công");
                         } else {
-                            JOptionPane.showMessageDialog(this, "Xóa sản phẩm thất bại");
+                            JOptionPane.showMessageDialog(this, "cập nhật loại sản phẩm thất bại");
                         }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Chọn 1 loại sản phẩm cần cập nhật");
                     }
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Chọn 1 sản phẩm cần xóa");
+                JOptionPane.showMessageDialog(this, "Mật khẩu không chính xác");
+            }
+        } else if (o.equals(btnDelete)) {
+            if (authentication()) {
+                int row = table.getSelectedRow();
+                String categoryIDStr = txtCategoryID.getText().trim();
+                if (row != -1 && !categoryIDStr.equals("")) {
+                    int categoryID = Integer.parseInt(categoryIDStr);
+                    String categoryName = CategoryDAO.getInstance().getCategoryNameByID(categoryID);
+                    int productCount = CategoryDAO.getInstance().getProductCount(categoryID);
+                    if (productCount > 0) {
+                        String message = String.format(
+                                "Để xóa sản phẩm loại sản phẩm: %s \nBạn cần xóa hết tất cả các sản phẩm thuộc loại sản phẩm này\nHoặc chuyển chúng sang loại khác",
+                                categoryName);
+                        JOptionPane.showConfirmDialog(this, message, "Thông báo", JOptionPane.OK_OPTION,
+                                JOptionPane.INFORMATION_MESSAGE);
+    
+                    } else {
+                        String message = String.format("Bạn muốn xóa loại sản phẩm %s\n", categoryName);
+                        int select = JOptionPane.showConfirmDialog(this, message, "Thông báo", JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE);
+    
+                        if (select == JOptionPane.YES_OPTION) {
+                            boolean result = CategoryDAO.getInstance().deleteCategory(categoryID);
+                            if (result == true) {
+                                modelTable.removeRow(row);
+                                refreshInput();
+                                JOptionPane.showMessageDialog(this, "Xóa sản phẩm thành công");
+                            } else {
+                                JOptionPane.showMessageDialog(this, "Xóa sản phẩm thất bại");
+                            }
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Chọn 1 sản phẩm cần xóa");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Mật khẩu không chính xác");
             }
         } else if (o.equals(btnRefresh)) {
             refreshInput();
@@ -360,6 +370,13 @@ public class pnCategory extends JPanel implements interfaceBtn, ActionListener, 
             return false;
         }
         return true;
+    }
+
+    private boolean authentication() {
+        String password = JOptionPane.showInputDialog(this, "Vui lòng nhập mật khẩu để xác thực danh tính", "Xác thực",
+                JOptionPane.YES_NO_OPTION);
+        boolean result = AccountDAO.getInstance().Login(loginAccount.getUsername(), password);
+        return result;
     }
 
     private void refreshInput() {

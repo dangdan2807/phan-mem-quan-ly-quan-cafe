@@ -240,49 +240,56 @@ public class pnAccount extends JPanel
                 }
             }
         } else if (o.equals(btnUpdate)) {
-            if (validData()) {
-                int row = table.getSelectedRow();
-                if (row != -1) {
-                    Account accountData = getDataInFrom();
-                    boolean result = AccountDAO.getInstance().updateAccount(accountData);
-                    if (result == true) {
-                        String type = "Nhân viên";
-                        if (accountData.getType() == 1)
-                            type = "Quản lý";
-                        modelTable.setValueAt(accountData.getDisplayName(), row, 2);
-                        modelTable.setValueAt(type, row, 3);
-
-                        JOptionPane.showMessageDialog(this, "cập nhật tài khoản thành công");
-                    } else {
-                        JOptionPane.showMessageDialog(this, "cập nhật tài khoản thất bại");
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(this, "Chọn 1 tài khoản cần cập nhật");
-                }
-            }
-        } else if (o.equals(btnDelete)) {
-            int row = table.getSelectedRow();
-            String username = txtUsername.getText().trim();
-            if (row != -1 && !username.equals("")) {
-                if (loginAccount.getUsername().equals(username)) {
-                    JOptionPane.showMessageDialog(this, "Bậy rồi bạn ơi!! ai lại đi xóa chính mình :>");
-                } else {
-                    String message = String.format("Bạn muốn xóa tài khoản %s\n", username);
-                    int select = JOptionPane.showConfirmDialog(this, message, "Thông báo", JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE);
-                    if (select == JOptionPane.YES_OPTION) {
-                        boolean result = AccountDAO.getInstance().deleteAccount(username);
+            if (authentication()) {
+                if (validData()) {
+                    int row = table.getSelectedRow();
+                    if (row != -1) {
+                        Account accountData = getDataInFrom();
+                        boolean result = AccountDAO.getInstance().updateAccount(accountData);
                         if (result == true) {
-                            modelTable.removeRow(row);
-                            refreshInput();
-                            JOptionPane.showMessageDialog(this, "Xóa tài khoản thành công");
+                            String type = "Nhân viên";
+                            if (accountData.getType() == 1)
+                                type = "Quản lý";
+                            modelTable.setValueAt(accountData.getDisplayName(), row, 2);
+                            modelTable.setValueAt(type, row, 3);
+                            JOptionPane.showMessageDialog(this, "cập nhật tài khoản thành công");
                         } else {
-                            JOptionPane.showMessageDialog(this, "Xóa tài khoản thất bại");
+                            JOptionPane.showMessageDialog(this, "cập nhật tài khoản thất bại");
                         }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Chọn 1 tài khoản cần cập nhật");
                     }
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Chọn 1 tài khoản cần xóa");
+                JOptionPane.showMessageDialog(this, "Mật khẩu không chính xác");
+            }
+        } else if (o.equals(btnDelete)) {
+            if (authentication()) {
+                int row = table.getSelectedRow();
+                String username = txtUsername.getText().trim();
+                if (row != -1 && !username.equals("")) {
+                    if (loginAccount.getUsername().equals(username)) {
+                        JOptionPane.showMessageDialog(this, "Bậy rồi bạn ơi!! ai lại đi xóa chính mình :>");
+                    } else {
+                        String message = String.format("Bạn muốn xóa tài khoản %s\n", username);
+                        int select = JOptionPane.showConfirmDialog(this, message, "Thông báo",
+                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        if (select == JOptionPane.YES_OPTION) {
+                            boolean result = AccountDAO.getInstance().deleteAccount(username);
+                            if (result == true) {
+                                modelTable.removeRow(row);
+                                refreshInput();
+                                JOptionPane.showMessageDialog(this, "Xóa tài khoản thành công");
+                            } else {
+                                JOptionPane.showMessageDialog(this, "Xóa tài khoản thất bại");
+                            }
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Chọn 1 tài khoản cần xóa");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Mật khẩu không chính xác");
             }
         } else if (o.equals(btnRefresh)) {
             refreshInput();
@@ -310,15 +317,19 @@ public class pnAccount extends JPanel
         } else if (o.equals(btnViewAll)) {
             loadAccountList();
         } else if (o.equals(btnResetPass)) {
-            String username = txtUsername.getText().trim();
-            if (username.equals("")) {
-                JOptionPane.showMessageDialog(this, "hãy chọn tài khoản");
+            if (authentication()) {
+                String username = txtUsername.getText().trim();
+                if (username.equals("")) {
+                    JOptionPane.showMessageDialog(this, "hãy chọn tài khoản");
+                } else {
+                    boolean result = AccountDAO.getInstance().resetPassword(username);
+                    if (result == true)
+                        JOptionPane.showMessageDialog(this, "Mật khẩu mới là: 123456");
+                    else
+                        JOptionPane.showMessageDialog(this, "Đặt lại mật khẩu thất bại");
+                }
             } else {
-                boolean result = AccountDAO.getInstance().resetPassword(username);
-                if (result == true)
-                    JOptionPane.showMessageDialog(this, "Mật khẩu mới là: 123456");
-                else
-                    JOptionPane.showMessageDialog(this, "Đặt lại mật khẩu thất bại");
+                JOptionPane.showMessageDialog(this, "Mật khẩu không chính xác");
             }
         }
     }
@@ -440,6 +451,13 @@ public class pnAccount extends JPanel
     @Override
     public JButton getBtnBack() {
         return btnBack;
+    }
+
+    private boolean authentication() {
+        String password = JOptionPane.showInputDialog(this, "Vui lòng nhập mật khẩu để xác thực danh tính", "Xác thực",
+                JOptionPane.YES_NO_OPTION);
+        boolean result = AccountDAO.getInstance().Login(loginAccount.getUsername(), password);
+        return result;
     }
 
     private boolean validData() {
