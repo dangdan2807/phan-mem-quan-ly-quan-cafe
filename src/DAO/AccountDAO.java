@@ -78,7 +78,7 @@ public class AccountDAO {
         return result > 0;
     }
 
-    public boolean deleteTable(String username) {
+    public boolean deleteAccount(String username) {
         String query = "delete from dbo.Account Where username = ?";
         Object[] parameter = new Object[] { username };
         int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);

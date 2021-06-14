@@ -67,7 +67,7 @@ public class pnAccount extends JFrame
         pnInfo.add(lbUsername);
 
         txtUsername = new JTextField();
-        txtUsername.setEditable(false);
+        // txtUsername.setEditable(false);
         txtUsername.setBounds(85, 19, 150, 20);
         pnInfo.add(txtUsername);
         txtUsername.setColumns(10);
@@ -221,78 +221,68 @@ public class pnAccount extends JFrame
         Object o = e.getSource();
         if (o.equals(btnAdd)) {
             if (validData()) {
-                Account accountDate = getDataInFrom();
-                boolean result = AccountDAO.getInstance().insertAccount(accountDate);
+                Account accountData = getDataInFrom();
+                boolean result = AccountDAO.getInstance().insertAccount(accountData);
                 DecimalFormat df = new DecimalFormat("#,###.##");
                 if (result == true) {
                     String stt = df.format(index++);
                     String type = "Nhân viên";
-                    if (accountDate.getType() == 1)
+                    if (accountData.getType() == 1)
                         type = "Quản lý";
                     modelTable.addRow(
-                            new Object[] { stt, accountDate.getUsername(), accountDate.getDisplayName(), type });
+                            new Object[] { stt, accountData.getUsername(), accountData.getDisplayName(), type });
                     modelTable.fireTableDataChanged();
                     int lastIndex = table.getRowCount() - 1;
                     table.getSelectionModel().setSelectionInterval(lastIndex, lastIndex);
                     table.scrollRectToVisible(table.getCellRect(lastIndex, lastIndex, true));
-                    JOptionPane.showMessageDialog(this, "Thêm tài khoản thành công");
+                    JOptionPane.showMessageDialog(this, "Thêm tài khoản thành công. Mật khẩu mặc định là: 123456");
                 } else {
                     JOptionPane.showMessageDialog(this, "Thêm tài khoản thất bại");
                 }
             }
         } else if (o.equals(btnUpdate)) {
-            // if (validData()) {
-            // int row = table.getSelectedRow();
-            // if (row != -1) {
-            // Table tableData = getDataInFrom();
-            // boolean result = TableDAO.getInstance().updateTable(tableData);
-            // if (result == true) {
-            // modelTable.setValueAt(tableData.getName(), row, 2);
-            // modelTable.setValueAt(tableData.getStatus(), row, 3);
+            if (validData()) {
+                int row = table.getSelectedRow();
+                if (row != -1) {
+                    Account accountData = getDataInFrom();
+                    boolean result = AccountDAO.getInstance().updateAccount(accountData);
+                    if (result == true) {
+                        String type = "Nhân viên";
+                        if (accountData.getType() == 1)
+                            type = "Quản lý";
+                        modelTable.setValueAt(accountData.getDisplayName(), row, 2);
+                        modelTable.setValueAt(type, row, 3);
 
-            // JOptionPane.showMessageDialog(this, "cập nhật table thành công");
-            // } else {
-            // JOptionPane.showMessageDialog(this, "cập nhật table thất bại");
-            // }
-            // } else {
-            // JOptionPane.showMessageDialog(this, "Chọn 1 table cần cập nhật");
-            // }
-            // }
+                        JOptionPane.showMessageDialog(this, "cập nhật tài khoản thành công");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "cập nhật tài khoản thất bại");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Chọn 1 tài khoản cần cập nhật");
+                }
+            }
         } else if (o.equals(btnDelete)) {
-            // int row = table.getSelectedRow();
-            // String tableIDStr = txtUsername.getText().trim();
-            // if (row != -1 && !tableIDStr.equals("")) {
-            // int tableID = Integer.parseInt(tableIDStr);
-            // String tableName =
-            // (TableDAO.getInstance().getTableByTableID(tableID)).getName();
-            // int billInfoUnpaidCount =
-            // BillDAO.getInstance().getListBillUnpaidByTableID(tableID);
-            // if (billInfoUnpaidCount > 0) {
-            // String message = String.format("Để xóa sản phẩm: %s \nBạn cần xóa thanh toán
-            // hóa đơn", tableName);
-            // JOptionPane.showMessageDialog(this, message, "Thông báo",
-            // JOptionPane.INFORMATION_MESSAGE);
-            // } else {
-            // String message = String.format("Bạn muốn xóa loại sản phẩm %s\n", tableName);
-            // int select = JOptionPane.showConfirmDialog(this, message, "Thông báo",
-            // JOptionPane.YES_NO_OPTION,
-            // JOptionPane.QUESTION_MESSAGE);
-            // if (select == JOptionPane.YES_OPTION) {
-            // boolean result = TableDAO.getInstance().deleteTable(tableID);
-            // if (result == true) {
-            // modelTable.removeRow(row);
-            // refreshInput();
-            // JOptionPane.showMessageDialog(this, "Xóa bàn thành công");
-            // } else {
-            // JOptionPane.showMessageDialog(this, "Xóa bàn thất bại");
-            // }
-            // }
-            // }
-            // } else {
-            // JOptionPane.showMessageDialog(this, "Chọn 1 bàn cần xóa");
-            // }
+            int row = table.getSelectedRow();
+            String username = txtUsername.getText().trim();
+            if (row != -1 && !username.equals("")) {
+                String message = String.format("Bạn muốn xóa tài khoản %s\n", username);
+                int select = JOptionPane.showConfirmDialog(this, message, "Thông báo", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                if (select == JOptionPane.YES_OPTION) {
+                    boolean result = AccountDAO.getInstance().deleteAccount(username);
+                    if (result == true) {
+                        modelTable.removeRow(row);
+                        refreshInput();
+                        JOptionPane.showMessageDialog(this, "Xóa tài khoản thành công");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Xóa tài khoản thất bại");
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Chọn 1 tài khoản cần xóa");
+            }
         } else if (o.equals(btnRefresh)) {
-            // refreshInput();
+            refreshInput();
         } else if (o.equals(btnSearch)) {
             // String tableName = txtKeyWord.getText().trim();
             // String status = cboSearch.getSelectedItem().toString();
@@ -425,11 +415,22 @@ public class pnAccount extends JFrame
     }
 
     private boolean validData() {
-        String table = txtDisplayName.getText().trim();
-        if (!(table.length() > 0)) {
+        String username = txtUsername.getText().trim();
+        if (!(username.length() > 0 && username.matches("^[a-zA-Z0-9_@#]{5,}$"))) {
+            if (username.length() < 0)
+                JOptionPane.showMessageDialog(this, "Tài khoản không được để trống");
+            else
+                JOptionPane.showMessageDialog(this,
+                        "Tài khoản phải có tối thiểu 5 ký tự và chỉ được chứa chữ, số, @, _, #");
+            return false;
+        }
+
+        String displayName = txtDisplayName.getText().trim();
+        if (!(displayName.length() > 0)) {
             JOptionPane.showMessageDialog(this, "Tên nhân viên không được để trống");
             return false;
         }
+
         return true;
     }
 
