@@ -32,7 +32,7 @@ GO
 CREATE TABLE Account
 (
     Username NVARCHAR(100) PRIMARY KEY,
-    PassWord NVARCHAR(1000) NOT NULL DEFAULT(N'0'),
+    PassWord NVARCHAR(1000) NOT NULL DEFAULT(N'123456'),
     DisplayName NVARCHAR(100),
     -- idEmployee int NOT NULL,
     -- 1. admin || 0. nhân viên
@@ -608,9 +608,28 @@ AS
     END
 GO
 
-SELECT count(b.id) as countBillInfo
-FROM dbo.TableFood tf, dbo.Bill b, dbo.BillInfo bi
-WHERE tf.id=8
-    AND bi.id = b.id
-    and b.idTable = 8
-    AND b.[status] = 0
+CREATE PROC USP_deleteBillByTableID
+    @tableID INT
+AS
+BEGIN
+    DECLARE @billCount INT
+    SELECT @billCount = count(*)
+    FROM dbo.Bill b
+    WHERE b.idTable = @tableID
+
+    IF @billCount > 0
+    BEGIN
+        DELETE FROM dbo.BillInfo 
+        WHERE idBill IN (
+            SELECT b.id
+            FROM dbo.Bill b
+            WHERE b.idTable = @tableID
+        )
+    END
+
+    DELETE FROM dbo.Bill
+    WHERE idTable = @tableID
+END
+GO  
+
+EXEC USP_deleteBillByTableID 26

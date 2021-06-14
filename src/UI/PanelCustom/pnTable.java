@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 import javax.swing.border.*;
 
-public class pnTable extends JFrame implements interfaceBtn, ActionListener, MouseListener, KeyListener, ItemListener {
+public class pnTable extends JPanel implements interfaceBtn, ActionListener, MouseListener, KeyListener, ItemListener {
     private JTable table;
     private DefaultTableModel modelTable;
     private JTextField txtTableID, txtTableName, txtKeyWord;
@@ -31,17 +31,14 @@ public class pnTable extends JFrame implements interfaceBtn, ActionListener, Mou
 
     public pnTable() {
         setSize(1270, 630);
-        setResizable(false);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        getContentPane().setLayout(null);
-        getContentPane().setLayout(new BorderLayout(0, 0));
+        this.setLayout(null);
+        this.setLayout(new BorderLayout(0, 0));
 
         JPanel pnTop = new JPanel();
         pnTop.setBackground(Color.WHITE);
         pnTop.setPreferredSize(new Dimension(10, 200));
         pnTop.setLayout(null);
-        getContentPane().add(pnTop, BorderLayout.NORTH);
+        this.add(pnTop, BorderLayout.NORTH);
 
         JPanel pnTitle = new JPanel();
         pnTitle.setBounds(0, 0, 1270, 40);
@@ -183,7 +180,7 @@ public class pnTable extends JFrame implements interfaceBtn, ActionListener, Mou
         pnTable.add(scpTable, BorderLayout.CENTER);
         pnTable.setBounds(10, 25, 1250, 600);
 
-        getContentPane().add(pnTable, BorderLayout.CENTER);
+        this.add(pnTable, BorderLayout.CENTER);
         reSizeColumnTable();
         loadTableList();
 
@@ -200,16 +197,14 @@ public class pnTable extends JFrame implements interfaceBtn, ActionListener, Mou
         btnRefresh.addMouseListener(this);
         btnSearch.addMouseListener(this);
         btnViewAll.addMouseListener(this);
+        btnBack.addMouseListener(this);
+        btnLogOut.addMouseListener(this);
 
         table.addMouseListener(this);
 
         txtKeyWord.addKeyListener(this);
 
         cboSearch.addItemListener(this);
-    }
-
-    public static void main(String[] args) {
-        new pnTable().setVisible(true);
     }
 
     @Override
@@ -260,13 +255,18 @@ public class pnTable extends JFrame implements interfaceBtn, ActionListener, Mou
                 String tableName = (TableDAO.getInstance().getTableByTableID(tableID)).getName();
                 int billInfoUnpaidCount = BillDAO.getInstance().getListBillUnpaidByTableID(tableID);
                 if (billInfoUnpaidCount > 0) {
-                    String message = String.format("Để xóa sản phẩm: %s \nBạn cần xóa thanh toán hóa đơn", tableName);
+                    String message = String.format("Để xóa %s \nBạn cần thanh toán hóa đơn của bàn này", tableName);
                     JOptionPane.showMessageDialog(this, message, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    String message = String.format("Bạn muốn xóa loại sản phẩm %s\n", tableName);
-                    int select = JOptionPane.showConfirmDialog(this, message, "Thông báo", JOptionPane.YES_NO_OPTION,
+                    String message = String.format(
+                            "Bạn muốn xóa %s\n Xóa bàn sẽ xóa tất cả hóa đơn của bàn từ trước đến giờ\nHãy suy nghĩ thật kỹ!!!",
+                            tableName);
+                    int select = JOptionPane.showConfirmDialog(this, message, "Xác nhận xóa", JOptionPane.YES_NO_OPTION,
                             JOptionPane.QUESTION_MESSAGE);
                     if (select == JOptionPane.YES_OPTION) {
+                        int countBill = BillDAO.getInstance().getCountBillByTableID(tableID);
+                        if (countBill > 0)
+                            BillDAO.getInstance().deleteBillByTableID(tableID);
                         boolean result = TableDAO.getInstance().deleteTable(tableID);
                         if (result == true) {
                             modelTable.removeRow(row);

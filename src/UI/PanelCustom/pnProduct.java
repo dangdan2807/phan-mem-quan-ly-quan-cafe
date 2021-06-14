@@ -196,6 +196,8 @@ public class pnProduct extends JPanel
         btnRefresh.addMouseListener(this);
         btnSearch.addMouseListener(this);
         btnViewAll.addMouseListener(this);
+        btnBack.addMouseListener(this);
+        btnLogOut.addMouseListener(this);
 
         cboSearchCategory.addItemListener(this);
 

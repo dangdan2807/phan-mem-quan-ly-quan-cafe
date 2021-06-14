@@ -47,7 +47,7 @@ public class Account {
 	}
 
 	public Account(ResultSet rs) throws SQLException {
-		this(rs.getString("Username"), rs.getString("Password"), rs.getString("DisplayName"), rs.getInt("Type"));
+		this(rs.getString("Username"), "", rs.getString("DisplayName"), rs.getInt("Type"));
 	}
 
 }
