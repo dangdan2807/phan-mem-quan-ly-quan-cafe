@@ -631,5 +631,3 @@ BEGIN
     WHERE idTable = @tableID
 END
 GO  
-
-EXEC USP_deleteBillByTableID 26

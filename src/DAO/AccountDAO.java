@@ -1,5 +1,7 @@
 package DAO;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.*;
 
@@ -29,9 +31,24 @@ public class AccountDAO {
     }
 
     public boolean Login(String username, String password) {
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("MD5");
+            md.update(password.getBytes());
+        } catch (NoSuchAlgorithmException e1) {
+            e1.printStackTrace();
+        }
+        byte[] hashData = md.digest();
+        String hashPass = "";
+        for (byte item : hashData) {
+            hashPass += item;
+        }
+        // StringBuffer reverse = new StringBuffer(hashData.toString());
+        // String passwordReverse = reverse.reverse().toString();
+
         int count = 0;
         String query = "{CALL USP_Login ( ? , ? )}";
-        Object[] parameter = new Object[] { username, password };
+        Object[] parameter = new Object[] { username, hashPass };
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
         try {
             rs.next();
