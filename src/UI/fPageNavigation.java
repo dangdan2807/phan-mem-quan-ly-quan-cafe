@@ -3,7 +3,6 @@ package UI;
 import javax.swing.*;
 import javax.swing.border.*;
 
-import DAO.AccountDAO;
 import UI.PanelCustom.customUI;
 import entity.Account;
 
@@ -92,11 +91,6 @@ public class fPageNavigation extends JFrame implements ActionListener, MouseList
         btnQLBanHang.addMouseListener(this);
         btnQLHeThong.addMouseListener(this);
         checkAccount(type);
-    }
-
-    public static void main(String[] args) {
-        Account loginAccount = AccountDAO.getInstance().getAccountByUsername("admin");
-        new fPageNavigation(loginAccount).setVisible(true);
     }
 
     @Override

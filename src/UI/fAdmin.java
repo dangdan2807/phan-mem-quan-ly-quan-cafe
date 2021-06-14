@@ -42,9 +42,9 @@ public class fAdmin extends JFrame implements ActionListener, ChangeListener {
     public void createTabControl() {
         tpTabMain = new JTabbedPane();
         pRevenue = new pnRevenue();
-        pProduct = new pnProduct();
-        pCategory = new pnCategory();
-        pTable = new pnTable();
+        pProduct = new pnProduct(loginAccount);
+        pCategory = new pnCategory(loginAccount);
+        pTable = new pnTable(loginAccount);
         pAccount = new pnAccount(loginAccount);
         tpTabMain.addTab("Doanh thu", null, pRevenue, "Quản lý doanh thu");
         tpTabMain.addTab("Sản phẩm", null, pProduct, "Quản lý sản phẩm");

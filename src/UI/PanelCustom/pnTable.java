@@ -28,11 +28,13 @@ public class pnTable extends JPanel implements interfaceBtn, ActionListener, Mou
     int index = 1;
     private JRadioButton radEmpty, radNotEmpty;
     private JComboBox<String> cboSearch;
+    private Account loginAccount = null;
 
-    public pnTable() {
+    public pnTable(Account account) {
         setSize(1270, 630);
         this.setLayout(null);
         this.setLayout(new BorderLayout(0, 0));
+        this.loginAccount = account;
 
         JPanel pnTop = new JPanel();
         pnTop.setBackground(Color.WHITE);
@@ -230,55 +232,63 @@ public class pnTable extends JPanel implements interfaceBtn, ActionListener, Mou
                 }
             }
         } else if (o.equals(btnUpdate)) {
-            if (validData()) {
-                int row = table.getSelectedRow();
-                if (row != -1) {
-                    Table tableData = getDataInFrom();
-                    boolean result = TableDAO.getInstance().updateTable(tableData);
-                    if (result == true) {
-                        modelTable.setValueAt(tableData.getName(), row, 2);
-                        modelTable.setValueAt(tableData.getStatus(), row, 3);
-
-                        JOptionPane.showMessageDialog(this, "cập nhật table thành công");
-                    } else {
-                        JOptionPane.showMessageDialog(this, "cập nhật table thất bại");
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(this, "Chọn 1 table cần cập nhật");
-                }
-            }
-        } else if (o.equals(btnDelete)) {
-            int row = table.getSelectedRow();
-            String tableIDStr = txtTableID.getText().trim();
-            if (row != -1 && !tableIDStr.equals("")) {
-                int tableID = Integer.parseInt(tableIDStr);
-                String tableName = (TableDAO.getInstance().getTableByTableID(tableID)).getName();
-                int billInfoUnpaidCount = BillDAO.getInstance().getListBillUnpaidByTableID(tableID);
-                if (billInfoUnpaidCount > 0) {
-                    String message = String.format("Để xóa %s \nBạn cần thanh toán hóa đơn của bàn này", tableName);
-                    JOptionPane.showMessageDialog(this, message, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    String message = String.format(
-                            "Bạn muốn xóa %s\n Xóa bàn sẽ xóa tất cả hóa đơn của bàn từ trước đến giờ\nHãy suy nghĩ thật kỹ!!!",
-                            tableName);
-                    int select = JOptionPane.showConfirmDialog(this, message, "Xác nhận xóa", JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE);
-                    if (select == JOptionPane.YES_OPTION) {
-                        int countBill = BillDAO.getInstance().getCountBillByTableID(tableID);
-                        if (countBill > 0)
-                            BillDAO.getInstance().deleteBillByTableID(tableID);
-                        boolean result = TableDAO.getInstance().deleteTable(tableID);
+            if (authentication()) {
+                if (validData()) {
+                    int row = table.getSelectedRow();
+                    if (row != -1) {
+                        Table tableData = getDataInFrom();
+                        boolean result = TableDAO.getInstance().updateTable(tableData);
                         if (result == true) {
-                            modelTable.removeRow(row);
-                            refreshInput();
-                            JOptionPane.showMessageDialog(this, "Xóa bàn thành công");
+                            modelTable.setValueAt(tableData.getName(), row, 2);
+                            modelTable.setValueAt(tableData.getStatus(), row, 3);
+
+                            JOptionPane.showMessageDialog(this, "cập nhật table thành công");
                         } else {
-                            JOptionPane.showMessageDialog(this, "Xóa bàn thất bại");
+                            JOptionPane.showMessageDialog(this, "cập nhật table thất bại");
                         }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Chọn 1 table cần cập nhật");
                     }
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Chọn 1 bàn cần xóa");
+                JOptionPane.showMessageDialog(this, "Mật khẩu không chính xác");
+            }
+        } else if (o.equals(btnDelete)) {
+            if (authentication()) {
+                int row = table.getSelectedRow();
+                String tableIDStr = txtTableID.getText().trim();
+                if (row != -1 && !tableIDStr.equals("")) {
+                    int tableID = Integer.parseInt(tableIDStr);
+                    String tableName = (TableDAO.getInstance().getTableByTableID(tableID)).getName();
+                    int billInfoUnpaidCount = BillDAO.getInstance().getListBillUnpaidByTableID(tableID);
+                    if (billInfoUnpaidCount > 0) {
+                        String message = String.format("Để xóa %s \nBạn cần thanh toán hóa đơn của bàn này", tableName);
+                        JOptionPane.showMessageDialog(this, message, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        String message = String.format(
+                                "Bạn muốn xóa %s\n Xóa bàn sẽ xóa tất cả hóa đơn của bàn từ trước đến giờ\nHãy suy nghĩ thật kỹ!!!",
+                                tableName);
+                        int select = JOptionPane.showConfirmDialog(this, message, "Xác nhận xóa",
+                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        if (select == JOptionPane.YES_OPTION) {
+                            int countBill = BillDAO.getInstance().getCountBillByTableID(tableID);
+                            if (countBill > 0)
+                                BillDAO.getInstance().deleteBillByTableID(tableID);
+                            boolean result = TableDAO.getInstance().deleteTable(tableID);
+                            if (result == true) {
+                                modelTable.removeRow(row);
+                                refreshInput();
+                                JOptionPane.showMessageDialog(this, "Xóa bàn thành công");
+                            } else {
+                                JOptionPane.showMessageDialog(this, "Xóa bàn thất bại");
+                            }
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Chọn 1 bàn cần xóa");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Mật khẩu không chính xác");
             }
         } else if (o.equals(btnRefresh)) {
             refreshInput();
@@ -411,6 +421,23 @@ public class pnTable extends JPanel implements interfaceBtn, ActionListener, Mou
     @Override
     public JButton getBtnBack() {
         return btnBack;
+    }
+
+    private boolean authentication() {
+        String password = "";
+        JPasswordField passwordField = new JPasswordField();
+        Object[] obj = { "Vui lòng nhập mật khẩu để xác thực danh tính:\n\n", passwordField };
+        Object stringArray[] = { "OK", "Cancel" };
+        int select = JOptionPane.showOptionDialog(null, obj, "Xác thực", JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null, stringArray, obj);
+        
+        boolean result = false;
+        if (select == JOptionPane.YES_OPTION) {
+            password = new String(passwordField.getPassword());
+            System.out.println(password);
+            result = AccountDAO.getInstance().Login(loginAccount.getUsername(), password);
+        }
+        return result;
     }
 
     private boolean validData() {

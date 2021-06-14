@@ -1,5 +1,7 @@
 package DAO;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.*;
 
@@ -29,9 +31,24 @@ public class AccountDAO {
     }
 
     public boolean Login(String username, String password) {
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("MD5");
+            md.update(password.getBytes());
+        } catch (NoSuchAlgorithmException e1) {
+            e1.printStackTrace();
+        }
+        byte[] hashData = md.digest();
+        String hashPass = "";
+        for (byte item : hashData) {
+            hashPass += item;
+        }
+        // StringBuffer reverse = new StringBuffer(hashData.toString());
+        // String passwordReverse = reverse.reverse().toString();
+
         int count = 0;
         String query = "{CALL USP_Login ( ? , ? )}";
-        Object[] parameter = new Object[] { username, password };
+        Object[] parameter = new Object[] { username, hashPass };
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
         try {
             rs.next();
@@ -41,7 +58,7 @@ public class AccountDAO {
         }
         return count > 0;
     }
-
+    
     public Account getAccountByUsername(String username) {
         String query = "Select * from dbo.Account where username = ?";
         Object[] parameter = new Object[] { username };
@@ -131,7 +148,8 @@ public class AccountDAO {
     }
 
     public boolean resetPassword(String username) {
-        String query = "Update dbo.Account set password = N'123456' where username = ?";
+        // password: 123456
+        String query = "Update dbo.Account set password = N'-3110-365773-7089-85-6686-3287-1415-12062' where username = ?";
         Object[] parameter = new Object[] { username };
         int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
         return result > 0;

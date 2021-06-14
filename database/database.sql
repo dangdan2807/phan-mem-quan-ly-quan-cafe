@@ -632,4 +632,4 @@ BEGIN
 END
 GO  
 
-EXEC USP_deleteBillByTableID 26
+select * from dbo.Account

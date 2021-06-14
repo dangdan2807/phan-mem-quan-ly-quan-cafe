@@ -227,8 +227,8 @@ public class fLogin extends JFrame implements ActionListener, KeyListener, Focus
         return true;
     }
 
-    private boolean login(String userName, String passWord) {
-        boolean result = accountDAO.Login(userName, passWord);
+    private boolean login(String userName, String password) {
+        boolean result = accountDAO.Login(userName, password);
         return result;
     }
 }
