@@ -58,7 +58,7 @@ public class AccountDAO {
 
     public ArrayList<Account> searchAccountListByUsername(String username) {
         String query = "Select * from dbo.Account where dbo.fuConvertToUnsign(username) like dbo.fuConvertToUnsign( ? )";
-        Object[] parameter = new Object[] { "%" + username + "%"};
+        Object[] parameter = new Object[] { "%" + username + "%" };
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
         ArrayList<Account> dataList = new ArrayList<Account>();
         try {
@@ -125,6 +125,13 @@ public class AccountDAO {
 
     public boolean deleteAccount(String username) {
         String query = "delete from dbo.Account Where username = ?";
+        Object[] parameter = new Object[] { username };
+        int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
+        return result > 0;
+    }
+
+    public boolean resetPassword(String username) {
+        String query = "Update dbo.Account set password = N'123456' where username = ?";
         Object[] parameter = new Object[] { username };
         int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
         return result > 0;

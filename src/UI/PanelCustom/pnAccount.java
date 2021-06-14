@@ -18,7 +18,7 @@ public class pnAccount extends JPanel
     private JTable table;
     private DefaultTableModel modelTable;
     private JTextField txtUsername, txtDisplayName, txtKeyWord;
-    private JButton btnAdd, btnDelete, btnUpdate, btnRefresh, btnLogOut, btnBack, btnSearch, btnViewAll;
+    private JButton btnAdd, btnDelete, btnUpdate, btnRefresh, btnLogOut, btnBack, btnSearch, btnViewAll, btnResetPass;
     private ImageIcon addIcon = new ImageIcon("img/blueAdd_16.png");
     private ImageIcon trashIcon = new ImageIcon("img/trash_16.png");
     private ImageIcon refreshIcon = new ImageIcon("img/refresh_16.png");
@@ -29,12 +29,13 @@ public class pnAccount extends JPanel
     private JRadioButton radStaff, radManager;
     private JComboBox<String> cboSearch;
     int index = 1;
+    private Account loginAccount = null;
 
-    public pnAccount() {
+    public pnAccount(Account account) {
         setSize(1270, 630);
         this.setLayout(null);
         this.setLayout(new BorderLayout(0, 0));
-
+        this.loginAccount = account;
         JPanel pnTop = new JPanel();
         pnTop.setBackground(Color.WHITE);
         pnTop.setPreferredSize(new Dimension(10, 200));
@@ -113,19 +114,24 @@ public class pnAccount extends JPanel
         pnInfo.add(lbType);
 
         radStaff = new JRadioButton("Nhân viên");
-        radStaff.setBounds(349, 17, 124, 24);
+        radStaff.setBounds(349, 17, 90, 24);
         radStaff.setBackground(Color.WHITE);
         radStaff.setSelected(true);
         pnInfo.add(radStaff);
 
         radManager = new JRadioButton("Quản lý");
-        radManager.setBounds(349, 44, 124, 24);
+        radManager.setBounds(349, 44, 90, 24);
         radManager.setBackground(Color.WHITE);
         pnInfo.add(radManager);
 
         ButtonGroup grRadStatus = new ButtonGroup();
         grRadStatus.add(radStaff);
         grRadStatus.add(radManager);
+
+        btnResetPass = new JButton("Đặt lại mk", null);
+        customUI.getInstance().setCustomBtn(btnResetPass);
+        btnResetPass.setBounds(447, 16, 110, 26);
+        pnInfo.add(btnResetPass);
 
         JPanel pnSearch = new JPanel();
         pnSearch.setBackground(Color.WHITE);
@@ -258,17 +264,21 @@ public class pnAccount extends JPanel
             int row = table.getSelectedRow();
             String username = txtUsername.getText().trim();
             if (row != -1 && !username.equals("")) {
-                String message = String.format("Bạn muốn xóa tài khoản %s\n", username);
-                int select = JOptionPane.showConfirmDialog(this, message, "Thông báo", JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE);
-                if (select == JOptionPane.YES_OPTION) {
-                    boolean result = AccountDAO.getInstance().deleteAccount(username);
-                    if (result == true) {
-                        modelTable.removeRow(row);
-                        refreshInput();
-                        JOptionPane.showMessageDialog(this, "Xóa tài khoản thành công");
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Xóa tài khoản thất bại");
+                if (loginAccount.getUsername().equals(username)) {
+                    JOptionPane.showMessageDialog(this, "Bậy rồi bạn ơi!! ai lại đi xóa chính mình :>");
+                } else {
+                    String message = String.format("Bạn muốn xóa tài khoản %s\n", username);
+                    int select = JOptionPane.showConfirmDialog(this, message, "Thông báo", JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE);
+                    if (select == JOptionPane.YES_OPTION) {
+                        boolean result = AccountDAO.getInstance().deleteAccount(username);
+                        if (result == true) {
+                            modelTable.removeRow(row);
+                            refreshInput();
+                            JOptionPane.showMessageDialog(this, "Xóa tài khoản thành công");
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Xóa tài khoản thất bại");
+                        }
                     }
                 }
             } else {
@@ -299,6 +309,17 @@ public class pnAccount extends JPanel
             }
         } else if (o.equals(btnViewAll)) {
             loadAccountList();
+        } else if (o.equals(btnResetPass)) {
+            String username = txtUsername.getText().trim();
+            if (username.equals("")) {
+                JOptionPane.showMessageDialog(this, "hãy chọn tài khoản");
+            } else {
+                boolean result = AccountDAO.getInstance().resetPassword(username);
+                if (result == true)
+                    JOptionPane.showMessageDialog(this, "Mật khẩu mới là: 123456");
+                else
+                    JOptionPane.showMessageDialog(this, "Đặt lại mật khẩu thất bại");
+            }
         }
     }
 
@@ -362,6 +383,8 @@ public class pnAccount extends JPanel
             customUI.getInstance().setCustomBtnHover(btnSearch);
         } else if (o.equals(btnViewAll)) {
             customUI.getInstance().setCustomBtnHover(btnViewAll);
+        } else if (o.equals(btnResetPass)) {
+            customUI.getInstance().setCustomBtnHover(btnResetPass);
         }
     }
 
@@ -384,6 +407,8 @@ public class pnAccount extends JPanel
             customUI.getInstance().setCustomBtn(btnSearch);
         } else if (o.equals(btnViewAll)) {
             customUI.getInstance().setCustomBtn(btnViewAll);
+        } else if (o.equals(btnResetPass)) {
+            customUI.getInstance().setCustomBtn(btnResetPass);
         }
     }
 
