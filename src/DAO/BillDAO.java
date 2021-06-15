@@ -39,11 +39,25 @@ public class BillDAO {
         return -1;
     }
 
-    public ResultSet getBillListByDate(Date dateCheckIn, Date dateCheckOut) {
-        String query = "{CALL USP_getListBillByDate( ? , ? )}";
-        Object[] parameter = new Object[] { dateCheckIn, dateCheckOut };
+    // public ResultSet getBillListByDate(Date dateCheckIn, Date dateCheckOut) {
+    //     String query = "{CALL USP_getListBillByDate( ? , ? )}";
+    //     Object[] parameter = new Object[] { dateCheckIn, dateCheckOut };
+    //     ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
+    //     return rs;
+    // }
+
+    public ResultSet getBillListByDateAndPage(Date dateCheckIn, Date dateCheckOut, int pageNum) {
+        String query = "{CALL USP_getListBillByDateAndPage( ? , ? , ? )}";
+        Object[] parameter = new Object[] { dateCheckIn, dateCheckOut, pageNum };
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
         return rs;
+    }
+
+    public int getNumBillByDate(Date dateCheckIn, Date dateCheckOut) {
+        String query = "{CALL USP_getNumBillByDate( ? , ? )}";
+        Object[] parameter = new Object[] { dateCheckIn, dateCheckOut };
+        int data = (int) DataProvider.getInstance().ExecuteScalar(query, parameter);
+        return data;
     }
 
     public void insertBill(int tableID) {

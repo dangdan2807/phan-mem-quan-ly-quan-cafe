@@ -15,12 +15,14 @@ import javax.swing.border.TitledBorder;
 
 public class pnRevenue extends JPanel implements interfaceBtn, ActionListener, MouseListener {
     private kDatePicker dpTuNgay, dpDenNgay;
-    private JButton btnStatistic, btnBack, btnLogOut;
+    private JButton btnStatistic, btnBack, btnLogOut, btnFirst, btnPrevious, btnNext, btnLast;
     private JTable table;
     private DefaultTableModel modelTable;
     private ImageIcon logOutIcon = new ImageIcon("img/logout_16.png");
     private ImageIcon analyticsIcon = new ImageIcon("img/analytics_16.png");
     private ImageIcon backIcon = new ImageIcon("img/back_16.png");
+    private JTextField txtPageNum;
+    private JLabel lbLastPageNum;
 
     public pnRevenue() {
         setLayout(null);
@@ -111,30 +113,85 @@ public class pnRevenue extends JPanel implements interfaceBtn, ActionListener, M
         } catch (ParseException e1) {
             e1.printStackTrace();
         }
-        loadListBillByDate(dateCheckIn, dateCheckOut);
+
+        JPanel pnSouth = new JPanel();
+        pnSouth.setPreferredSize(new Dimension(10, 32));
+        add(pnSouth, BorderLayout.SOUTH);
+
+        btnFirst = new JButton("Trang đầu");
+        customUI.getInstance().setCustomBtn(btnFirst);
+        pnSouth.add(btnFirst);
+
+        btnPrevious = new JButton("Trang trước");
+        customUI.getInstance().setCustomBtn(btnPrevious);
+        pnSouth.add(btnPrevious);
+
+        JLabel lbSpace = new JLabel("");
+        lbSpace.setPreferredSize(new Dimension(50, 20));
+        pnSouth.add(lbSpace);
+
+        txtPageNum = new JTextField();
+        txtPageNum.setHorizontalAlignment(SwingConstants.CENTER);
+        txtPageNum.setText("1");
+        pnSouth.add(txtPageNum);
+        txtPageNum.setColumns(10);
+
+        lbLastPageNum = new JLabel("/1");
+        lbLastPageNum.setPreferredSize(new Dimension(50, 20));
+        pnSouth.add(lbLastPageNum);
+
+        btnNext = new JButton("Trang sau");
+        customUI.getInstance().setCustomBtn(btnNext);
+        pnSouth.add(btnNext);
+
+        btnLast = new JButton("Trang cuối");
+        customUI.getInstance().setCustomBtn(btnLast);
+        pnSouth.add(btnLast);
+
+        loadListBillByDate(dateCheckIn, dateCheckOut, 1);
 
         btnStatistic.addActionListener(this);
-        btnLogOut.addActionListener(this);
-        btnBack.addActionListener(this);
+        btnFirst.addActionListener(this);
+        btnPrevious.addActionListener(this);
+        btnNext.addActionListener(this);
+        btnLast.addActionListener(this);
 
         btnStatistic.addMouseListener(this);
         btnLogOut.addMouseListener(this);
         btnBack.addMouseListener(this);
+        btnFirst.addMouseListener(this);
+        btnPrevious.addMouseListener(this);
+        btnNext.addMouseListener(this);
+        btnLast.addMouseListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
         if (o.equals(btnStatistic)) {
-            Date dateCheckIn = null;
-            Date dateCheckOut = null;
-            try {
-                dateCheckIn = dpTuNgay.getFullDate();
-                dateCheckOut = dpDenNgay.getFullDate();
-            } catch (ParseException e1) {
-                e1.printStackTrace();
+            statistic();
+        } else if (o.equals(btnFirst)) {
+            txtPageNum.setText("1");
+            statistic();
+        } else if (o.equals(btnPrevious)) {
+            int pageNum = Integer.parseInt(txtPageNum.getText().trim());
+            if (pageNum != 1) {
+                pageNum--;
+                txtPageNum.setText(String.valueOf(pageNum));
+                statistic();
             }
-            loadListBillByDate(dateCheckIn, dateCheckOut);
+        } else if (o.equals(btnNext)) {
+            int pageNum = Integer.parseInt(txtPageNum.getText().trim());
+            int lastPage = Integer.parseInt(lbLastPageNum.getText().replace("/", ""));
+            if (pageNum < lastPage) {
+                pageNum++;
+                txtPageNum.setText(String.valueOf(pageNum));
+                statistic();
+            }
+        } else if (o.equals(btnLast)) {
+            int lastPage = getLastPage();
+            txtPageNum.setText(String.valueOf(lastPage));
+            statistic();
         }
     }
 
@@ -162,6 +219,14 @@ public class pnRevenue extends JPanel implements interfaceBtn, ActionListener, M
             customUI.getInstance().setCustomBtnHover(btnLogOut);
         } else if (o.equals(btnBack)) {
             customUI.getInstance().setCustomBtnHover(btnBack);
+        } else if (o.equals(btnFirst)) {
+            customUI.getInstance().setCustomBtnHover(btnFirst);
+        } else if (o.equals(btnPrevious)) {
+            customUI.getInstance().setCustomBtnHover(btnPrevious);
+        } else if (o.equals(btnNext)) {
+            customUI.getInstance().setCustomBtnHover(btnNext);
+        } else if (o.equals(btnLast)) {
+            customUI.getInstance().setCustomBtnHover(btnLast);
         }
     }
 
@@ -174,15 +239,55 @@ public class pnRevenue extends JPanel implements interfaceBtn, ActionListener, M
             customUI.getInstance().setCustomBtn(btnLogOut);
         } else if (o.equals(btnBack)) {
             customUI.getInstance().setCustomBtn(btnBack);
+        } else if (o.equals(btnFirst)) {
+            customUI.getInstance().setCustomBtn(btnFirst);
+        } else if (o.equals(btnPrevious)) {
+            customUI.getInstance().setCustomBtn(btnPrevious);
+        } else if (o.equals(btnNext)) {
+            customUI.getInstance().setCustomBtn(btnNext);
+        } else if (o.equals(btnLast)) {
+            customUI.getInstance().setCustomBtn(btnLast);
         }
     }
 
-    private void loadListBillByDate(Date dateCheckIn, Date dateCheckOut) {
+    public int getLastPage() {
+        Date dateCheckIn = null;
+        Date dateCheckOut = null;
+        try {
+            dateCheckIn = dpTuNgay.getFullDate();
+            dateCheckOut = dpDenNgay.getFullDate();
+        } catch (ParseException e1) {
+            e1.printStackTrace();
+        }
+        int sumRecord = BillDAO.getInstance().getNumBillByDate(dateCheckIn, dateCheckOut);
+        int lastPage = sumRecord / 30;
+        if (sumRecord % 30 != 0) {
+            lastPage++;
+        }
+        return lastPage;
+    }
+
+    private void statistic() {
+        Date dateCheckIn = null;
+        Date dateCheckOut = null;
+        try {
+            dateCheckIn = dpTuNgay.getFullDate();
+            dateCheckOut = dpDenNgay.getFullDate();
+        } catch (ParseException e1) {
+            e1.printStackTrace();
+        }
+        int lastPage = getLastPage();
+        lbLastPageNum.setText("/" + lastPage);
+        int pageNum = Integer.parseInt(txtPageNum.getText().trim());
+        loadListBillByDate(dateCheckIn, dateCheckOut, pageNum);
+    }
+
+    private void loadListBillByDate(Date dateCheckIn, Date dateCheckOut, int pageNum) {
         modelTable.getDataVector().removeAllElements();
         modelTable.fireTableDataChanged();
-        ResultSet rs = BillDAO.getInstance().getBillListByDate(dateCheckIn, dateCheckOut);
+        ResultSet rs = BillDAO.getInstance().getBillListByDateAndPage(dateCheckIn, dateCheckOut, pageNum);
         DecimalFormat df = new DecimalFormat("#,###.##");
-        int i = 1;
+        int i = 1 + (pageNum - 1) * 30;
         try {
             while (rs.next()) {
                 int billID = rs.getInt("id");
