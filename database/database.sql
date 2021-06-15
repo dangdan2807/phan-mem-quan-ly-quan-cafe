@@ -486,20 +486,6 @@ BEGIN
 END 
 GO
 
-CREATE PROC USP_getListBillByDate
-    @dateCheckIn DATE,
-    @dateCheckOut DATE
-AS
-    BEGIN
-        SELECT t.name, b.id, b.totalPrice, b.DateCheckIn, b.DateCheckOut, b.Discount
-        FROM dbo.Bill b, dbo.TableFood t
-        WHERE b.DateCheckIn >= @dateCheckIn
-            AND b.DateCheckOut <= @dateCheckOut 
-            AND b.[status] = 1
-            AND t.id = b.idTable
-    END
-GO
-
 CREATE PROC UPS_updateAccount
     @username NVARCHAR(100),
     @displayName NVARCHAR(100),
@@ -632,4 +618,51 @@ BEGIN
 END
 GO  
 
-select * from dbo.Account
+CREATE PROC USP_getListBillByDateAndPage
+    @dateCheckIn DATE,
+    @dateCheckOut DATE,
+    @page int
+AS
+BEGIN
+    DECLARE @pageRows int = 30
+    DECLARE @selectRows int = @pageRows * @page
+    DECLARE @exceptRows int = (@page - 1) * @pageRows
+
+    ;WITH billShow AS (
+    SELECT b.id, t.name, b.totalPrice, b.DateCheckIn, b.DateCheckOut, b.Discount
+    FROM dbo.Bill b, dbo.TableFood t
+    WHERE b.DateCheckIn >= @dateCheckIn
+        AND b.DateCheckOut <= @dateCheckOut --DATEADD(day, 1, @dateCheckOut)
+        AND b.[status] = 1
+        AND t.id = b.idTable
+    )
+    -- c1
+    -- SELECT TOP (@selectRows) *
+    -- FROM billShow
+    -- EXCEPT
+    -- SELECT TOP (@exceptRows) *
+    -- FROM billShow
+
+    -- c2
+    SELECT TOP (@selectRows) *
+    FROM BillShow
+    WHERE id NOT IN (
+        SELECT TOP (@exceptRows) id
+        FROM BillShow
+    )
+END
+GO
+
+CREATE PROC USP_getNumBillByDate
+    @dateCheckIn DATE,
+    @dateCheckOut DATE
+AS
+    BEGIN
+        SELECT COUNT(*)
+        FROM dbo.Bill b, dbo.TableFood t
+        WHERE b.DateCheckIn >= @dateCheckIn
+            AND b.DateCheckOut < DATEADD(day, 1, @dateCheckOut)
+            AND b.[status] = 1
+            AND t.id = b.idTable
+    END
+GO
