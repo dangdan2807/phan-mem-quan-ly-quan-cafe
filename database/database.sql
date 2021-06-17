@@ -100,8 +100,10 @@ GO
 INSERT INTO dbo.Account
     (UserName, [PassWord], DisplayName, [Type])
 VALUES
-    (N'admin', N'admin', N'admin', 1),
-    (N'nhanvien1', N'nhanvien1', N'nhanvien1', 0)
+-- password: admin
+    (N'admin', N'3335474112287-91-8967-119741474-12831-61', N'Quản lý', 1),
+-- password: nhanvien1
+    (N'nhanvien1', N'-4-1333-48-1069869112228-26-2515318086', N'Nhân viên 1', 0)
 GO
 
 DECLARE @i INT = 1
@@ -172,17 +174,19 @@ VALUES
     (N'Hồng trà chanh mật ong', 5, 22000),
     (N'Hồng trà japan', 5, 22000),
 
-    (N'Flan chocolate', 6, 7000),
-    (N'Flan trứng gà', 6, 7000),
-    (N'Sương sáo', 6, 7000),
-    (N'Thạch khoai môn', 6, 7000),
-    (N'Thạch trái cây', 6, 7000),
-    (N'Thạch phô mai', 6, 7000),
-    (N'Trân châu trắng', 6, 7000),
-    (N'Trân châu đen', 6, 7000),
+    (N'Topping flan chocolate', 6, 7000),
+    (N'Topping flan trứng gà', 6, 7000),
+    (N'Topping sương sáo', 6, 7000),
+    (N'Topping thạch khoai môn', 6, 7000),
+    (N'Topping thạch trái cây', 6, 7000),
+    (N'Topping thạch phô mai', 6, 7000),
+    (N'Topping trân châu trắng', 6, 7000),
+    (N'Topping trân châu đen', 6, 7000),
 
     (N'Trà sữa matcha', 7, 22000),
-    (N'Trà sữa việt quốc', 7, 24000)
+    (N'Trà sữa việt quốc', 7, 24000),
+    (N'Trà sữa dâu', 7, 25000),
+    (N'Trà sữa matcha', 7, 25000)
 GO
 
 -- UPDATE dbo.Product SET name = N'Trà sữa matcha 1' , idCategory = 7, price = 24000 WHERE id = 47

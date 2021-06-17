@@ -13,6 +13,7 @@ public class DataProvider {
         return instance;
     }
 
+    // dùng khi select trả về các bảng
     public ResultSet ExecuteQuery(String query, Object[] parameter) {
         PreparedStatement stmt = null;
         ResultSet dataList = null;
@@ -38,6 +39,8 @@ public class DataProvider {
         return dataList;
     }
 
+    // dùng khi insert, delete, update hoặc các câu query trả về số lượng dòng thực thi
+    // có dòng nào thực thi => false
     public int ExecuteNonQuery(String query, Object[] parameter) {
         int data = 0;
         PreparedStatement stmt = null;

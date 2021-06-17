@@ -445,10 +445,9 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
                     showBill(tableID);
                     loadTable(tableID);
                     txtBillID.setText("");
-                    // btnPayment.setEnabled(false);
+                    spinCount.setValue(0);
                 }
             }
-
         } else if (o.equals(btnRefresh)) {
             LoadListTable();
         } else if (o.equals(btnSwitchTable)) {

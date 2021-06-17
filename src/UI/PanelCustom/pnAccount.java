@@ -231,6 +231,7 @@ public class pnAccount extends JPanel
                     modelTable.addRow(
                             new Object[] { stt, accountData.getUsername(), accountData.getDisplayName(), type });
                     modelTable.fireTableDataChanged();
+                    // di chuyển và bô đen dòng vừa thêm vào
                     int lastIndex = table.getRowCount() - 1;
                     table.getSelectionModel().setSelectionInterval(lastIndex, lastIndex);
                     table.scrollRectToVisible(table.getCellRect(lastIndex, lastIndex, true));
