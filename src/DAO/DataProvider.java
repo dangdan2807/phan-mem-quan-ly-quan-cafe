@@ -13,7 +13,12 @@ public class DataProvider {
         return instance;
     }
 
-    // dùng khi select trả về các bảng
+    /**
+     * dùng khi select, function, prod, view trả về các bảng
+     * @param query truyền vào query để truy vấn
+     * @param parameter Object chứa các trường cần truy ván có thể rỗng
+     * @return ResultSet
+     */
     public ResultSet ExecuteQuery(String query, Object[] parameter) {
         PreparedStatement stmt = null;
         ResultSet dataList = null;
@@ -39,8 +44,13 @@ public class DataProvider {
         return dataList;
     }
 
-    // dùng khi insert, delete, update hoặc các câu query trả về số lượng dòng thực thi
-    // có dòng nào thực thi => false
+    /**
+     * dùng khi insert, delete, update hoặc các câu query trả về số lượng dòng thực thi.
+     * Có dòng nào thực thi => false
+     * @param query truyền vào query để truy vấn
+     * @param parameter Object chứa các trường cần truy ván có thể rỗng
+     * @return true | false
+     */
     public int ExecuteNonQuery(String query, Object[] parameter) {
         int data = 0;
         PreparedStatement stmt = null;
@@ -72,8 +82,13 @@ public class DataProvider {
         return data;
     }
 
-    // dùng để đếm, ...
-    // trả về cột đầu tiên của dùng đầu tiên của kết quả
+    /**
+     * dùng để đếm, lấy ra 1 giá trị duy nhất, ...
+     * Trả về cột đầu tiên của dùng đầu tiên của kết quả
+     * @param query truyền vào query để truy vấn
+     * @param parameter Object chứa các trường cần truy ván có thể rỗng
+     * @return true | false
+     */
     public Object ExecuteScalar(String query, Object[] parameter) {
         Object data = null;
         ResultSet rs = null;
