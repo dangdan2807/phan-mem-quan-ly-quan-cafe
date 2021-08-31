@@ -26,8 +26,8 @@ public class AccountDAO {
      * @return <code>List</code>
      */
     public List<Account> getListAccount() {
-        String select = "{UserName: 1, DisplayName: 1, Type: 1, _id: 0, Password: 0}";
-        String where = "{UserName: {$regex: '.'}}";
+        String select = "{ 'UserName': 1, 'DisplayName': 1, 'Type': 1, '_id': 1 }";
+        String where = "{ 'UserName': {'$regex': '.'}}";
         List<Account> dataList = new ArrayList<Account>();
         try {
             List<Document> docs = DataProvider.getInstance().readData(COLLECTION, select, where);
@@ -70,7 +70,7 @@ public class AccountDAO {
 
         int count = 0;
         // vùng cần bổ sung
-        String where = "{'UserName': " + username + ", Password: " + hashPass + "}";
+        String where = "{UserName: " + username + ", Password: " + hashPass + "}";
         try {
             List<Document> docs = DataProvider.getInstance().readData(COLLECTION, "{}", where);
             count = docs.size();
@@ -87,7 +87,7 @@ public class AccountDAO {
      * @return Account
      */
     public Account getAccountByUsername(String username) {
-        String select = "{UserName: 1, DisplayName: 1, Type: 1, _id: 0, Password: 0}";
+        String select = "{UserName: 1, DisplayName: 1, Type: 1, _id: 1}";
         String where = "{UserName: " + username + "}";
         Account account = null;
         try {
@@ -126,7 +126,7 @@ public class AccountDAO {
      * @return ArrayList Account
      */
     public ArrayList<Account> searchAccountListByType(int type) {
-        String select = "{UserName: 1, DisplayName: 1, Type: 1, _id: 0, Password: 0}";
+        String select = "{UserName: 1, DisplayName: 1, Type: 1, _id: 1}";
         String where = "{Type: " + type + "}";
         ArrayList<Account> dataList = new ArrayList<Account>();
         try {
@@ -168,10 +168,10 @@ public class AccountDAO {
      * @return boolean
      */
     public boolean insertAccount(Account account) {
-        String json = "{ UserName: " + account.getUsername()
-                + ", Password: " + account.getPassword()
-                + ", DisplayName: " + account.getDisplayName() 
-                + ", Type" + account.getType() + " }";
+        String json = "{ UserName: '" + account.getUsername()
+                + "', Password: '" + account.getPassword()
+                + "', DisplayName: '" + account.getDisplayName() 
+                + "', Type: " + account.getType() + " }";
         ObjectId id = null;
         boolean result = false;
         try {
@@ -218,10 +218,10 @@ public class AccountDAO {
      * @return boolean
      */
     public boolean updateAccount(Account account) {
-        String jsonWhere = "{UserName: " + account.getUsername() + "}";
-        String jsonUpdate = "{$set: {Password: " + account.getPassword()
-                + ", DisplayName" + account.getDisplayName()
-                + ", Type: " + account.getType()
+        String jsonWhere = "{UserName: '" + account.getUsername() + "'}";
+        String jsonUpdate = "{'$set': { Password: '" + account.getPassword()
+                + "', DisplayName: '" + account.getDisplayName()
+                + "', Type: " + account.getType()
                 + "}}";
         UpdateResult data = null;
         boolean result = false;
@@ -247,7 +247,7 @@ public class AccountDAO {
      * @return boolean
      */
     public boolean deleteAccount(String username) {
-        String jsonWhere = "{UserName: " + username + "}";
+        String jsonWhere = "{UserName: '" + username + "'}";
         boolean result = false;
         try {
             DeleteResult data = DataProvider.getInstance().deleteData(COLLECTION, jsonWhere);
@@ -273,8 +273,8 @@ public class AccountDAO {
     public boolean resetPassword(String username) {
         // password: 123456
         String newPassword = "-3110-365773-7089-85-6686-3287-1415-12062";
-        String jsonWhere = "{UserName: " + username + "}";
-        String jsonUpdate = "{$set: {Password: " + newPassword + "}}";
+        String jsonWhere = "{UserName: '" + username + "'}";
+        String jsonUpdate = "{$set: {Password: '" + newPassword + "'}}";
         boolean result = false;
         try {
             UpdateResult data = DataProvider.getInstance().updateData(COLLECTION, jsonWhere, jsonUpdate);

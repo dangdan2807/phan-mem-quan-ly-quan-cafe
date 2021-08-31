@@ -3,15 +3,15 @@ package entityMongoDB;
 import org.bson.Document;
 
 public class Table {
-    private int id;
+    private int tableID;
     private String name, status;
 
-    public int getId() {
-        return id;
+    public int gettableID() {
+        return tableID;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void settableID(int tableID) {
+        this.tableID = tableID;
     }
 
     public String getName() {
@@ -30,13 +30,13 @@ public class Table {
         this.status = status;
     }
 
-    public Table(int id, String name, String status) {
-        this.id = id;
+    public Table(int tableID, String name, String status) {
+        this.tableID = tableID;
         this.name = name;
         this.status = status;
     }
 
     public Table(Document doc) {
-        this(doc.getInteger("id"), doc.getString("name"), doc.getString("status"));
+        this(doc.getInteger("tableID"), doc.getString("name"), doc.getString("status"));
     }
 }
