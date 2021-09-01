@@ -34,6 +34,7 @@ datas = [
   { tableID: 1, name: 'Bàn 1', status: 'Trống' },
   { tableID: 2, name: 'Bàn 2', status: 'Trống' }, 
   { tableID: 3, name: 'Bàn 3', status: 'Trống' }, 
+  { tableID: 4, name: 'Bàn 4', status: 'Trống' }, 
   { tableID: 5, name: 'Bàn 5', status: 'Trống' },
   { tableID: 6, name: 'Bàn 6', status: 'Trống' },
   { tableID: 7, name: 'Bàn 7', status: 'Trống' },
@@ -50,6 +51,7 @@ datas = [
   { tableID: 18, name: 'Bàn 18', status: 'Trống' },
   { tableID: 19, name: 'Bàn 19', status: 'Trống' },
   { tableID: 20, name: 'Bàn 20', status: 'Trống' }
+  { tableID: 21, name: 'Bàn 21', status: 'Trống' }
 ]
 
 db.getCollection(collection).insertMany(datas)

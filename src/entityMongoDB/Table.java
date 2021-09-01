@@ -36,7 +36,18 @@ public class Table {
         this.status = status;
     }
 
+    public Table(String name, String status) {
+        this.name = name;
+        this.status = status;
+    }
+
+    public Table(String name) {
+        this.name = name;
+        this.status = "Trống";
+    }
+    
     public Table(Document doc) {
         this(doc.getInteger("tableID"), doc.getString("name"), doc.getString("status"));
     }
+
 }

@@ -23,17 +23,17 @@ public class AccountDAO {
     /**
      * Lấy danh sách tài khoản từ database
      * 
-     * @return <code>List</code>
+     * @return <code>List</code> Account
      */
     public List<Account> getListAccount() {
-        String select = "{ 'UserName': 1, 'DisplayName': 1, 'Type': 1, '_id': 1 }";
-        String where = "{ 'UserName': {'$regex': '.'}}";
+        String select = "{ 'UserName': 1, 'DisplayName': 1, 'Type': 1, '_id': 0 }";
+        String where = "{}";
+        String sort = "{}";
         List<Account> dataList = new ArrayList<Account>();
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, select, where);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, select, where, sort, 0, 0);
             for (Document doc : docs) {
                 dataList.add(new Account(doc));
-                System.out.println(doc);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,7 +72,7 @@ public class AccountDAO {
         // vùng cần bổ sung
         String where = "{UserName: " + username + ", Password: " + hashPass + "}";
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, "{}", where);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, "{}", where, "{}", 0, 0);
             count = docs.size();
         } catch (Exception e) {
             e.printStackTrace();
@@ -87,11 +87,11 @@ public class AccountDAO {
      * @return Account
      */
     public Account getAccountByUsername(String username) {
-        String select = "{UserName: 1, DisplayName: 1, Type: 1, _id: 1}";
+        String select = "{UserName: 1, DisplayName: 1, Type: 1}";
         String where = "{UserName: " + username + "}";
         Account account = null;
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, select, where);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, select, where, "{}", 0, 0);
             account = new Account(docs.get(0));
         } catch (Exception e) {
             e.printStackTrace();
@@ -99,38 +99,18 @@ public class AccountDAO {
         return account;
     }
 
-    // public List<Account> searchAccountListByUsername(String username) {
-    // String query = "Select * from dbo.Account where
-    // dbo.fuConvertToUnsign(username) like dbo.fuConvertToUnsign( ? )";
-    // Object[] parameter = new Object[] { "%" + username + "%" };
-    // ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
-    // ArrayList<Account> dataList = new ArrayList<Account>();
-    // try {
-    // while (rs.next()) {
-    // dataList.add(new Account(rs));
-    // }
-    // } catch (SQLException e) {
-    // e.printStackTrace();
-    // }
-    // return dataList;
-    // }
-
     /**
-     * Lấy danh sách tài khoản dựa trên chức vụ (<code>Type</code>)
-     * <p>
-     * <code>Type = 1</code> là quản lý
-     * <p>
-     * <code>Type = 0</code> là nhân viên
+     * Lấy ra danh sách <code>Account</code> dựa trên username
      * 
-     * @param type loại chức vụ cần tìm
-     * @return ArrayList Account
+     * @param username tài khoản cần tìm thông tin
+     * @return <code>List<code> Account
      */
-    public ArrayList<Account> searchAccountListByType(int type) {
-        String select = "{UserName: 1, DisplayName: 1, Type: 1, _id: 1}";
-        String where = "{Type: " + type + "}";
-        ArrayList<Account> dataList = new ArrayList<Account>();
+    public List<Account> searchAccountListByUsername(String username) {
+        String jsonSelect = "{ UserName: 1, DisplayName: 1, Type: 1, _id: 1 }";
+        String jsonWhere = "{ UserName: {$regex: '" + username + "', $options: 'i'}}";
+        List<Account> dataList = new ArrayList<Account>();
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, select, where);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, jsonWhere, "{}", 0, 0);
             for (Document doc : docs) {
                 dataList.add(new Account(doc));
             }
@@ -140,22 +120,53 @@ public class AccountDAO {
         return dataList;
     }
 
-    // public ArrayList<Account> searchAccountListByUsernameAndType(String username,
-    // int type) {
-    // String query = "Select * from dbo.Account where
-    // dbo.fuConvertToUnsign(username) like dbo.fuConvertToUnsign(?) and type = ?";
-    // Object[] parameter = new Object[] { "%" + username + "%", type };
-    // ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
-    // ArrayList<Account> dataList = new ArrayList<Account>();
-    // try {
-    // while (rs.next()) {
-    // dataList.add(new Account(rs));
-    // }
-    // } catch (SQLException e) {
-    // e.printStackTrace();
-    // }
-    // return dataList;
-    // }
+    /**
+     * Lấy danh sách tài khoản dựa trên chức vụ (<code>Type</code>)
+     * <p>
+     * <code>Type = 1</code> là quản lý
+     * <p>
+     * <code>Type = 0</code> là nhân viên
+     * 
+     * @param type loại chức vụ cần tìm
+     * @return <code>List</code> Account
+     */
+    public List<Account> searchAccountListByType(int type) {
+        String jsonSelect = "{ UserName: 1, DisplayName: 1, Type: 1, _id: 1 }";
+        String jsonWhere = "{ Type: " + type + " }";
+        List<Account> dataList = new ArrayList<Account>();
+        try {
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, jsonWhere, "{}", 0, 0);
+            for (Document doc : docs) {
+                dataList.add(new Account(doc));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dataList;
+    }
+
+    /**
+     * Lấy danh sách tài khoản dựa trên tài khoản (<code>username</code>) và chức vụ
+     * (<code>Type</code>)
+     * 
+     * @param username Tài khoản cần tìm
+     * @param type     Chức vụ cần tìm
+     * @return <code>List</code> Account
+     */
+    public List<Account> searchAccountListByUsernameAndType(String username, int type) {
+        String jsonSelect = "{ UserName: 1, DisplayName: 1, Type: 1, _id: 1 }";
+        String jsonWhere = "{ UserName: {$regex: '" + username + "', $options: 'i'} ,Type: " + type + " }";
+        List<Account> dataList = new ArrayList<Account>();
+        try {
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, jsonWhere, "{}", 0, 0);
+            for (Document doc : docs) {
+                dataList.add(new Account(doc));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dataList;
+    }
 
     /**
      * Thêm 1 tài khoản vào csdl
@@ -168,10 +179,8 @@ public class AccountDAO {
      * @return boolean
      */
     public boolean insertAccount(Account account) {
-        String json = "{ UserName: '" + account.getUsername()
-                + "', Password: '" + account.getPassword()
-                + "', DisplayName: '" + account.getDisplayName() 
-                + "', Type: " + account.getType() + " }";
+        String json = "{ UserName: '" + account.getUsername() + "', Password: '" + account.getPassword()
+                + "', DisplayName: '" + account.getDisplayName() + "', Type: " + account.getType() + " }";
         ObjectId id = null;
         boolean result = false;
         try {
@@ -219,10 +228,8 @@ public class AccountDAO {
      */
     public boolean updateAccount(Account account) {
         String jsonWhere = "{UserName: '" + account.getUsername() + "'}";
-        String jsonUpdate = "{'$set': { Password: '" + account.getPassword()
-                + "', DisplayName: '" + account.getDisplayName()
-                + "', Type: " + account.getType()
-                + "}}";
+        String jsonUpdate = "{'$set': { Password: '" + account.getPassword() + "', DisplayName: '"
+                + account.getDisplayName() + "', Type: " + account.getType() + "}}";
         UpdateResult data = null;
         boolean result = false;
         try {

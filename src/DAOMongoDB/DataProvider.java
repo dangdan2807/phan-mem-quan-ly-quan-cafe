@@ -33,6 +33,9 @@ public class DataProvider {
     public ObjectId insertData(String collection, String jsonData) {
         MongoClient client = null;
         ObjectId result = null;
+        if (jsonData == null || jsonData.equals("")) {
+            jsonData = "{}";
+        }
         Document query = Document.parse(jsonData);
         try {
             db.connect();
@@ -60,16 +63,31 @@ public class DataProvider {
      * @param Collection Collection cần truy vấn
      * @param jsonSelect Những trường cần lấy ra (viết dạng json)
      * @param jsonWhere  Những điều kiện tìm đối tượng (viết dạng json)
+     * @param jsonSort   Những điều kiện sắp xếp các đối tượng tìm được (viết dạng
+     *                   json)
+     * @param limitRow   Giới hạn số lượng dòng được lấy ra (integer) mặc định = 0
+     * @param skipRow    Bỏ qua x dòng được lấy ra đầu tiên (integer) mặc
+     *                   định = 0
      * @return List trả về 1 list data
      */
-    public List<Document> readData(String Collection, String jsonSelect, String jsonWhere) {
+    public List<Document> readData(String Collection, String jsonSelect, String jsonWhere, String jsonSort,
+            int limitRow, int skipRow) {
         MongoClient client = null;
         List<Document> results = null;
         if (jsonSelect == null || jsonSelect.equals("")) {
             jsonSelect = "{}";
         } else if (jsonWhere == null || jsonWhere.equals("")) {
             jsonWhere = "{}";
+        } else if (jsonSort == null || jsonSort.equals("")) {
+            jsonSort = "{}";
+        } else if (limitRow < 0) {
+            limitRow = 0;
+        } else if (skipRow < 0) {
+            limitRow = 0;
         }
+        Document whereValue = Document.parse(jsonWhere);
+        Document selectValue = Document.parse(jsonSelect);
+        Document sortValue = Document.parse(jsonSort);
         try {
             db.connect();
             client = ConnectMongo.getConnection();
@@ -77,7 +95,8 @@ public class DataProvider {
             MongoDatabase db = client.getDatabase(databaseName);
             MongoCollection<Document> collection = db.getCollection(Collection);
             results = new ArrayList<>();
-            collection.find(Document.parse(jsonWhere)).projection(Document.parse(jsonSelect)).into(results);
+            collection.find(whereValue).projection(selectValue).sort(sortValue).skip(skipRow).limit(limitRow)
+                    .into(results);
             client.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -100,6 +119,11 @@ public class DataProvider {
     public UpdateResult updateData(String Collection, String jsonWhere, String jsonUpdate) {
         MongoClient client = null;
         UpdateResult result = null;
+        if (jsonUpdate == null || jsonUpdate.equals("")) {
+            jsonUpdate = "{}";
+        } else if (jsonWhere == null || jsonWhere.equals("")) {
+            jsonWhere = "{}";
+        }
         Document query = Document.parse(jsonWhere);
         Document update = Document.parse(jsonUpdate);
         try {
@@ -130,6 +154,9 @@ public class DataProvider {
     public DeleteResult deleteData(String collection, String jsonWhere) {
         MongoClient client = null;
         DeleteResult result = null;
+        if (jsonWhere == null || jsonWhere.equals("")) {
+            jsonWhere = "{}";
+        }
         Document query = Document.parse(jsonWhere);
         try {
             db.connect();
