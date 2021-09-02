@@ -4,15 +4,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Table {
-    private int id;
+    private int tableID;
     private String name, status;
 
-    public int getId() {
-        return id;
+    public int getTableID() {
+        return tableID;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setTableID(int tableID) {
+        this.tableID = tableID;
     }
 
     public String getName() {
@@ -31,8 +31,8 @@ public class Table {
         this.status = status;
     }
 
-    public Table(int id, String name, String status) {
-        this.id = id;
+    public Table(int tableID, String name, String status) {
+        this.tableID = tableID;
         this.name = name;
         this.status = status;
     }

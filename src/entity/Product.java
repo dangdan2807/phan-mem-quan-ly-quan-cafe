@@ -4,16 +4,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Product {
-    private int id, categoryID;
+    private int productID, categoryID;
     private String name;
     private double price;
 
-    public int getId() {
-        return id;
+    public int getProductID() {
+        return productID;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setProductID(int id) {
+        this.productID = id;
     }
 
     public int getCategoryID() {
@@ -41,14 +41,14 @@ public class Product {
     }
 
     public Product(int id, int categoryID, String name, double price) {
-        this.id = id;
+        this.productID = id;
         this.categoryID = categoryID;
         this.name = name;
         this.price = price;
     }
 
     public Product(ResultSet rs) throws SQLException {
-        this(rs.getInt("id"), rs.getInt("idCategory"), rs.getString("name"), rs.getDouble("price"));
+        this(rs.getInt("productID"), rs.getInt("idCategory"), rs.getString("name"), rs.getDouble("price"));
     }
 
 }

@@ -398,10 +398,10 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
                     count *= -1;
                 String productName = txtProductName.getText().trim();
                 Product product = ProductDAO.getInstance().getProductByProductName(productName);
-                int productID = product.getId();
+                int productID = product.getProductID();
                 String tableName = txtTableName.getText().trim();
                 Table table = TableDAO.getInstance().getTableByTableName(tableName);
-                int tableID = table.getId();
+                int tableID = table.getTableID();
                 int billID = BillDAO.getInstance().getUncheckBillByTableID(tableID);
                 // create new bill
                 if (billID == -1) {
@@ -429,7 +429,7 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
         } else if (o.equals(btnPayment)) {
             String tableName = txtTableName.getText().trim();
             Table table = TableDAO.getInstance().getTableByTableName(tableName);
-            int tableID = table.getId();
+            int tableID = table.getTableID();
             int discount = (int) spinDiscount.getValue();
             int billID = BillDAO.getInstance().getUncheckBillByTableID(tableID);
             String totalPricePayment = txtPayment.getText().trim();
@@ -453,11 +453,11 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
         } else if (o.equals(btnSwitchTable)) {
             String tableName1 = txtTableName.getText().trim();
             Table table1 = TableDAO.getInstance().getTableByTableName(tableName1);
-            int tableID1 = table1.getId();
+            int tableID1 = table1.getTableID();
 
             String tableName2 = cboTableName.getSelectedItem().toString().trim();
             Table table2 = TableDAO.getInstance().getTableByTableName(tableName2);
-            int tableID2 = table2.getId();
+            int tableID2 = table2.getTableID();
 
             String message = String.format("Bạn có chắc chắn muốn chuyển từ bàn %d qua bàn %d", tableID1, tableID2);
             int select = JOptionPane.showConfirmDialog(this, message, "Xác nhận chuyển bàn",
@@ -629,7 +629,7 @@ public class fManagerSale extends JFrame implements ActionListener, MouseListene
         for (int i = 0; i < sizeTableList; i++) {
             final int selection = i;
             Table table = tableList.get(i);
-            int tableID = table.getId();
+            int tableID = table.getTableID();
             btnTableList[selection] = new JButton("");
             loadTable(tableID);
             btnTableList[selection].setBorder(lineGray);

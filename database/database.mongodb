@@ -50,7 +50,7 @@ datas = [
   { tableID: 17, name: 'Bàn 17', status: 'Trống' },
   { tableID: 18, name: 'Bàn 18', status: 'Trống' },
   { tableID: 19, name: 'Bàn 19', status: 'Trống' },
-  { tableID: 20, name: 'Bàn 20', status: 'Trống' }
+  { tableID: 20, name: 'Bàn 20', status: 'Trống' },
   { tableID: 21, name: 'Bàn 21', status: 'Trống' }
 ]
 
@@ -77,55 +77,56 @@ db.getCollection(collection).createIndex({"categoryID": 1}, { unique: true })
 collection = "Product";
 db.createCollection(collection);
 datas = [
-  { productID: 1, name:'Cafe đá', idCategory: 1, price: 18000},
-  { productID: 2, name:'Cafe sữa', idCategory: 1, price: 20000},
-  { productID: 3, name:'Espresso', idCategory: 1, price: 24000},
-  { productID: 4, name:'Latte Macchiato', idCategory: 1, price: 24000},
-  { productID: 5, name:'Cappuccino', idCategory: 1, price: 24000},
-  { productID: 6, name:'Cafe Latte', idCategory: 1, price: 24000},
-  { productID: 7, name:'Cafe Mocha', idCategory: 1, price: 24000},
-  { productID: 8, name:'Americano', idCategory: 1, price: 24000},
-  { productID: 9, name:'Espresso Con Panna', idCategory: 1, price: 24000},
-  { productID: 10, name:'Cappuccino Viennese', idCategory: 1, price: 24000},
-  { productID: 11, name:'Red bull', idCategory: 2, price: 12000},
-  { productID: 12, name:'7-up', idCategory: 2, price: 12000},
-  { productID: 13, name:'Aquafina', idCategory: 2, price: 12000},
-  { productID: 14, name:'Lavie', idCategory: 2, price: 12000},
-  { productID: 15, name:'Mirinda soda kem', idCategory: 2, price: 12000},
-  { productID: 16, name:'Pepsi light', idCategory: 2, price: 12000},
-  { productID: 17, name:'Mirinda xá xị', idCategory: 2, price: 12000},
-  { productID: 18, name:'Moutain dew', idCategory: 2, price: 12000},
-  { productID: 19, name:'Dasani', idCategory: 2, price: 12000},
-  { productID: 20, name:'Trà ô long tea plus', idCategory: 2, price: 12000},
-  { productID: 21, name:'Trà dưa hấu bạc hà', idCategory: 3, price: 24000},
-  { productID: 22, name:'Trà đào cam sả', idCategory: 3, price: 30000},
-  { productID: 23, name:'Trà xoài', idCategory: 3, price: 16000},
-  { productID: 24, name:'Trà bí đao', idCategory: 3, price: 16000},
-  { productID: 25, name:'Lục trà xí muội', idCategory: 3, price: 16000},
-  { productID: 26, name:'Sinh tố kiwi', idCategory: 4, price: 22000},
-  { productID: 27, name:'Sinh tố dâu', idCategory: 4, price: 22000},
-  { productID: 28, name:'Sinh tố đậu xanh', idCategory: 4, price: 17000},
-  { productID: 29, name:'Sinh tố cà rốt', idCategory: 4, price: 22000},
-  { productID: 30, name:'Sinh tố chuối', idCategory: 4, price: 17000},
-  { productID: 31, name:'Sinh tố cà chua', idCategory: 4, price: 17000},
-  { productID: 32, name:'Sinh tố rau má', idCategory: 4, price: 12000},
-  { productID: 33, name:'Hồng trà đào', idCategory: 5, price: 22000},
-  { productID: 34, name:'Hồng trà nhiệt đới', idCategory: 5, price: 22000},
-  { productID: 35, name:'Hồng trà táo', idCategory: 5, price: 22000},
-  { productID: 36, name:'Hồng trà chanh mật ong', idCategory: 5, price: 22000},
-  { productID: 37, name:'Hồng trà japan', idCategory: 5, price: 22000},
-  { productID: 38, name:'Topping flan chocolate', idCategory: 6, price: 7000},
-  { productID: 39, name:'Topping flan trứng gà', idCategory: 6, price: 7000},
-  { productID: 40, name:'Topping sương sáo', idCategory: 6, price: 7000},
-  { productID: 41, name:'Topping thạch khoai môn', idCategory: 6, price: 7000},
-  { productID: 42, name:'Topping thạch trái cây', idCategory: 6, price: 7000},
-  { productID: 43, name:'Topping thạch phô mai', idCategory: 6, price: 7000},
-  { productID: 44, name:'Topping trân châu trắng', idCategory: 6, price: 7000},
-  { productID: 45, name:'Topping trân châu đen', idCategory: 6, price: 7000},
-  { productID: 46, name:'Trà sữa matcha', idCategory: 7, price: 22000},
-  { productID: 47, name:'Trà sữa việt quốc', idCategory: 7, price: 24000},
-  { productID: 48, name:'Trà sữa dâu', idCategory: 7, price: 25000},
-  { productID: 49, name:'Trà sữa matcha', idCategory: 7, price: 25000}
+  { productID: 1, name:'Cafe đá', idCategory: 1, price: NumberDecimal("18000.0")},
+  { productID: 2, name:'Cafe sữa', idCategory: 1, price: Number(20000.0)},
+  { productID: 3, name:'Espresso', idCategory: 1, price: Number(24000.0)},
+  { productID: 4, name:'Latte Macchiato', idCategory: 1, price: Number(24000.0)},
+  { productID: 5, name:'Cappuccino', idCategory: 1, price: Number(24000.0)},
+  { productID: 6, name:'Cafe Latte', idCategory: 1, price: Number(24000.0)},
+  { productID: 7, name:'Cafe Mocha', idCategory: 1, price: Number(24000.0)},
+  { productID: 8, name:'Americano', idCategory: 1, price: Number(24000.0)},
+  { productID: 9, name:'Espresso Con Panna', idCategory: 1, price: Number(24000.0)},
+  { productID: 10, name:'Cappuccino Viennese', idCategory: 1, price: Number(24000.0)},
+  { productID: 11, name:'Red bull', idCategory: 2, price: Number(12000.0)},
+  { productID: 12, name:'7-up', idCategory: 2, price: Number(12000.0)},
+  { productID: 13, name:'Aquafina', idCategory: 2, price: Number(12000.0)},
+  { productID: 14, name:'Lavie', idCategory: 2, price: Number(12000.0)},
+  { productID: 15, name:'Mirinda soda kem', idCategory: 2, price: Number(12000.0)},
+  { productID: 16, name:'Pepsi light', idCategory: 2, price: Number(12000.0)},
+  { productID: 17, name:'Mirinda xá xị', idCategory: 2, price: Number(12000.0)},
+  { productID: 18, name:'Moutain dew', idCategory: 2, price: Number(12000.0)},
+  { productID: 19, name:'Dasani', idCategory: 2, price: Number(12000.0)},
+  { productID: 20, name:'Trà ô long tea plus', idCategory: 2, price: Number(12000.0)},
+  { productID: 21, name:'Trà dưa hấu bạc hà', idCategory: 3, price: Number(24000.0)},
+  { productID: 22, name:'Trà đào cam sả', idCategory: 3, price: Number(30000.0)},
+  { productID: 23, name:'Trà xoài', idCategory: 3, price: Number(16000.0)},
+  { productID: 24, name:'Trà bí đao', idCategory: 3, price: Number(16000.0)},
+  { productID: 25, name:'Lục trà xí muội', idCategory: 3, price: Number(16000.0)},
+  { productID: 26, name:'Sinh tố kiwi', idCategory: 4, price: Number(22000.0)},
+  { productID: 27, name:'Sinh tố dâu', idCategory: 4, price: Number(22000.0)},
+  { productID: 28, name:'Sinh tố đậu xanh', idCategory: 4, price: Number(17000.0)},
+  { productID: 29, name:'Sinh tố cà rốt', idCategory: 4, price: Number(22000.0)},
+  { productID: 30, name:'Sinh tố chuối', idCategory: 4, price: Number(17000.0)},
+  { productID: 31, name:'Sinh tố cà chua', idCategory: 4, price: Number(17000.0)},
+  { productID: 32, name:'Sinh tố rau má', idCategory: 4, price: Number(12000.0)},
+  { productID: 33, name:'Hồng trà đào', idCategory: 5, price: Number(22000.0)},
+  { productID: 34, name:'Hồng trà nhiệt đới', idCategory: 5, price: Number(22000.0)},
+  { productID: 35, name:'Hồng trà táo', idCategory: 5, price: Number(22000.0)},
+  { productID: 36, name:'Hồng trà chanh mật ong', idCategory: 5, price: Number(22000.0)},
+  { productID: 37, name:'Hồng trà japan', idCategory: 5, price: Number(22000.0)},
+  { productID: 38, name:'Topping flan chocolate', idCategory: 6, price: Number(7000.0)},
+  { productID: 39, name:'Topping flan trứng gà', idCategory: 6, price: Number(7000.0)},
+  { productID: 40, name:'Topping sương sáo', idCategory: 6, price: Number(7000.0)},
+  { productID: 41, name:'Topping thạch khoai môn', idCategory: 6, price: Number(7000.0)},
+  { productID: 42, name:'Topping thạch trái cây', idCategory: 6, price: Number(7000.0)},
+  { productID: 43, name:'Topping thạch phô mai', idCategory: 6, price: Number(7000.0)},
+  { productID: 44, name:'Topping trân châu trắng', idCategory: 6, price: Number(7000.0)},
+  { productID: 45, name:'Topping trân châu đen', idCategory: 6, price: Number(7000.0)},
+  { productID: 46, name:'Trà sữa matcha', idCategory: 7, price: Number(22000.0)},
+  { productID: 47, name:'Trà sữa việt quốc', idCategory: 7, price: Number(24000.0)},
+  { productID: 48, name:'Trà sữa dâu', idCategory: 7, price: Number(25000.0)},
+  { productID: 49, name:'Trà sữa matcha', idCategory: 7, price: Number(25000.0)},
+  { productID: 50, name:'Trà sữa Không có sửa', idCategory: 7, price: Number(30000.0)}
 ]
 
 db.getCollection(collection).insertMany(datas)
@@ -137,7 +138,7 @@ var date = new Date();
 db.createCollection(collection);
 // status:  0. chưa thanh toán ||  1. đã thanh toán
 datas = [
-  {BillID: 1, idTable: 1, DateCheckIn: date.getDate(), DateCheckOut: '', status: 0, Discount: 0, totalPrice: 0}
+  {BillID: 0, idTable: 0, DateCheckIn: date.getDate(), DateCheckOut: 'date.getDate()', status: 0, Discount: 0, totalPrice: 0}
 ]
 
 db.getCollection(collection).insertMany(datas)
@@ -148,19 +149,8 @@ db.getCollection(collection).createIndex({"BillID": 1}, {unique: true})
 collection = "BillInfo";
 db.createCollection(collection);
 datas = [
-  {BillInfoID: 1, idBill: 1, idProduct: 1, count: 0},
+  {BillInfoID: 0, idBill: 0, idProduct: 0, count: 0},
 ]
 
 db.getCollection(collection).insertMany(datas)
 db.getCollection(collection).createIndex({"BillInfoID": 1}, {unique: true})
-
-
-const database = 'QuanLyQuanCafe';
-use(database)
-db.system.js.save({
-  _id: "addTwoValue",
-  value: function(a,b)
-  {
-      return a+b
-  }
-})

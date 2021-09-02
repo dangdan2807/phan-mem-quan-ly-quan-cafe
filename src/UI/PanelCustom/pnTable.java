@@ -219,7 +219,7 @@ public class pnTable extends JPanel implements interfaceBtn, ActionListener, Mou
                 DecimalFormat df = new DecimalFormat("#,###.##");
                 if (result == true) {
                     String stt = df.format(index++);
-                    int tableID = TableDAO.getInstance().getLastCategoryID();
+                    int tableID = TableDAO.getInstance().getLastTableID();
                     modelTable.addRow(new Object[] { stt, tableID, tableData.getName(), tableData.getStatus() });
                     modelTable.fireTableDataChanged();
                     txtTableID.setText(String.valueOf(tableID));
@@ -496,7 +496,7 @@ public class pnTable extends JPanel implements interfaceBtn, ActionListener, Mou
         index = 1;
         for (Table item : tableList) {
             String stt = df.format(index++);
-            modelTable.addRow(new Object[] { stt, item.getId(), item.getName(), item.getStatus() });
+            modelTable.addRow(new Object[] { stt, item.getTableID(), item.getName(), item.getStatus() });
         }
     }
 

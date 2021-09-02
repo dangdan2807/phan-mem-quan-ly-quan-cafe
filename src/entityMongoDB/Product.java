@@ -3,16 +3,16 @@ package entityMongoDB;
 import org.bson.Document;
 
 public class Product {
-    private int id, categoryID;
+    private int productID, categoryID;
     private String name;
     private double price;
 
-    public int getId() {
-        return id;
+    public int getProductID() {
+        return productID;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setProductID(int id) {
+        this.productID = id;
     }
 
     public int getCategoryID() {
@@ -39,15 +39,15 @@ public class Product {
         this.price = price;
     }
 
-    public Product(int id, int categoryID, String name, double price) {
-        this.id = id;
+    public Product(int productID, int categoryID, String name, double price) {
+        this.productID = productID;
         this.categoryID = categoryID;
         this.name = name;
         this.price = price;
     }
 
     public Product(Document doc) {
-        this(doc.getInteger("id"), doc.getInteger("idCategory"), doc.getString("name"), doc.getDouble("price"));
+        this(doc.getInteger("productID"), doc.getInteger("idCategory"), doc.getString("name"), doc.getDouble("price"));
     }
 
 }

@@ -147,7 +147,7 @@ public class TableDAO {
      * 
      * @return <code>int</code> ID của bàn
      */
-    public int getLastCategoryID() {
+    public int getLastTableID() {
         String jsonSelect = "{ tableID: 1, name: 1, status: 1 }";
         String jsonSort = "{ tableID: -1 }";
         int limitRow = 1;
@@ -157,7 +157,7 @@ public class TableDAO {
                     0);
             if (docs.size() > 0) {
                 Table table = new Table(docs.get(0));
-                id = table.gettableID();
+                id = table.getTableID();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -166,7 +166,7 @@ public class TableDAO {
     }
 
     public boolean insertTable(Table table) {
-        int tableID = getLastCategoryID() + 1;
+        int tableID = getLastTableID() + 1;
         if (tableID == 0)
             return false;
         String json = "{ tableID: " + tableID + ", name: '" + table.getName() + "', status: '" + table.getStatus()
@@ -185,7 +185,7 @@ public class TableDAO {
     }
 
     public boolean updateTable(Table table) {
-        String jsonWhere = "{ tableID: " + table.gettableID() + "}";
+        String jsonWhere = "{ tableID: " + table.getTableID() + "}";
         String jsonUpdate = "{$set: { name: '" + table.getName() + "', status: '" + table.getStatus() + "'}}";
         UpdateResult data = null;
         boolean result = false;
@@ -200,8 +200,8 @@ public class TableDAO {
         return result;
     }
 
-    public boolean deleteTable(int tableID) {
-        String jsonWhere = "{ tableID: " + tableID + "}";
+    public boolean deleteTable(int id) {
+        String jsonWhere = "{ tableID: " + id + "}";
         boolean result = false;
         try {
             DeleteResult data = DataProvider.getInstance().deleteData(COLLECTION, jsonWhere);

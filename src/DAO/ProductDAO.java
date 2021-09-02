@@ -43,6 +43,14 @@ public class ProductDAO {
         return data;
     }
 
+    public int getProductCountByCategoryID(int categoryID) {
+        int count = 0;
+        String query = "SELECT count(*) as ProductCount FROM dbo.Product p where p.idCategory = ?";
+        Object[] parameter = new Object[] { categoryID };
+        count = (int) DataProvider.getInstance().ExecuteScalar(query, parameter);
+        return count;
+    }
+
     public int getLastProductID() {
         int data = -1;
         String query = "SELECT * FROM dbo.Product";
@@ -108,7 +116,7 @@ public class ProductDAO {
     public boolean updateProduct(Product product) {
         String query = "Update dbo.Product set name = ? , idCategory = ? , price = ? Where id = ?";
         Object[] parameter = new Object[] { product.getName(), product.getCategoryID(), product.getPrice(),
-                product.getId() };
+                product.getProductID() };
         int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
         return result > 0;
     }

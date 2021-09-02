@@ -3,15 +3,15 @@ package entityMongoDB;
 import org.bson.Document;
 
 public class Category {
-    private int id;
+    private int categoryID;
     private String name;
 
-    public int getId() {
-        return id;
+    public int getCategoryID() {
+        return categoryID;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCategoryID(int categoryID) {
+        this.categoryID = categoryID;
     }
 
     public String getName() {
@@ -22,12 +22,22 @@ public class Category {
         this.name = name;
     }
 
-    public Category(int id, String name) {
-        this.id = id;
+    public Category(int categoryID, String name) {
+        this.categoryID = categoryID;
+        this.name = name;
+    }
+
+    public Category(int categoryID) {
+        this.categoryID = categoryID;
+        this.name = "";
+    }
+
+    public Category(String name) {
+        this.categoryID = -1;
         this.name = name;
     }
 
     public Category(Document doc) {
-        this(doc.getInteger("id"), doc.getString("name"));
+        this(doc.getInteger("categoryID"), doc.getString("name"));
     }
 }

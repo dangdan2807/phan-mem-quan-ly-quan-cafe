@@ -1,8 +1,7 @@
 package DAOMongoDB;
 
 import java.util.*;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -26,12 +25,10 @@ public class AccountDAO {
      * @return <code>List</code> Account
      */
     public List<Account> getListAccount() {
-        String select = "{ 'UserName': 1, 'DisplayName': 1, 'Type': 1, '_id': 0 }";
-        String where = "{}";
-        String sort = "{}";
+        String jonSelect = "{ 'UserName': 1, 'DisplayName': 1, 'Type': 1, '_id': 0 }";
         List<Account> dataList = new ArrayList<Account>();
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, select, where, sort, 0, 0);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jonSelect, "{}", "{}", 0, 0);
             for (Document doc : docs) {
                 dataList.add(new Account(doc));
             }

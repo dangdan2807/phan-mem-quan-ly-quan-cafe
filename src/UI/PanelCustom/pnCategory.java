@@ -225,7 +225,7 @@ public class pnCategory extends JPanel implements interfaceBtn, ActionListener, 
                 if (row != -1 && !categoryIDStr.equals("")) {
                     int categoryID = Integer.parseInt(categoryIDStr);
                     String categoryName = CategoryDAO.getInstance().getCategoryNameByID(categoryID);
-                    int productCount = CategoryDAO.getInstance().getProductCount(categoryID);
+                    int productCount = ProductDAO.getInstance().getProductCountByCategoryID(categoryID);
                     if (productCount > 0) {
                         String message = String.format(
                                 "Để xóa sản phẩm loại sản phẩm: %s \nBạn cần xóa hết tất cả các sản phẩm thuộc loại sản phẩm này\nHoặc chuyển chúng sang loại khác",

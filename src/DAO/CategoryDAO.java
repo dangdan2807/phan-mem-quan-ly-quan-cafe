@@ -84,14 +84,6 @@ public class CategoryDAO {
         return data;
     }
 
-    public int getProductCount(int categoryID) {
-        int count = 0;
-        String query = "SELECT count(*) as ProductCount FROM dbo.Product p where p.idCategory = ?";
-        Object[] parameter = new Object[] { categoryID };
-        count = (int) DataProvider.getInstance().ExecuteScalar(query, parameter);
-        return count;
-    }
-
     public boolean insertCategory(Category category) {
         String query = "INSERT INTO dbo.ProductCategory (name) VALUES ( ? )";
         Object[] parameter = new Object[] { category.getName() };

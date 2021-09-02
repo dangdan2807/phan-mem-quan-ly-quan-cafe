@@ -6,11 +6,11 @@ public class Table {
     private int tableID;
     private String name, status;
 
-    public int gettableID() {
+    public int getTableID() {
         return tableID;
     }
 
-    public void settableID(int tableID) {
+    public void setTableID(int tableID) {
         this.tableID = tableID;
     }
 

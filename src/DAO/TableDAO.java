@@ -111,7 +111,7 @@ public class TableDAO {
         return dataList;
     }
 
-    public int getLastCategoryID() {
+    public int getLastTableID() {
         int data = -1;
         String query = "SELECT * FROM dbo.TableFood";
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, null);
@@ -133,7 +133,7 @@ public class TableDAO {
 
     public boolean updateTable(Table table) {
         String query = "Update dbo.TableFood set name = ? , status = ? where id = ?";
-        Object[] parameter = new Object[] { table.getName(), table.getStatus(), table.getId() };
+        Object[] parameter = new Object[] { table.getName(), table.getStatus(), table.getTableID() };
         int result = DataProvider.getInstance().ExecuteNonQuery(query, parameter);
         return result > 0;
     }
