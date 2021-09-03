@@ -490,14 +490,14 @@ public class pnProduct extends JPanel
     }
 
     private void loadProductList() {
-        ResultSet productList = ProductDAO.getInstance().getListProductCustom();
+        ResultSet productList = ProductDAO.getInstance().getListProduct();
         loadDataIntoTable(productList);
     }
 
     private void loadProductListByCategoryName(String categoryName) {
         ResultSet productList = null;
         if (categoryName.equalsIgnoreCase("Tất cả")) {
-            productList = ProductDAO.getInstance().getListProductCustom();
+            productList = ProductDAO.getInstance().getListProduct();
         } else {
             productList = ProductDAO.getInstance().searchProductByCategoryName(categoryName);
         }

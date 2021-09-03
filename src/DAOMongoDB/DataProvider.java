@@ -61,47 +61,45 @@ public class DataProvider {
      * <code>String a = "{}"</code>
      * 
      * @param Collection Collection cần truy vấn
-     * @param jsonSelect Những trường cần lấy ra (viết dạng json)
-     * @param jsonWhere  Những điều kiện tìm đối tượng (viết dạng json)
-     * @param jsonSort   Những điều kiện sắp xếp các đối tượng tìm được (viết dạng
-     *                   json)
+     * @param jsonData   json dùng để truy vấn (dạng json)
      * @param limitRow   Giới hạn số lượng dòng được lấy ra (integer) mặc định = 0
-     * @param skipRow    Bỏ qua x dòng được lấy ra đầu tiên (integer) mặc
-     *                   định = 0
-     * @return List trả về 1 list data
+     * @param skipRow    Bỏ qua x dòng được lấy ra đầu tiên (integer) mặc định = 0
+     * @return <code>List</code> Account
      */
-    public List<Document> readData(String Collection, String jsonSelect, String jsonWhere, String jsonSort,
-            int limitRow, int skipRow) {
+    public List<Document> readData(String Collection, String[] jsonData, int limitRow, int skipRow) {
         MongoClient client = null;
-        List<Document> results = null;
-        if (jsonSelect == null || jsonSelect.equals("")) {
-            jsonSelect = "{}";
-        } else if (jsonWhere == null || jsonWhere.equals("")) {
-            jsonWhere = "{}";
-        } else if (jsonSort == null || jsonSort.equals("")) {
-            jsonSort = "{}";
-        } else if (limitRow < 0) {
-            limitRow = 0;
-        } else if (skipRow < 0) {
-            limitRow = 0;
+        List<Document> resultDocs = new ArrayList<Document>();
+        List<Document> docs = new ArrayList<Document>();
+        for (String json : jsonData) {
+            if (json.matches("^\\{.+\\}$")) {
+                Document doc = Document.parse(json);
+                docs.add(doc);
+            }
         }
-        Document whereValue = Document.parse(jsonWhere);
-        Document selectValue = Document.parse(jsonSelect);
-        Document sortValue = Document.parse(jsonSort);
-        try {
-            db.connect();
-            client = ConnectMongo.getConnection();
-
-            MongoDatabase db = client.getDatabase(databaseName);
-            MongoCollection<Document> collection = db.getCollection(Collection);
-            results = new ArrayList<>();
-            collection.find(whereValue).projection(selectValue).sort(sortValue).skip(skipRow).limit(limitRow)
-                    .into(results);
-            client.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (limitRow >= 1) {
+            Document limitValue = Document.parse("{ $limit: " + limitRow + "}");
+            docs.add(limitValue);
         }
-        return results;
+        if (skipRow >= 1) {
+            Document skipValue = Document.parse("{ $skip: " + skipRow + "}");
+            docs.add(skipValue);
+        }
+        if (docs.size() > 0) {
+            try {
+                db.connect();
+                client = ConnectMongo.getConnection();
+                MongoDatabase db = client.getDatabase(databaseName);
+                MongoCollection<Document> collection = db.getCollection(Collection);
+                AggregateIterable<Document> results = collection.aggregate(docs);
+                for (Document doc : results) {
+                    resultDocs.add(doc);
+                }
+                client.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return resultDocs;
     }
 
     /**

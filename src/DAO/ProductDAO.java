@@ -79,7 +79,7 @@ public class ProductDAO {
         return dataList;
     }
 
-    public ResultSet getListProductCustom() {
+    public ResultSet getListProduct() {
         String query = "{CALL USP_getListProduct}";
         ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, null);
         return rs;

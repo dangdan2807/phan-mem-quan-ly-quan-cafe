@@ -39,6 +39,10 @@ public class Product {
         this.price = price;
     }
 
+    private static Double convertToDouble(Object object) {
+        return Double.parseDouble(object.toString());
+    }
+
     public Product(int productID, int categoryID, String name, double price) {
         this.productID = productID;
         this.categoryID = categoryID;
@@ -47,7 +51,13 @@ public class Product {
     }
 
     public Product(Document doc) {
-        this(doc.getInteger("productID"), doc.getInteger("idCategory"), doc.getString("name"), doc.getDouble("price"));
+        this(doc.getInteger("productID"), doc.getInteger("idCategory"), doc.getString("name"),
+                convertToDouble(doc.get("price")));
     }
 
+    @Override
+    public String toString() {
+        return "Product [productID=" + productID + ", name=" + name + ", price=" + price
+                + ", categoryID=" + categoryID + "]";
+    }
 }

@@ -45,9 +45,14 @@ public class Table {
         this.name = name;
         this.status = "Trống";
     }
-    
+
     public Table(Document doc) {
         this(doc.getInteger("tableID"), doc.getString("name"), doc.getString("status"));
+    }
+
+    @Override
+    public String toString() {
+        return "Table [TableID" + tableID + ", name=" + name + ", status=" + status + "]";
     }
 
 }

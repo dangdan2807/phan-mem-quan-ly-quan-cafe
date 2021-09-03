@@ -40,4 +40,9 @@ public class Category {
     public Category(Document doc) {
         this(doc.getInteger("categoryID"), doc.getString("name"));
     }
+
+    @Override
+    public String toString() {
+        return "Category [categoryID=" + categoryID + ", name=" + name + "]";
+    }
 }

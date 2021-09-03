@@ -3,7 +3,6 @@ package DAOMongoDB;
 import java.util.*;
 
 import org.bson.Document;
-import com.mongodb.client.result.*;
 
 import entityMongoDB.Product;
 
@@ -17,28 +16,33 @@ public class ProductDAO {
         return instance;
     }
 
-    // public List<Product> getListProductByCategoryName(String categoryName) {
-    // ArrayList<Product> dataList = new ArrayList<Product>();
-    // String query = "{CALL USP_getListProductByCategoryName ( ? )}";
-    // Object[] parameter = new Object[] { categoryName };
-    // ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
-    // try {
-    // while (rs.next()) {
-    // dataList.add(new Product(rs));
-    // }
-    // } catch (SQLException e) {
-    // e.printStackTrace();
-    // }
-    // return dataList;
-    // }
+    public List<Product> getListProductByCategoryName(String categoryName) {
+        int categoryID = CategoryDAO.getInstance().getCategoryIDByCategoryName(categoryName);
+        String jsonSelect = "{ $project: { productID: 1, name: 1, idCategory: 1, price: 1, _id: 0 }}";
+        String jsonWhere = "{ $match: { idCategory: " + categoryID + "}}";
+        String[] jsonData = { jsonSelect, jsonWhere };
+        List<Product> dataList = new ArrayList<Product>();
+        try {
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
+            for (Document doc : docs) {
+                dataList.add(new Product(doc));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dataList;
+    }
 
     public Product getProductByProductName(String productName) {
-        String jsonSelect = "{ productID: 1, name: 1, idCategory: 1, price: 1 }";
-        String jsonWhere = "{name: {$regex: '^" + productName + "$', $options: 'si'}}";
+        String jsonSelect = "{ $project: { productID: 1, name: 1, idCategory: 1, price: 1, _id: 0 }}";
+        String jsonWhere = "{ $match: {name: {$regex: '^" + productName + "$', $options: 'si'}}}";
+        String[] jsonData = { jsonSelect, jsonWhere };
         Product product = null;
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, jsonWhere, "{}", 0, 0);
-            product = new Product(docs.get(0));
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
+            if (docs.size() > 0) {
+                product = new Product(docs.get(0));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -46,12 +50,14 @@ public class ProductDAO {
     }
 
     public int getProductCountByCategoryID(int categoryID) {
-        String jsonSelect = "{ productID: 1, name: 1, idCategory: 1, price: 1 }";
-        String jsonWhere = "{idCategory: " + categoryID + "}";
+        String jsonSelect = "{ $project: { productID: 1, idCategory: 1, _id: 0 }}";
+        String jsonWhere = "{ $match: { idCategory: " + categoryID + "}}";
+        String jsonCount = "{ $count: 'count'}";
+        String[] jsonData = { jsonSelect, jsonWhere, jsonCount };
         int product = 0;
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, jsonWhere, "{}", 0, 0);
-            product = docs.size();
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
+            product = docs.get(0).getInteger("count");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -59,13 +65,13 @@ public class ProductDAO {
     }
 
     public int getLastProductID() {
-        String jsonSelect = "{ productID: 1, name: 1, idCategory: 1, price: 1 }";
-        String jsonSort = "{ productID: -1 }";
+        String jsonSelect = "{ $project: { productID: 1, name: 1, idCategory: 1, price: 1, _id: 0 }}";
+        String jsonSort = "{ $sort: { productID: -1 }}";
+        String[] jsonData = { jsonSelect, jsonSort };
         int limitRow = 1;
         int id = -1;
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, "{}", jsonSort, limitRow,
-                    0);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, limitRow, 0);
             if (docs.size() > 0) {
                 Product product = new Product(docs.get(0));
                 id = product.getProductID();
@@ -76,42 +82,72 @@ public class ProductDAO {
         return id;
     }
 
-    // public ArrayList<Product> getListProductByProductName(String productName) {
-    // ArrayList<Product> dataList = new ArrayList<Product>();
-    // String query = "{CALL USP_getListProductByProductName ( ? )}";
-    // Object[] parameter = new Object[] { productName };
-    // ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
-    // try {
-    // while (rs.next()) {
-    // dataList.add(new Product(rs));
-    // }
-    // } catch (SQLException e) {
-    // e.printStackTrace();
-    // }
-    // return dataList;
-    // }
+    public List<Product> getListProductByProductName(String productName) {
+        String jsonSelect = "{ $project: { productID: 1, name: 1, idCategory: 1, price: 1, _id: 0 }}";
+        String jsonWhere = "{ $match: {name: {$regex: '" + productName + "', $options: 'si'}}}";
+        String[] jsonData = { jsonSelect, jsonWhere };
+        List<Product> dataList = new ArrayList<Product>();
+        try {
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
+            for (Document doc : docs) {
+                dataList.add(new Product(doc));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dataList;
+    }
 
-    // public ResultSet getListProductCustom() {
-    // String query = "{CALL USP_getListProduct}";
-    // ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, null);
-    // return rs;
-    // }
+    public List<Product> getListProduct() {
+        String jsonSelect = "{ $project: { productID: 1, name: 1, idCategory: 1, price: 1, _id: 0 }}";
+        String[] jsonData = { jsonSelect };
+        List<Product> dataList = new ArrayList<Product>();
+        try {
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
+            for (Document doc : docs) {
+                dataList.add(new Product(doc));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dataList;
+    }
 
-    // public ResultSet searchProductByCategoryNameAndProductName(String
-    // productName, String categoryName) {
-    // String query = "{CALL USP_searchProductByCategoryNameAndProductName ( ? , ?
-    // )}";
-    // Object[] parameter = new Object[] { productName, categoryName };
-    // ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
-    // return rs;
-    // }
+    public List<Product> searchProductByCategoryNameAndProductName(String productName, String categoryName) {
+        int categoryID = CategoryDAO.getInstance().getCategoryIDByCategoryName(categoryName);
+        String jsonSelect = "{ $project: { productID: 1, name: 1, idCategory: 1, price: 1, _id: 0 }}";
+        String jsonWhere = "{ $match: { name: { $regex: '" + productName + "', $options: 'si'}, idCategory: "
+                + categoryID + "}}";
+        System.out.println("categoryID: " + categoryID);
+        String[] jsonData = { jsonSelect, jsonWhere };
+        List<Product> dataList = new ArrayList<Product>();
+        try {
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
+            for (Document doc : docs) {
+                dataList.add(new Product(doc));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dataList;
+    }
 
-    // public ResultSet searchProductByCategoryName(String categoryName) {
-    // String query = "{CALL USP_searchProductByCategoryName ( ? )}";
-    // Object[] parameter = new Object[] { categoryName };
-    // ResultSet rs = DataProvider.getInstance().ExecuteQuery(query, parameter);
-    // return rs;
-    // }
+    public List<Product> searchProductByCategoryName(String categoryName) {
+        int categoryID = CategoryDAO.getInstance().getCategoryIDByCategoryName(categoryName);
+        String jsonSelect = "{ $project: { productID: 1, name: 1, idCategory: 1, price: 1, _id: 0 }}";
+        String jsonWhere = "{ $match: { idCategory: " + categoryID + "}}";
+        String[] jsonData = { jsonSelect, jsonWhere };
+        List<Product> dataList = new ArrayList<Product>();
+        try {
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
+            for (Document doc : docs) {
+                dataList.add(new Product(doc));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dataList;
+    }
 
     // public ResultSet searchProductByProductName(String productName) {
     // String query = "{CALL USP_searchProductByProductName ( ? )}";

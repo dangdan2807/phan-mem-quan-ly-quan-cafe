@@ -26,10 +26,11 @@ public class TableDAO {
      * @return <code>List</code> Table
      */
     public List<Table> getListTable() {
-        String jsonSelect = "{ 'tableID': 1, 'name': 1, 'status': 1}";
+        String jsonSelect = "{ $project: { tableID: 1, name: 1, status: 1, _id: 0 }}";
+        String[] jsonData = { jsonSelect };
         List<Table> dataList = new ArrayList<Table>();
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, "{}", "{}", 0, 0);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
             for (Document doc : docs) {
                 dataList.add(new Table(doc));
             }
@@ -40,11 +41,12 @@ public class TableDAO {
     }
 
     public Table getTableByTableID(int tableID) {
-        String jsonSelect = "{ 'tableID': 1, 'name': 1, 'status': 1}";
-        String jsonWhere = "{ tableID: " + tableID + " }";
+        String jsonSelect = "{ $project: { tableID: 1, name: 1, status: 1, _id: 0 }}";
+        String jsonWhere = "{ $match: { tableID: " + tableID + " }}";
+        String[] jsonData = { jsonSelect, jsonWhere };
         Table table = null;
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, jsonWhere, "{}", 0, 0);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
             table = new Table(docs.get(0));
         } catch (Exception e) {
             e.printStackTrace();
@@ -59,12 +61,15 @@ public class TableDAO {
      * @return <code>Table</code>
      */
     public Table getTableByTableName(String tableName) {
-        String jsonSelect = "{ 'tableID': 1, 'name': 1, 'status': 1}";
-        String jsonWhere = "{name: {$regex: '^" + tableName + "$', $options: 'si'}}";
+        String jsonSelect = "{ $project: { tableID: 1, name: 1, status: 1, _id: 0 }}";
+        String jsonWhere = "{ $match: { name: { $regex: '^" + tableName + "$', $options: 'si'}}}";
+        String[] jsonData = { jsonSelect, jsonWhere };
         Table table = null;
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, jsonWhere, "{}", 0, 0);
-            table = new Table(docs.get(0));
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
+            if (docs.size() > 0) {
+                table = new Table(docs.get(0));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -84,11 +89,12 @@ public class TableDAO {
      * @return <code>List</code> Table
      */
     public List<Table> getTableListByTableName(String tableName) {
-        String jsonSelect = "{ 'tableID': 1, 'name': 1, 'status': 1}";
-        String jsonWhere = "{name: {$regex: '" + tableName + "', $options: 'si'}}";
+        String jsonSelect = "{ $project: { tableID: 1, name: 1, status: 1, _id: 0 }}";
+        String jsonWhere = "{ $match: { name: {$regex: '" + tableName + "', $options: 'si'}}}";
+        String[] jsonData = { jsonSelect, jsonWhere };
         List<Table> dataList = new ArrayList<Table>();
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, jsonWhere, "{}", 0, 0);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
             for (Document doc : docs) {
                 dataList.add(new Table(doc));
             }
@@ -106,12 +112,13 @@ public class TableDAO {
      * @return <code>List</code> Table
      */
     public List<Table> getTableListByTableNameAndStatus(String tableName, String status) {
-        String jsonSelect = "{ tableID: 1, name: 1, status: 1}";
-        String jsonWhere = "{name: {$regex: '" + tableName + "', $options: 'i'}, status: {$regex: '" + status
-                + "', $options: 'i'}}";
+        String jsonSelect = "{ $project: { tableID: 1, name: 1, status: 1, _id: 0 }}";
+        String jsonWhere = "{ $match: { name: { $regex: '" + tableName + "', $options: 'si'}, status: { $regex: '" + status
+                + "', $options: 'si'}}}";
+        String[] jsonData = { jsonSelect, jsonWhere };
         List<Table> dataList = new ArrayList<Table>();
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, jsonWhere, "{}", 0, 0);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
             for (Document doc : docs) {
                 dataList.add(new Table(doc));
             }
@@ -128,11 +135,12 @@ public class TableDAO {
      * @return <code>List</code> Table
      */
     public List<Table> getTableListByStatus(String status) {
-        String jsonSelect = "{ tableID: 1, name: 1, status: 1}";
-        String jsonWhere = "{status: {$regex: '" + status + "', $options: 'i'}}";
+        String jsonSelect = "{ $project: { tableID: 1, name: 1, status: 1, _id: 0 }}";
+        String jsonWhere = "{ $match: { status: { $regex: '" + status + "', $options: 'si'}}}";
+        String[] jsonData = { jsonSelect, jsonWhere };
         List<Table> dataList = new ArrayList<Table>();
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, jsonWhere, "{}", 0, 0);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
             for (Document doc : docs) {
                 dataList.add(new Table(doc));
             }
@@ -148,12 +156,13 @@ public class TableDAO {
      * @return <code>int</code> ID của bàn
      */
     public int getLastTableID() {
-        String jsonSelect = "{ tableID: 1, name: 1, status: 1 }";
-        String jsonSort = "{ tableID: -1 }";
+        String jsonSelect = "{ $project: { tableID: 1, name: 1, status: 1, _id: 0 }}";
+        String jsonSort = "{ $sort: { tableID: -1 }}";
+        String[] jsonData = { jsonSelect, jsonSort };
         int limitRow = 1;
         int id = -1;
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, "{}", jsonSort, limitRow,
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, limitRow,
                     0);
             if (docs.size() > 0) {
                 Table table = new Table(docs.get(0));

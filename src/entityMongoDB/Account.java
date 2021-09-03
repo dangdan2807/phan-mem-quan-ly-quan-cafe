@@ -48,4 +48,10 @@ public class Account {
 	public Account(Document doc) {
 		this(doc.getString("UserName"), "", doc.getString("DisplayName"), doc.getInteger("Type"));
 	}
+
+	@Override
+	public String toString() {
+		return "Account [username=" + username + ", displayName=" + displayName + ", password=" + password + ", type="
+				+ type + "]";
+	}
 }

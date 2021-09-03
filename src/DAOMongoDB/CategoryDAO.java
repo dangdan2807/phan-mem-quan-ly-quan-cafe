@@ -19,10 +19,11 @@ public class CategoryDAO {
     }
 
     public List<Category> getListCategory() {
-        String jsonSelect = "{ categoryID: 1, name:1 }";
+        String jsonSelect = "{ $project: { categoryID: 1, name:1, _id: 0 }}";
+        String[] jsonData = { jsonSelect };
         List<Category> dataList = new ArrayList<Category>();
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, "{}", "{}", 0, 0);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
             for (Document doc : docs) {
                 dataList.add(new Category(doc));
             }
@@ -33,11 +34,12 @@ public class CategoryDAO {
     }
 
     public List<Category> getListCategoryByName(String categoryName) {
-        String jsonSelect = "{ categoryID: 1, name: 1 }";
-        String jsonWhere = "{ name: { $regex: '" + categoryName + "', $options: 'i'}}";
+        String jsonSelect = "{ $project: { categoryID: 1, name: 1, _id: 0 }}";
+        String jsonWhere = "{ $match: { name: { $regex: '" + categoryName + "', $options: 'i'}}}";
+        String[] jsonData = { jsonSelect, jsonWhere };
         List<Category> dataList = new ArrayList<Category>();
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, jsonWhere, "{}", 0, 0);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
             for (Document doc : docs) {
                 dataList.add(new Category(doc));
             }
@@ -48,11 +50,12 @@ public class CategoryDAO {
     }
 
     public int getCategoryIDByCategoryName(String categoryName) {
-        String jsonSelect = "{ categoryID: 1, name: 1 }";
-        String jsonWhere = "{ name: { $regex: '^" + categoryName + "$', $options: 'si' }}";
+        String jsonSelect = "{ $project: { categoryID: 1, name: 1, _id: 0 }}";
+        String jsonWhere = "{ $match: { name: { $regex: '^" + categoryName + "$', $options: 'si' }}}";
+        String[] jsonData = { jsonSelect, jsonWhere };
         int categoryID = -1;
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, jsonWhere, "{}", 0, 0);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
             if (docs.size() > 0) {
                 Category category = new Category(docs.get(0));
                 categoryID = category.getCategoryID();
@@ -64,11 +67,12 @@ public class CategoryDAO {
     }
 
     public String getCategoryNameByID(int categoryID) {
-        String jsonSelect = "{ categoryID: 1, name: 1 }";
-        String jsonWhere = "{ categoryID: " + categoryID + "}";
+        String jsonSelect = "{ $project: { categoryID: 1, name: 1, _id: 0 }}";
+        String jsonWhere = "{ $match: { categoryID: " + categoryID + "}}";
+        String[] jsonData = { jsonSelect, jsonWhere };
         String categoryName = "";
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, jsonWhere, "{}", 0, 0);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
             if (docs.size() > 0) {
                 Category category = new Category(docs.get(0));
                 categoryName = category.getName();
@@ -80,13 +84,13 @@ public class CategoryDAO {
     }
 
     public int getLastCategoryID() {
-        String jsonSelect = "{ categoryID: 1, name: 1 }";
-        String jsonSort = "{ categoryID: -1 }";
+        String jsonSelect = "{ $project: { categoryID: 1, name: 1, _id: 0 }}";
+        String jsonSort = "{ $sort: { categoryID: -1 }}";
+        String[] jsonData = { jsonSelect, jsonSort };
         int limitRow = 1;
         int categoryID = -1;
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, "{}", jsonSort, limitRow,
-                    0);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, limitRow, 0);
             if (docs.size() > 0) {
                 Category table = new Category(docs.get(0));
                 categoryID = table.getCategoryID();

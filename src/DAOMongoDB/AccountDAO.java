@@ -3,8 +3,9 @@ package DAOMongoDB;
 import java.util.*;
 import java.security.*;
 
-import org.bson.Document;
-import org.bson.types.ObjectId;
+import org.bson.*;
+import org.bson.types.*;
+
 import com.mongodb.client.result.*;
 
 import entityMongoDB.*;
@@ -25,12 +26,14 @@ public class AccountDAO {
      * @return <code>List</code> Account
      */
     public List<Account> getListAccount() {
-        String jonSelect = "{ 'UserName': 1, 'DisplayName': 1, 'Type': 1, '_id': 0 }";
+        String jonSelect = "{ $project: { UserName: 1, DisplayName: 1, Type: 1, _id: 0 }}";
+        String[] jsonData = { jonSelect };
         List<Account> dataList = new ArrayList<Account>();
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jonSelect, "{}", "{}", 0, 0);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
             for (Document doc : docs) {
-                dataList.add(new Account(doc));
+                Account account = new Account(doc);
+                dataList.add(account);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,9 +70,10 @@ public class AccountDAO {
 
         int count = 0;
         // vùng cần bổ sung
-        String where = "{UserName: " + username + ", Password: " + hashPass + "}";
+        String jsonWhere = "{ $match: { UserName: " + username + ", Password: " + hashPass + "}}";
+        String[] jsonData = { jsonWhere };
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, "{}", where, "{}", 0, 0);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
             count = docs.size();
         } catch (Exception e) {
             e.printStackTrace();
@@ -84,12 +88,15 @@ public class AccountDAO {
      * @return Account
      */
     public Account getAccountByUsername(String username) {
-        String select = "{UserName: 1, DisplayName: 1, Type: 1}";
-        String where = "{UserName: " + username + "}";
+        String select = "{ $project: { UserName: 1, DisplayName: 1, Type: 1, _id: 0}}";
+        String where = "{ $match: { UserName: { $regex: '^" + username + "$', $options: 'si'}}}";
+        String[] jsonData = { select, where };
         Account account = null;
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, select, where, "{}", 0, 0);
-            account = new Account(docs.get(0));
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
+            if (docs.size() > 0) {
+                account = new Account(docs.get(0));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -103,11 +110,12 @@ public class AccountDAO {
      * @return <code>List<code> Account
      */
     public List<Account> searchAccountListByUsername(String username) {
-        String jsonSelect = "{ UserName: 1, DisplayName: 1, Type: 1, _id: 1 }";
-        String jsonWhere = "{ UserName: {$regex: '" + username + "', $options: 'i'}}";
+        String jsonSelect = "{ $project: { UserName: 1, DisplayName: 1, Type: 1, _id: 0 }}";
+        String jsonWhere = "{ $match: { UserName: {$regex: '" + username + "', $options: 'i'}}}";
+        String[] jsonData = { jsonSelect, jsonWhere };
         List<Account> dataList = new ArrayList<Account>();
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, jsonWhere, "{}", 0, 0);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
             for (Document doc : docs) {
                 dataList.add(new Account(doc));
             }
@@ -128,11 +136,12 @@ public class AccountDAO {
      * @return <code>List</code> Account
      */
     public List<Account> searchAccountListByType(int type) {
-        String jsonSelect = "{ UserName: 1, DisplayName: 1, Type: 1, _id: 1 }";
-        String jsonWhere = "{ Type: " + type + " }";
+        String jsonSelect = "{ $project: { UserName: 1, DisplayName: 1, Type: 1, _id: 0 }}";
+        String jsonWhere = "{ $match: { Type: " + type + " }}";
+        String[] jsonData = { jsonSelect, jsonWhere };
         List<Account> dataList = new ArrayList<Account>();
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, jsonWhere, "{}", 0, 0);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
             for (Document doc : docs) {
                 dataList.add(new Account(doc));
             }
@@ -151,11 +160,12 @@ public class AccountDAO {
      * @return <code>List</code> Account
      */
     public List<Account> searchAccountListByUsernameAndType(String username, int type) {
-        String jsonSelect = "{ UserName: 1, DisplayName: 1, Type: 1, _id: 1 }";
-        String jsonWhere = "{ UserName: {$regex: '" + username + "', $options: 'i'} ,Type: " + type + " }";
+        String jsonSelect = "{ $project: { UserName: 1, DisplayName: 1, Type: 1, _id: 0 }}";
+        String jsonWhere = "{ $match: { UserName: {$regex: '" + username + "', $options: 'i'} ,Type: " + type + " }}";
+        String[] jsonData = { jsonSelect, jsonWhere };
         List<Account> dataList = new ArrayList<Account>();
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonSelect, jsonWhere, "{}", 0, 0);
+            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
             for (Document doc : docs) {
                 dataList.add(new Account(doc));
             }
@@ -225,7 +235,7 @@ public class AccountDAO {
      */
     public boolean updateAccount(Account account) {
         String jsonWhere = "{UserName: '" + account.getUsername() + "'}";
-        String jsonUpdate = "{'$set': { Password: '" + account.getPassword() + "', DisplayName: '"
+        String jsonUpdate = "{$set: { Password: '" + account.getPassword() + "', DisplayName: '"
                 + account.getDisplayName() + "', Type: " + account.getType() + "}}";
         UpdateResult data = null;
         boolean result = false;
@@ -277,8 +287,8 @@ public class AccountDAO {
     public boolean resetPassword(String username) {
         // password: 123456
         String newPassword = "-3110-365773-7089-85-6686-3287-1415-12062";
-        String jsonWhere = "{UserName: '" + username + "'}";
-        String jsonUpdate = "{$set: {Password: '" + newPassword + "'}}";
+        String jsonWhere = "{ UserName: '" + username + "'}";
+        String jsonUpdate = "{ $set: {Password: '" + newPassword + "'}}";
         boolean result = false;
         try {
             UpdateResult data = DataProvider.getInstance().updateData(COLLECTION, jsonWhere, jsonUpdate);
