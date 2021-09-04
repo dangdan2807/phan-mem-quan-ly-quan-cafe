@@ -1,7 +1,7 @@
 package DAOMongoDB;
 
 import com.mongodb.client.*;
-import com.mongodb.client.result.*;
+import com.mongodb.client.model.*;
 import com.mongodb.MongoClient;
 import org.bson.Document;
 import org.bson.types.*;
@@ -30,24 +30,23 @@ public class DataProvider {
      * @param jsonData   Json dữ liệu cần truyền (viết dạng json)
      * @return result trả về ObjectId nếu thành công | null nếu thất bại
      */
-    public ObjectId insertData(String collection, String jsonData) {
+    public ObjectId insertDocument(String collection, String jsonData) {
         MongoClient client = null;
         ObjectId result = null;
-        if (jsonData == null || jsonData.equals("")) {
-            jsonData = "{}";
-        }
-        Document query = Document.parse(jsonData);
-        try {
-            db.connect();
-            client = ConnectMongo.getConnection();
+        if (jsonData.matches("^\\{.+\\}$")) {
+            try {
+                db.connect();
+                client = ConnectMongo.getConnection();
 
-            MongoDatabase db = client.getDatabase(databaseName);
-            MongoCollection<Document> collections = db.getCollection(collection);
-            collections.insertOne(query);
-            result = query.getObjectId("_id");
-            client.close();
-        } catch (Exception e) {
-            // e.printStackTrace();
+                MongoDatabase db = client.getDatabase(databaseName);
+                MongoCollection<Document> collections = db.getCollection(collection);
+                Document doc = Document.parse(jsonData);
+                collections.insertOne(doc);
+                result = doc.getObjectId("_id");
+                client.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return result;
     }
@@ -66,7 +65,7 @@ public class DataProvider {
      * @param skipRow    Bỏ qua x dòng được lấy ra đầu tiên (integer) mặc định = 0
      * @return <code>List</code> Account
      */
-    public List<Document> readData(String Collection, String[] jsonData, int limitRow, int skipRow) {
+    public List<Document> readDocuments(String Collection, String[] jsonData, int limitRow, int skipRow) {
         MongoClient client = null;
         List<Document> resultDocs = new ArrayList<Document>();
         List<Document> docs = new ArrayList<Document>();
@@ -111,29 +110,37 @@ public class DataProvider {
      * <code>String a = "{}"</code>
      * 
      * @param Collection Collection cần truy vấn
-     * @param jsonWhere  Những điều kiện tìm đối tượng cần cập nhật (viết dạng json)
-     * @param jsonUpdate Dữ liệu cần cập nhật (viết dạng json)
+     * @param jsonData   Những điều kiện tìm đối tượng cần cập nhật (viết dạng json)
+     *                   <p>
+     *                   ví dụ: { < String tìm kiếm >, < String update > }
+     * @param options    các hàm hỗ trợ truy vấn
+     * @return Document
      */
-    public UpdateResult updateData(String Collection, String jsonWhere, String jsonUpdate) {
-        MongoClient client = null;
-        UpdateResult result = null;
-        if (jsonUpdate == null || jsonUpdate.equals("")) {
-            jsonUpdate = "{}";
-        } else if (jsonWhere == null || jsonWhere.equals("")) {
-            jsonWhere = "{}";
+    public Document updateDocument(String Collection, String[] jsonData, FindOneAndUpdateOptions options) {
+        Document result = null;
+        List<Document> filter = new ArrayList<Document>();
+        for (String json : jsonData) {
+            if (json.matches("^\\{.+\\}$")) {
+                Document doc = Document.parse(json);
+                filter.add(doc);
+            }
         }
-        Document query = Document.parse(jsonWhere);
-        Document update = Document.parse(jsonUpdate);
-        try {
-            db.connect();
-            client = ConnectMongo.getConnection();
-
-            MongoDatabase db = client.getDatabase(databaseName);
-            MongoCollection<Document> collection = db.getCollection(Collection);
-            result = collection.updateOne(query, update);
-            client.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        MongoClient client = null;
+        if (filter.size() >= 2) {
+            try {
+                db.connect();
+                client = ConnectMongo.getConnection();
+                MongoDatabase db = client.getDatabase(databaseName);
+                MongoCollection<Document> collection = db.getCollection(Collection);
+                if (options != null) {
+                    result = collection.findOneAndUpdate(filter.get(0), filter.get(1), options);
+                } else {
+                    result = collection.findOneAndUpdate(filter.get(0), filter.get(1));
+                }
+                client.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return result;
     }
@@ -147,26 +154,29 @@ public class DataProvider {
      * <code>String a = "{}"</code>
      * 
      * @param collection Collection cần truy vấn
-     * @param jsonWhere  Những điều kiện tìm đối tượng (viết dạng json)
+     * @param jsonFilter Những điều kiện tìm đối tượng (viết dạng json)
+     * @param options    các hàm hỗ trợ truy vấn
+     * @return Document
      */
-    public DeleteResult deleteData(String collection, String jsonWhere) {
+    public Document deleteDocument(String collection, String jsonFilter, FindOneAndDeleteOptions options) {
         MongoClient client = null;
-        DeleteResult result = null;
-        if (jsonWhere == null || jsonWhere.equals("")) {
-            jsonWhere = "{}";
+        Document resultDoc = null;
+        if (jsonFilter.matches("^\\{.+\\}$")) {
+            try {
+                db.connect();
+                client = ConnectMongo.getConnection();
+                MongoDatabase db = client.getDatabase(databaseName);
+                MongoCollection<Document> col = db.getCollection(collection);
+                Document filterDoc = Document.parse(jsonFilter);
+                if (options != null) {
+                    resultDoc = col.findOneAndDelete(filterDoc, options);
+                }
+                resultDoc = col.findOneAndDelete(filterDoc);
+                client.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        Document query = Document.parse(jsonWhere);
-        try {
-            db.connect();
-            client = ConnectMongo.getConnection();
-
-            MongoDatabase db = client.getDatabase(databaseName);
-            MongoCollection<Document> col = db.getCollection(collection);
-            result = col.deleteOne(query);
-            client.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
+        return resultDoc;
     }
 }
