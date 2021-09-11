@@ -4,7 +4,8 @@ import java.util.*;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import com.mongodb.client.result.*;
+
+import com.mongodb.client.model.*;
 
 import entityMongoDB.*;
 
@@ -30,7 +31,7 @@ public class TableDAO {
         String[] jsonData = { jsonSelect };
         List<Table> dataList = new ArrayList<Table>();
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
+            List<Document> docs = DataProvider.getInstance().readDocuments(COLLECTION, jsonData, 0, 0);
             for (Document doc : docs) {
                 dataList.add(new Table(doc));
             }
@@ -46,7 +47,7 @@ public class TableDAO {
         String[] jsonData = { jsonSelect, jsonWhere };
         Table table = null;
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
+            List<Document> docs = DataProvider.getInstance().readDocuments(COLLECTION, jsonData, 0, 0);
             table = new Table(docs.get(0));
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,7 +67,7 @@ public class TableDAO {
         String[] jsonData = { jsonSelect, jsonWhere };
         Table table = null;
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
+            List<Document> docs = DataProvider.getInstance().readDocuments(COLLECTION, jsonData, 0, 0);
             if (docs.size() > 0) {
                 table = new Table(docs.get(0));
             }
@@ -94,7 +95,7 @@ public class TableDAO {
         String[] jsonData = { jsonSelect, jsonWhere };
         List<Table> dataList = new ArrayList<Table>();
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
+            List<Document> docs = DataProvider.getInstance().readDocuments(COLLECTION, jsonData, 0, 0);
             for (Document doc : docs) {
                 dataList.add(new Table(doc));
             }
@@ -113,12 +114,12 @@ public class TableDAO {
      */
     public List<Table> getTableListByTableNameAndStatus(String tableName, String status) {
         String jsonSelect = "{ $project: { tableID: 1, name: 1, status: 1, _id: 0 }}";
-        String jsonWhere = "{ $match: { name: { $regex: '" + tableName + "', $options: 'si'}, status: { $regex: '" + status
-                + "', $options: 'si'}}}";
+        String jsonWhere = "{ $match: { name: { $regex: '" + tableName + "', $options: 'si'}, status: { $regex: '"
+                + status + "', $options: 'si'}}}";
         String[] jsonData = { jsonSelect, jsonWhere };
         List<Table> dataList = new ArrayList<Table>();
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
+            List<Document> docs = DataProvider.getInstance().readDocuments(COLLECTION, jsonData, 0, 0);
             for (Document doc : docs) {
                 dataList.add(new Table(doc));
             }
@@ -140,7 +141,7 @@ public class TableDAO {
         String[] jsonData = { jsonSelect, jsonWhere };
         List<Table> dataList = new ArrayList<Table>();
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, 0, 0);
+            List<Document> docs = DataProvider.getInstance().readDocuments(COLLECTION, jsonData, 0, 0);
             for (Document doc : docs) {
                 dataList.add(new Table(doc));
             }
@@ -162,8 +163,7 @@ public class TableDAO {
         int limitRow = 1;
         int id = -1;
         try {
-            List<Document> docs = DataProvider.getInstance().readData(COLLECTION, jsonData, limitRow,
-                    0);
+            List<Document> docs = DataProvider.getInstance().readDocuments(COLLECTION, jsonData, limitRow, 0);
             if (docs.size() > 0) {
                 Table table = new Table(docs.get(0));
                 id = table.getTableID();
@@ -183,7 +183,7 @@ public class TableDAO {
         ObjectId id = null;
         boolean result = false;
         try {
-            id = DataProvider.getInstance().insertData(COLLECTION, json);
+            id = DataProvider.getInstance().insertDocument(COLLECTION, json);
             if (id != null) {
                 result = true;
             }
@@ -195,12 +195,14 @@ public class TableDAO {
 
     public boolean updateTable(Table table) {
         String jsonWhere = "{ tableID: " + table.getTableID() + "}";
-        String jsonUpdate = "{$set: { name: '" + table.getName() + "', status: '" + table.getStatus() + "'}}";
-        UpdateResult data = null;
+        String jsonUpdate = "{ $set: { name: '" + table.getName() + "', status: '" + table.getStatus() + "'}}";
+        String[] jsonData = { jsonWhere, jsonUpdate };
+        FindOneAndUpdateOptions options = null;
+        Document doc = null;
         boolean result = false;
         try {
-            data = DataProvider.getInstance().updateData(COLLECTION, jsonWhere, jsonUpdate);
-            if (data.getModifiedCount() > 0) {
+            doc = DataProvider.getInstance().updateDocument(COLLECTION, jsonData, options);
+            if (doc != null) {
                 result = true;
             }
         } catch (Exception e) {
@@ -210,11 +212,12 @@ public class TableDAO {
     }
 
     public boolean deleteTable(int id) {
-        String jsonWhere = "{ tableID: " + id + "}";
+        String jsonFilter = "{ tableID: " + id + "}";
+        FindOneAndDeleteOptions options = null;
         boolean result = false;
         try {
-            DeleteResult data = DataProvider.getInstance().deleteData(COLLECTION, jsonWhere);
-            if (data.getDeletedCount() > 0) {
+            Document data = DataProvider.getInstance().deleteDocument(COLLECTION, jsonFilter, options);
+            if (data != null) {
                 result = true;
             }
         } catch (Exception e) {

@@ -1,0 +1,78 @@
+[{
+  "_id": {
+    "$oid": "612f3a4eda696a51da4264e0"
+  },
+  "tableID": 1,
+  "name": "Bàn 1",
+  "status": "Trống"
+},{
+  "_id": {
+    "$oid": "612f3a4eda696a51da4264e1"
+  },
+  "tableID": 2,
+  "name": "Bàn 2",
+  "status": "Trống"
+},{
+  "_id": {
+    "$oid": "612f3a4eda696a51da4264e2"
+  },
+  "tableID": 3,
+  "name": "Bàn 3",
+  "status": "Trống"
+},{
+  "_id": {
+    "$oid": "612f3a4eda696a51da4264e3"
+  },
+  "tableID": 4,
+  "name": "Bàn 4",
+  "status": "Trống"
+},{
+  "_id": {
+    "$oid": "612f3a4eda696a51da4264e4"
+  },
+  "tableID": 5,
+  "name": "Bàn 5",
+  "status": "Trống"
+},{
+  "_id": {
+    "$oid": "612f3a4eda696a51da4264e5"
+  },
+  "tableID": 6,
+  "name": "Bàn 6",
+  "status": "Trống"
+},{
+  "_id": {
+    "$oid": "612f3a4eda696a51da4264e6"
+  },
+  "tableID": 7,
+  "name": "Bàn 7",
+  "status": "Trống"
+},{
+  "_id": {
+    "$oid": "612f3a4eda696a51da4264e7"
+  },
+  "tableID": 8,
+  "name": "Bàn 8",
+  "status": "Trống"
+},{
+  "_id": {
+    "$oid": "612f3a4eda696a51da4264e8"
+  },
+  "tableID": 9,
+  "name": "Bàn 9",
+  "status": "Trống"
+},{
+  "_id": {
+    "$oid": "612f3a4eda696a51da4264e9"
+  },
+  "tableID": 10,
+  "name": "Bàn 10",
+  "status": "Trống"
+},{
+  "_id": {
+    "$oid": "612f3a4eda696a51da4264ea"
+  },
+  "tableID": 11,
+  "name": "Bàn 11",
+  "status": "Trống"
+}]
