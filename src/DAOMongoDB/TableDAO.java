@@ -10,7 +10,7 @@ import com.mongodb.client.model.*;
 import entityMongoDB.*;
 
 public class TableDAO {
-    private static TableDAO instance;
+    private static TableDAO instance = new TableDAO();
     private static String COLLECTION = "TableFood";
     public static int TABLE_WIDTH = 90;
     public static int TABLE_HEIGHT = 90;
@@ -48,7 +48,9 @@ public class TableDAO {
         Table table = null;
         try {
             List<Document> docs = DataProvider.getInstance().readDocuments(COLLECTION, jsonData, 0, 0);
-            table = new Table(docs.get(0));
+            if (docs.size() > 0) {
+                table = new Table(docs.get(0));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
